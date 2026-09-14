@@ -14,6 +14,7 @@ const beamLayer = document.querySelector('#beam-layer');
 const levelTagElement = document.querySelector('#level-tag');
 const boardSizeElement = document.querySelector('#board-size');
 const livesElement = document.querySelector('#lives');
+const missionLivesElement = document.querySelector('#mission-lives');
 const statusCard = document.querySelector('#status-card');
 const statusKicker = document.querySelector('#status-kicker');
 const statusTitle = document.querySelector('#status-title');
@@ -82,6 +83,7 @@ function render({ animatedMirrorId = null } = {}) {
     });
 
     livesElement.textContent = lives;
+    missionLivesElement.textContent = lives;
     fireButton.disabled = isAnimating || isSolved;
     resetButton.disabled = isAnimating;
     boardWrap.dataset.terminalReason = visibleSimulation.terminalReason ?? '';

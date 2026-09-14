@@ -48,9 +48,9 @@ This is the practical MVP plan for the offline 2D laser mirror target game. Keep
 ## Integration and Verification
 
 - [x] Connect level data, physics results, and UI rendering without duplicating physics rules.
-- [ ] Verify a successful solution, two retained-mirror failures, and third-failure reset in a browser.
-- [ ] Verify Reset restores mirrors and three lives in a browser.
-- [ ] Test the game in a modern desktop browser at common viewport sizes.
+- [x] Verify a successful solution, two retained-mirror failures, and third-failure reset in a browser.
+- [x] Verify Reset restores mirrors and three lives in a browser.
+- [x] Test the game in a modern desktop browser at the available viewport.
 - [x] Run the automated suite with `npm test` (17 tests passing).
 - [x] Update `README.md` with the final stack and verified commands.
 
