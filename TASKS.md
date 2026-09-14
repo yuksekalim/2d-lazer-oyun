@@ -15,42 +15,44 @@ This is the practical MVP plan for the offline 2D laser mirror target game. Keep
 
 ## Foundation
 
-- [ ] Choose the minimal web stack and create the static entry point.
-- [ ] Add the project scripts and document actual local commands in `README.md`.
-- [ ] Add source, level, test, and asset directories.
+- [x] Choose the minimal web stack and create the static entry point.
+- [x] Add the project scripts and document actual local commands in `README.md`.
+- [x] Add source, level, test, and asset directories.
 
 ## Physics Agent
 
-- [ ] Define grid coordinates, four movement directions, and mirror orientations.
-- [ ] Implement deterministic beam tracing from the border source.
-- [ ] Stop on walls and boundaries; detect target entry and repeating states.
-- [ ] Return a structured result containing the path and terminal outcome.
-- [ ] Test straight paths, both mirror orientations, collisions, target hits, misses, and loops.
+- [x] Define grid coordinates, four movement directions, and mirror orientations.
+- [x] Implement deterministic beam tracing from the border source.
+- [x] Stop on walls and boundaries; detect target entry and repeating states.
+- [x] Return a structured result containing the path and terminal outcome.
+- [x] Test straight paths, both mirror orientations, collisions, target hits, misses, and loops.
 
 ## Level Agent
 
-- [ ] Define the level-file schema and validation rules.
-- [ ] Create one clear, hand-designed 5×5 level.
-- [ ] Ensure the level has exactly one source and target and at least one verified solution.
-- [ ] Keep the initial puzzle short and understandable without introducing advanced mechanics.
+- [x] Define the level-file schema and documented validation rules.
+- [x] Create one clear, hand-designed 5×5 level.
+- [x] Ensure the level has exactly one source and target and at least one verified solution.
+- [x] Keep the initial puzzle short and understandable without introducing advanced mechanics.
+- [ ] Add a dedicated runtime schema validator for level files.
 
 ## UI Agent
 
-- [ ] Render the 5×5 board and all fixed and interactive elements.
-- [ ] Hide the beam until **Fire Laser** is pressed.
-- [ ] Rotate mirrors by click/tap and animate the beam one cell at a time.
-- [ ] Disable mirror and gameplay controls during beam playback.
-- [ ] Display three lives and apply the defined failure/reset behavior.
-- [ ] Add **Fire Laser**, **Reset**, **Play Again**, and success/failure feedback.
-- [ ] Use simple geometric visuals with animation hooks that can support future polish.
+- [x] Render the 5×5 board and all fixed and interactive elements.
+- [x] Hide the beam until **Fire Laser** is pressed.
+- [x] Rotate mirrors by click/tap and animate the beam one cell at a time.
+- [x] Disable mirror and gameplay controls during beam playback.
+- [x] Display three lives and apply the defined failure/reset behavior.
+- [x] Add **Fire Laser**, **Reset**, **Play Again**, and success/failure feedback.
+- [x] Use simple geometric visuals with animation hooks that can support future polish.
 
 ## Integration and Verification
 
-- [ ] Connect level data, physics results, and UI rendering without duplicating physics rules.
-- [ ] Verify a successful solution, two retained-mirror failures, and third-failure reset.
-- [ ] Verify Reset restores mirrors and three lives.
+- [x] Connect level data, physics results, and UI rendering without duplicating physics rules.
+- [ ] Verify a successful solution, two retained-mirror failures, and third-failure reset in a browser.
+- [ ] Verify Reset restores mirrors and three lives in a browser.
 - [ ] Test the game in a modern desktop browser at common viewport sizes.
-- [ ] Update `README.md` with the final stack and verified commands.
+- [x] Run the automated suite with `npm test` (17 tests passing).
+- [x] Update `README.md` with the final stack and verified commands.
 
 ## Future, Not MVP
 

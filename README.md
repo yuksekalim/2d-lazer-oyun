@@ -36,7 +36,14 @@ Add hand-designed level sets across 5×5, 8×8, and 11×11 boards, grouped into 
 
 ## Local Development
 
-The game is planned as a self-contained static web project that runs in a modern browser. Installation, development, test, and build commands will be documented here when the web stack is selected.
+The game is a self-contained static web project with no runtime dependencies or backend.
+
+```bash
+npm test
+npm run dev
+```
+
+`npm test` runs the Node test suite. `npm run dev` starts a local static server; open `http://localhost:4173/src/ui/` in a modern browser.
 
 ## License
 
