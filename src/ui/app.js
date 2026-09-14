@@ -1,20 +1,24 @@
 import { animateLaser } from '../animation/laser-animation.js';
 import { animateMirror } from '../animation/mirror-animation.js';
 import { animateTarget } from '../animation/target-animation.js';
-import { bindMirrorInput } from '../input/mirror-input.js';
 import { renderBoard } from '../rendering/board-renderer.js';
 import { createInitialState, loadMvpLevel, simulate } from './physics-adapter.js';
 
 const MAX_LIVES = 3;
+const LEVELS_PER_DIFFICULTY = 3;
+const DIFFICULTIES = Object.freeze(['easy', 'medium', 'hard']);
+const DIFFICULTY_LABELS = Object.freeze({ easy: 'Easy', medium: 'Medium', hard: 'Hard' });
 const EMPTY_SIMULATION = Object.freeze({ beamPath: [], targetHit: false, terminalReason: null });
 
 const boardElement = document.querySelector('#game-board');
 const boardWrap = document.querySelector('#board-wrap');
+const appShell = document.querySelector('.app-shell');
 const beamLayer = document.querySelector('#beam-layer');
 const levelTagElement = document.querySelector('#level-tag');
+const levelProgressElement = document.querySelector('#level-progress');
 const boardSizeElement = document.querySelector('#board-size');
+const difficultyTabs = [...document.querySelectorAll('.difficulty-tab')];
 const livesRow = document.querySelector('#lives-row');
-const missionLivesElement = document.querySelector('#mission-lives');
 const statusCard = document.querySelector('#status-card');
 const statusKicker = document.querySelector('#status-kicker');
 const statusTitle = document.querySelector('#status-title');
@@ -22,9 +26,15 @@ const statusDetail = document.querySelector('#status-detail');
 const fireButton = document.querySelector('#fire-button');
 const resetButton = document.querySelector('#reset-button');
 const winOverlay = document.querySelector('#win-overlay');
+const winKicker = document.querySelector('#win-kicker');
+const winTitle = document.querySelector('#win-title');
+const winCopy = document.querySelector('#win-copy');
+const nextDifficultyButton = document.querySelector('#next-difficulty-button');
 const playAgainButton = document.querySelector('#play-again-button');
 
 let levels = [];
+let levelsByDifficulty = Object.create(null);
+let difficultyId = 'easy';
 let levelIndex = 0;
 let level = null;
 let boardState = null;
@@ -35,6 +45,7 @@ let isAnimating = false;
 let isCoolingDown = false;
 let isSolved = false;
 let cancelLaserAnimation = null;
+let cancelMirrorAnimation = null;
 let feedbackTimer = null;
 
 function setStatus(state, kicker, title, detail) {
@@ -68,6 +79,7 @@ function updateStatus(simulation) {
         'wrong-target-direction': ['blocked', 'ATTEMPT FAILED', 'Wrong portal direction', 'The target portal rejected that approach.'],
         'source-reentry': ['loop', 'ATTEMPT FAILED', 'Source portal re-entry', 'The beam returned to its source.'],
         'portal-loop': ['loop', 'ATTEMPT FAILED', 'Portal loop detected', 'The beam repeated a portal path.'],
+        'step-limit': ['loop', 'ATTEMPT FAILED', 'Route limit reached', 'The beam exceeded the safe trace limit. Try another angle.'],
     };
     const [state, kicker, title, detail] = states[simulation.terminalReason] ?? states.boundary;
     setStatus(state, kicker, title, detail);
@@ -80,7 +92,26 @@ function updateLives() {
         heart.classList.toggle('is-filled', filled);
         heart.textContent = filled ? '♥' : '♡';
     });
-    missionLivesElement.textContent = lives;
+}
+
+function currentDifficultyLevels() {
+    return levelsByDifficulty[difficultyId] ?? [];
+}
+
+function updateDifficultyTabs() {
+    difficultyTabs.forEach((tab) => {
+        const active = tab.dataset.difficulty === difficultyId;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-pressed', String(active));
+        tab.disabled = isAnimating || isCoolingDown || !levels.length;
+    });
+}
+
+function updateProgress() {
+    const difficultyLabel = DIFFICULTY_LABELS[difficultyId].toUpperCase();
+    const levelNumber = levelIndex + 1;
+    levelTagElement.textContent = `${difficultyLabel} · LEVEL ${levelNumber} / ${LEVELS_PER_DIFFICULTY}`;
+    levelProgressElement.textContent = `LEVEL ${levelNumber} / ${LEVELS_PER_DIFFICULTY}`;
 }
 
 function createState() {
@@ -98,9 +129,10 @@ function render({ animatedMirrorId = null } = {}) {
         boardState,
         simulation: visibleSimulation,
         showTrace: beamVisible && !isAnimating,
+        onMirrorActivate: rotateMirror,
     });
 
-    levelTagElement.textContent = level.name.toUpperCase();
+    updateProgress();
     boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
     boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
     updateLives();
@@ -112,7 +144,11 @@ function render({ animatedMirrorId = null } = {}) {
     elements.mirrorButtons.forEach((mirrorButton) => {
         mirrorButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
     });
-    if (animatedMirrorId) animateMirror(elements.mirrorButtons.get(animatedMirrorId));
+    updateDifficultyTabs();
+    if (animatedMirrorId) {
+        cancelMirrorAnimation?.();
+        cancelMirrorAnimation = animateMirror(elements.mirrorButtons.get(animatedMirrorId));
+    }
     if (!isAnimating) animateTarget(elements.targetElement, visibleSimulation.targetHit);
 }
 
@@ -133,6 +169,67 @@ function clearFeedbackTimer() {
     feedbackTimer = null;
 }
 
+function loadLevelAt(nextLevelIndex, { focusFire = true } = {}) {
+    const difficultyLevels = currentDifficultyLevels();
+    levelIndex = nextLevelIndex;
+    level = difficultyLevels[levelIndex];
+    if (!level) throw new Error(`Missing ${difficultyId} level ${levelIndex + 1}`);
+
+    boardState = createState();
+    beamVisible = false;
+    lastSimulation = null;
+    isAnimating = false;
+    isCoolingDown = false;
+    isSolved = false;
+    winOverlay.hidden = true;
+    appShell.inert = false;
+    render();
+    if (focusFire) fireButton.focus();
+}
+
+function groupLevels(campaignLevels) {
+    const grouped = Object.fromEntries(DIFFICULTIES.map((id) => [id, []]));
+    campaignLevels.forEach((campaignLevel) => {
+        if (grouped[campaignLevel.difficulty]) grouped[campaignLevel.difficulty].push(campaignLevel);
+    });
+    DIFFICULTIES.forEach((id) => {
+        grouped[id].sort((first, second) => first.id.localeCompare(second.id, undefined, { numeric: true }));
+        if (grouped[id].length !== LEVELS_PER_DIFFICULTY) {
+            throw new Error(`${DIFFICULTY_LABELS[id]} requires exactly ${LEVELS_PER_DIFFICULTY} levels`);
+        }
+    });
+    return grouped;
+}
+
+function selectDifficulty(nextDifficultyId) {
+    if (!levelsByDifficulty[nextDifficultyId] || isAnimating || isCoolingDown) return;
+    clearFeedbackTimer();
+    difficultyId = nextDifficultyId;
+    lives = MAX_LIVES;
+    loadLevelAt(0);
+}
+
+function showDifficultyComplete() {
+    const isFinalDifficulty = difficultyId === DIFFICULTIES.at(-1);
+    isSolved = true;
+    render();
+    winKicker.textContent = isFinalDifficulty ? 'CAMPAIGN COMPLETE' : 'DIFFICULTY CLEARED';
+    winTitle.innerHTML = isFinalDifficulty ? 'All lines<br><em>aligned.</em>' : `${DIFFICULTY_LABELS[difficultyId]}<br><em>cleared.</em>`;
+    winCopy.innerHTML = isFinalDifficulty
+        ? 'Every route is online. You completed the full three-difficulty campaign.'
+        : `All three ${DIFFICULTY_LABELS[difficultyId]} routes are online. Ready for the next challenge?`;
+    nextDifficultyButton.hidden = isFinalDifficulty;
+    nextDifficultyButton.disabled = isFinalDifficulty;
+    playAgainButton.textContent = `Replay ${DIFFICULTY_LABELS[difficultyId]}`;
+    const replayIcon = document.createElement('span');
+    replayIcon.setAttribute('aria-hidden', 'true');
+    replayIcon.textContent = '↺';
+    playAgainButton.append(' ', replayIcon);
+    appShell.inert = true;
+    winOverlay.hidden = false;
+    (isFinalDifficulty ? playAgainButton : nextDifficultyButton).focus();
+}
+
 function finishAttempt() {
     cancelLaserAnimation = null;
     isAnimating = false;
@@ -141,18 +238,10 @@ function finishAttempt() {
         isSolved = true;
         render();
         feedbackTimer = window.setTimeout(() => {
-            if (levelIndex < levels.length - 1) {
-                levelIndex += 1;
-                level = levels[levelIndex];
-                boardState = createState();
-                beamVisible = false;
-                lastSimulation = null;
-                isSolved = false;
-                render();
-                fireButton.focus();
+            if (levelIndex < LEVELS_PER_DIFFICULTY - 1) {
+                loadLevelAt(levelIndex + 1);
             } else {
-                winOverlay.hidden = false;
-                playAgainButton.focus();
+                showDifficultyComplete();
             }
             feedbackTimer = null;
         }, 720);
@@ -165,7 +254,7 @@ function finishAttempt() {
         lives -= 1;
         if (lives === 0) {
             levelIndex = 0;
-            level = levels[levelIndex];
+            level = currentDifficultyLevels()[levelIndex];
             boardState = createState();
             lives = MAX_LIVES;
         }
@@ -194,6 +283,8 @@ function resetGame() {
     if (!level) return;
     cancelLaserAnimation?.();
     cancelLaserAnimation = null;
+    cancelMirrorAnimation?.();
+    cancelMirrorAnimation = null;
     clearFeedbackTimer();
     boardState = createState();
     lastSimulation = null;
@@ -202,6 +293,7 @@ function resetGame() {
     isCoolingDown = false;
     isSolved = false;
     winOverlay.hidden = true;
+    appShell.inert = false;
     render();
     fireButton.focus();
 }
@@ -209,34 +301,40 @@ function resetGame() {
 function playAgain() {
     clearFeedbackTimer();
     lives = MAX_LIVES;
-    levelIndex = 0;
-    level = levels[levelIndex];
-    resetGame();
+    loadLevelAt(0);
+}
+
+function advanceDifficulty() {
+    const nextIndex = DIFFICULTIES.indexOf(difficultyId) + 1;
+    if (nextIndex < DIFFICULTIES.length) selectDifficulty(DIFFICULTIES[nextIndex]);
 }
 
 function showLoadError(error) {
     setStatus('blocked', 'LOAD ERROR', 'Levels unavailable', error.message);
     fireButton.disabled = true;
     resetButton.disabled = true;
+    difficultyTabs.forEach((tab) => { tab.disabled = true; });
 }
 
 async function initialize() {
     try {
         levels = await loadMvpLevel();
+        levelsByDifficulty = groupLevels(levels);
+        difficultyId = DIFFICULTIES[0];
         levelIndex = 0;
-        level = levels[levelIndex];
+        level = currentDifficultyLevels()[levelIndex];
         boardState = createState();
-        levelTagElement.textContent = level.name.toUpperCase();
-        boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
-        boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
         render();
     } catch (error) {
         showLoadError(error);
     }
 }
 
-bindMirrorInput(boardElement, rotateMirror);
+difficultyTabs.forEach((tab) => {
+    tab.addEventListener('click', () => selectDifficulty(tab.dataset.difficulty));
+});
 fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);
+nextDifficultyButton.addEventListener('click', advanceDifficulty);
 playAgainButton.addEventListener('click', playAgain);
 initialize();

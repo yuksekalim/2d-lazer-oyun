@@ -1,81 +1,107 @@
-/**
- * UI adapter for the teleport MVP.
- *
- * The committed physics branch documents the production contract but does
- * not yet expose portal-aware runtime code. Until that implementation lands,
- * these two small fixtures keep the UI testable. The UI consumes the same
- * shape that the production adapter will return and never calculates a
- * reflection or portal collision itself.
- */
+import { DIRECTIONS, MIRROR_ORIENTATIONS } from '../physics/geometry.js';
+import { simulateLaser } from '../physics/laser.js';
 
-const freezeCells = (cells) => Object.freeze(cells.map((cell) => Object.freeze(cell)));
-
-const LEVEL_FIXTURES = Object.freeze([
-    Object.freeze({
-        id: 'easy_01',
-        name: 'Easy 01 / First Gate',
-        size: 7,
-        source: Object.freeze({ row: 3, col: 0, role: 'emitter', direction: 'E' }),
-        target: Object.freeze({ row: 0, col: 6, role: 'target', facingDirection: 'E', color: 'orange' }),
-        portals: Object.freeze([
-            Object.freeze({ id: 'target-01', role: 'target', row: 0, col: 6, facingDirection: 'E', color: 'orange' }),
-        ]),
-        walls: freezeCells([{ row: 1, col: 5 }, { row: 4, col: 5 }]),
-        mirrors: Object.freeze([
-            Object.freeze({ id: 'mirror-a', label: 'Alpha', row: 3, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-            Object.freeze({ id: 'mirror-b', label: 'Beta', row: 0, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-            Object.freeze({ id: 'mirror-c', label: 'Gamma', row: 5, col: 4, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-        ]),
-        solution: Object.freeze([
-            Object.freeze({ mirror: 'mirror-a', orientation: '/' }),
-            Object.freeze({ mirror: 'mirror-b', orientation: '/' }),
-        ]),
-    }),
-    Object.freeze({
-        id: 'easy_02',
-        name: 'Easy 02 / Blue Shift',
-        size: 7,
-        source: Object.freeze({ row: 6, col: 0, role: 'source', direction: 'E', color: 'blue' }),
-        target: Object.freeze({ row: 0, col: 4, role: 'target', facingDirection: 'N', color: 'orange' }),
-        portals: Object.freeze([
-            Object.freeze({ id: 'source-02', role: 'source', row: 6, col: 0, direction: 'E', color: 'blue' }),
-            Object.freeze({ id: 'target-02', role: 'target', row: 0, col: 4, facingDirection: 'N', color: 'orange' }),
-        ]),
-        walls: freezeCells([{ row: 1, col: 6 }, { row: 3, col: 0 }, { row: 4, col: 3 }, { row: 5, col: 6 }]),
-        mirrors: Object.freeze([
-            Object.freeze({ id: 'mirror-d', label: 'Delta', row: 6, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-            Object.freeze({ id: 'mirror-e', label: 'Echo', row: 2, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-            Object.freeze({ id: 'mirror-f', label: 'Foxtrot', row: 2, col: 4, orientation: '\\', initialOrientation: '\\', rotatable: true }),
-        ]),
-        solution: Object.freeze([
-            Object.freeze({ mirror: 'mirror-d', orientation: '/' }),
-            Object.freeze({ mirror: 'mirror-e', orientation: '/' }),
-            Object.freeze({ mirror: 'mirror-f', orientation: '/' }),
-        ]),
-    }),
-]);
-
-const ROUTES = Object.freeze({
-    easy_01: Object.freeze([
-        { row: 3, col: 0 }, { row: 3, col: 1 }, { row: 3, col: 2 },
-        { row: 2, col: 2 }, { row: 1, col: 2 }, { row: 0, col: 2 },
-        { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 },
-    ]),
-    easy_02: Object.freeze([
-        { row: 6, col: 0 }, { row: 6, col: 1 }, { row: 6, col: 2 },
-        { row: 5, col: 2 }, { row: 4, col: 2 }, { row: 3, col: 2 }, { row: 2, col: 2 },
-        { row: 2, col: 3 }, { row: 2, col: 4 }, { row: 1, col: 4 }, { row: 0, col: 4 },
-    ]),
+const DIRECTION_NAMES = Object.freeze({
+    north: DIRECTIONS.NORTH,
+    east: DIRECTIONS.EAST,
+    south: DIRECTIONS.SOUTH,
+    west: DIRECTIONS.WEST,
+    n: DIRECTIONS.NORTH,
+    e: DIRECTIONS.EAST,
+    s: DIRECTIONS.SOUTH,
+    w: DIRECTIONS.WEST,
 });
 
-const cloneLevel = (level) => ({
-    ...level,
-    source: { ...level.source },
-    target: { ...level.target },
-    portals: level.portals.map((portal) => ({ ...portal })),
-    walls: level.walls.map((wall) => ({ ...wall })),
-    mirrors: level.mirrors.map((mirror) => ({ ...mirror })),
+const ORIENTATION_NAMES = Object.freeze({
+    slash: MIRROR_ORIENTATIONS.SLASH,
+    backslash: MIRROR_ORIENTATIONS.BACKSLASH,
+    [MIRROR_ORIENTATIONS.SLASH]: MIRROR_ORIENTATIONS.SLASH,
+    [MIRROR_ORIENTATIONS.BACKSLASH]: MIRROR_ORIENTATIONS.BACKSLASH,
 });
+
+function normalizeDirection(direction) {
+    const normalized = DIRECTION_NAMES[String(direction).toLowerCase()] ?? direction;
+    if (!Object.values(DIRECTIONS).includes(normalized)) {
+        throw new RangeError(`Unsupported laser direction: ${direction}`);
+    }
+    return normalized;
+}
+
+export function normalizeOrientation(orientation) {
+    const normalized = ORIENTATION_NAMES[orientation];
+    if (!normalized) throw new RangeError(`Unsupported mirror orientation: ${orientation}`);
+    return normalized;
+}
+
+function toUiCell(position) {
+    return { row: position.y, col: position.x };
+}
+
+function toPhysicsCell(cell) {
+    return { x: cell.col, y: cell.row };
+}
+
+/** Convert authored level content into the UI/physics contract. */
+export function normalizeLevel(rawLevel) {
+    const { board } = rawLevel;
+    const rawSource = rawLevel.source ?? rawLevel.emitter;
+    if (!rawSource) throw new Error(`Level ${rawLevel.id} has no source`);
+
+    const portals = (rawLevel.portals ?? []).map((portal) => ({
+        id: portal.id,
+        role: portal.role,
+        row: portal.position.y,
+        col: portal.position.x,
+        direction: normalizeDirection(portal.direction ?? portal.facingDirection),
+        facingDirection: normalizeDirection(portal.direction ?? portal.facingDirection),
+        color: portal.color,
+    }));
+    const rawTarget = rawLevel.target?.portalId
+        ? portals.find((portal) => portal.id === rawLevel.target.portalId)
+        : rawLevel.target;
+    if (!rawTarget) throw new Error(`Level ${rawLevel.id} has no target portal`);
+    const targetCell = rawTarget.position
+        ? toUiCell(rawTarget.position)
+        : { row: rawTarget.row, col: rawTarget.col };
+
+    const source = {
+        ...toUiCell(rawSource.position),
+        role: rawSource.role ?? 'emitter',
+        direction: normalizeDirection(rawSource.direction),
+        ...(rawSource.portalId ? { portalId: rawSource.portalId } : {}),
+        ...(rawSource.color ? { color: rawSource.color } : {}),
+    };
+
+    return {
+        id: rawLevel.id,
+        name: rawLevel.name,
+        difficulty: rawLevel.id.split('_')[0],
+        size: board.width,
+        source,
+        target: {
+            ...targetCell,
+            role: 'target',
+            portalId: rawTarget.id,
+            facingDirection: normalizeDirection(rawTarget.direction ?? rawTarget.facingDirection),
+            color: rawTarget.color ?? 'orange',
+        },
+        portals,
+        walls: (rawLevel.obstacles ?? []).map(toUiCell),
+        mirrors: (rawLevel.mirrors ?? []).map((mirror) => ({
+            id: mirror.id,
+            label: mirror.id.replace(/_/g, ' '),
+            row: mirror.position.y,
+            col: mirror.position.x,
+            orientation: normalizeOrientation(mirror.orientation),
+            initialOrientation: normalizeOrientation(mirror.orientation),
+            rotatable: mirror.rotatable !== false,
+        })),
+        solution: (rawLevel.solution ?? []).map((item) => ({
+            mirror: item.mirror,
+            orientation: normalizeOrientation(item.orientation),
+        })),
+    };
+}
 
 export function createInitialState(level) {
     return {
@@ -85,40 +111,77 @@ export function createInitialState(level) {
         target: { ...level.target },
         portals: level.portals.map((portal) => ({ ...portal })),
         walls: level.walls.map((wall) => ({ ...wall })),
-        mirrors: level.mirrors.map((mirror) => ({ ...mirror, orientation: mirror.initialOrientation })),
+        mirrors: level.mirrors.map((mirror) => ({
+            ...mirror,
+            orientation: mirror.initialOrientation,
+        })),
     };
 }
 
-const isSolved = (level, boardState) => level.solution.every(({ mirror, orientation }) => (
-    boardState.mirrors.find((candidate) => candidate.id === mirror)?.orientation === orientation
-));
-
-const failedPath = (level, boardState) => {
-    const route = ROUTES[level.id];
-    const firstUnsolved = level.solution.findIndex(({ mirror, orientation }) => (
-        boardState.mirrors.find((candidate) => candidate.id === mirror)?.orientation !== orientation
-    ));
-    const stop = Math.max(2, Math.min(route.length - 1, (firstUnsolved + 1) * 2));
-    return route.slice(0, stop);
-};
-
-export function simulate(boardState) {
-    const level = LEVEL_FIXTURES.find((candidate) => candidate.id === boardState.levelId);
-    if (!level) throw new Error(`Unknown placeholder level: ${boardState.levelId}`);
-    const targetHit = isSolved(level, boardState);
-    const targetPortal = level.portals.find((portal) => portal.role === 'target');
-    const beamPath = targetHit ? ROUTES[level.id] : failedPath(level, boardState);
+function toPhysicsBoard(boardState) {
     return {
-        beamPath,
-        targetHit,
-        terminalReason: targetHit ? 'target' : 'boundary',
-        terminal: targetHit
-            ? { position: { row: level.target.row, col: level.target.col }, direction: level.target.facingDirection, portalId: targetPortal.id }
-            : { position: beamPath[beamPath.length - 1], direction: 'E' },
-        portalEvents: targetHit ? [{ type: 'target-enter', portalId: targetPortal.id }] : [],
+        width: boardState.size,
+        height: boardState.size,
+        walls: boardState.walls.map(toPhysicsCell),
+        mirrors: boardState.mirrors.map((mirror) => ({
+            position: toPhysicsCell(mirror),
+            orientation: normalizeOrientation(mirror.orientation),
+        })),
+        portals: boardState.portals.map((portal) => ({
+            id: portal.id,
+            role: portal.role,
+            position: toPhysicsCell(portal),
+            direction: normalizeDirection(portal.facingDirection ?? portal.direction),
+            color: portal.color,
+        })),
+        target: {
+            position: toPhysicsCell(boardState.target),
+            direction: normalizeDirection(boardState.target.facingDirection),
+        },
+    };
+}
+
+function toUiTerminal(terminal) {
+    return {
+        ...terminal,
+        position: toUiCell(terminal.position),
+    };
+}
+
+/** Adapt the deterministic physics result to the row/column UI shape. */
+export function simulate(boardState) {
+    const result = simulateLaser(
+        toPhysicsBoard(boardState),
+        {
+            position: toPhysicsCell(boardState.source),
+            direction: normalizeDirection(boardState.source.direction),
+            portalId: boardState.source.portalId,
+        },
+    );
+
+    return {
+        beamPath: result.path.map(toUiCell),
+        reflections: result.reflections.map((reflection) => ({
+            ...reflection,
+            position: toUiCell(reflection.position),
+        })),
+        portalEvents: result.portalEvents.map((event) => ({
+            ...event,
+            ...(event.position ? { position: toUiCell(event.position) } : {}),
+        })),
+        terminalReason: result.terminal.reason,
+        terminal: toUiTerminal(result.terminal),
+        targetHit: result.targetHit,
+        loopDetected: ['loop', 'portal-loop'].includes(result.terminal.reason),
     };
 }
 
 export async function loadMvpLevel() {
-    return LEVEL_FIXTURES.map(cloneLevel);
+    const response = await fetch('../../levels/levels.json');
+    if (!response.ok) throw new Error(`Unable to load levels: ${response.status}`);
+
+    const content = await response.json();
+    const rawLevels = content.levels?.filter((candidate) => /^(easy|medium|hard)_\d+$/.test(candidate.id));
+    if (rawLevels?.length !== 9) throw new Error('Campaign requires exactly nine levels');
+    return rawLevels.map(normalizeLevel);
 }

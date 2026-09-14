@@ -5,9 +5,12 @@ function pointsForPath(path, count) {
         .join(' ');
 }
 
+const prefersReducedMotion = () => typeof window !== 'undefined'
+    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
 /** Reveal a beam path one traversed cell at a time. Returns a cancel function. */
 export function animateLaser(beamLayer, path = [], { stepDuration = 120, onComplete } = {}) {
-    const beamLines = beamLayer?.querySelectorAll('.beam-line, .beam-pulse');
+    const beamLines = beamLayer?.querySelectorAll('.beam-glow, .beam-line, .beam-pulse, .beam-spark');
     let timer = null;
     let cancelled = false;
 
@@ -33,6 +36,13 @@ export function animateLaser(beamLayer, path = [], { stepDuration = 120, onCompl
         const points = pointsForPath(path, visibleCount);
         beamLines.forEach((line) => line.setAttribute('points', points));
     };
+
+    if (prefersReducedMotion()) {
+        visibleCount = path.length;
+        updatePath();
+        timer = setTimeout(finish, 0);
+        return cancel;
+    }
 
     beamLayer.classList.add('is-animating');
     updatePath();
