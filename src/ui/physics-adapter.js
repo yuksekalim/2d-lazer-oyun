@@ -58,11 +58,10 @@ export function normalizeLevel(rawLevel) {
     }));
     const targetPortal = portals.find((portal) => portal.role === "target");
     const rawTarget = rawLevel.target?.portalId
-        ? targetPortal?.id === rawLevel.target.portalId
-            ? targetPortal
-            : portals.find((portal) => portal.id === rawLevel.target.portalId)
+        ? portals.find((portal) => portal.id === rawLevel.target.portalId)
         : rawLevel.target;
     if (!rawTarget) throw new Error(`Level ${rawLevel.id} has no target portal`);
+    const targetCell = rawTarget.position ? toUiCell(rawTarget.position) : { row: rawTarget.row, col: rawTarget.col };
 
     const source = {
         ...toUiCell(rawSource.position),
@@ -78,7 +77,7 @@ export function normalizeLevel(rawLevel) {
         size: board.width,
         source,
         target: {
-            ...toUiCell(rawTarget.position),
+            ...targetCell,
             role: "target",
             portalId: rawTarget.id,
             facingDirection: normalizeDirection(rawTarget.direction ?? rawTarget.facingDirection),

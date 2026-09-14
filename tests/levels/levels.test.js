@@ -7,9 +7,12 @@ const levelsUrl = new URL('../../levels/levels.json', import.meta.url);
 const content = JSON.parse(readFileSync(levelsUrl, 'utf8'));
 
 describe('authored levels', () => {
-    it('includes a 5x5 MVP level first', () => {
-        assert.equal(content.levels[0]?.board.width, 5);
-        assert.equal(content.levels[0]?.board.height, 5);
+    it('contains exactly two 7x7 teleport MVP levels', () => {
+        assert.equal(content.formatVersion, 2);
+        assert.equal(content.levels.length, 2);
+        assert.ok(content.levels.every((level) => level.board.width === 7 && level.board.height === 7));
+        assert.equal(content.levels[0]?.id, 'easy_01');
+        assert.equal(content.levels[1]?.id, 'easy_02');
     });
 
     for (const rawLevel of content.levels) {

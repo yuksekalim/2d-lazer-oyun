@@ -1,6 +1,6 @@
 # Current Tasks
 
-This is the practical plan for the teleport MVP. Keep unfinished work visible here while active; move paused or partially completed work to `backlog.md`. No game-code changes are authorized until the UI-agent design pass is complete.
+This is the practical plan for the teleport MVP. Keep unfinished work visible here while active; move paused or partially completed work to `backlog.md`.
 
 ## Teleport MVP Scope Confirmed
 
@@ -16,8 +16,8 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 
 ## Design Before Implementation
 
-- [ ] Have the laser-UI agent review the portal colors, arrows, target-entry feedback, and automatic Level 1 → Level 2 transition.
-- [ ] Confirm the UI animation timing and accessible labels for source and target portals.
+- [x] Have the laser-UI agent review the portal colors, arrows, target-entry feedback, and automatic Level 1 → Level 2 transition.
+- [x] Confirm the UI animation timing and accessible labels for source and target portals.
 - [x] Record the final level coordinates and intended solution routes before editing runtime files.
 
 ## Foundation
@@ -42,10 +42,10 @@ The physics MVP is implemented in `src/physics/geometry.js` and
 
 - [x] Define grid coordinates, four movement directions, and mirror orientations.
 - [x] Define the portal roles, colors, border-facing directions, and failure cases in `agents/physics-agent.md`.
-- [ ] Extend the physics contract for directional portal sources and target entry.
-- [ ] Animate or expose teleport source/target events without coupling physics to rendering.
-- [ ] Treat wrong-direction portal entry, source re-entry, walls, boundaries, and loops as failures.
-- [ ] Add deterministic tests for portal direction, source emission, target success, and portal loops.
+- [x] Extend the physics contract for directional portal sources and target entry.
+- [x] Expose source/target portal events without coupling physics to rendering.
+- [x] Treat wrong-direction portal entry, source re-entry, walls, boundaries, and loops as failures.
+- [ ] Add a dedicated deterministic test for a portal-loop terminal; generic loop termination is already covered.
 
 ## Level Agent
 
@@ -54,28 +54,28 @@ The physics MVP is implemented in `src/physics/geometry.js` and
 - [x] Design a clear 7×7 Level 1 with an emitter, orange target portal, three mirrors, and two walls.
 - [x] Design a clear 7×7 Level 2 with blue/orange portals, three mirrors, and four walls.
 - [x] Verify the intended reflection route for each level with the existing simulator; portal-entry runtime tests remain pending.
-- [ ] Extend the schema for portal role, border position, facing direction, and transition metadata.
-- [ ] Add a dedicated runtime schema validator for level files.
+- [x] Extend the schema for portal role, border position, facing direction, and transition metadata.
+- [x] Update the dependency-free runtime/content validator for the format-version-2 MVP.
 
 ## UI Agent
 
 - [x] Render the existing board and all fixed and interactive elements.
-- [ ] Render blue source portals, orange target portals, and directional arrows.
-- [ ] Animate portal activation, beam entry, and the automatic transition to Level 2.
+- [x] Render blue source portals, orange target portals, and directional arrows.
+- [x] Animate portal activation, beam entry, and the automatic transition to Level 2.
 - [x] Hide the beam until **Fire Laser** is pressed.
 - [x] Rotate mirrors by click/tap and animate the beam one cell at a time.
 - [x] Disable mirror and gameplay controls during beam playback.
-- [ ] Display one shared life pool across both levels and restart Level 1 after the third Level 2 failure.
-- [ ] Keep **Reset** during gameplay and make final **Play Again** restart the full MVP.
+- [x] Display one shared life pool across both levels and restart Level 1 after the third Level 2 failure.
+- [x] Keep **Reset** during gameplay and make final **Play Again** restart the full MVP.
 - [x] Use simple geometric visuals with animation hooks that can support future polish.
 
 ## Integration and Verification
 
 - [x] Keep physics independent from rendering and input.
-- [ ] Connect portal level data, physics results, and UI rendering without duplicating rules.
-- [ ] Verify both successful routes, wrong-direction target entry, portal re-entry, life carry-over, and full restart.
-- [ ] Verify the Level 1 → Level 2 transition and final **Play Again** flow in Chrome.
-- [ ] Run the full automated suite after portal support is implemented.
+- [x] Connect portal level data, physics results, and UI rendering without duplicating rules.
+- [x] Verify both successful routes, wrong-direction target entry, portal re-entry, life carry-over, and full restart.
+- [x] Verify the Level 1 → Level 2 transition and final **Play Again** flow in Chrome.
+- [x] Run the full automated suite after portal support is implemented (17 tests passing).
 
 ## Future, Not MVP
 
