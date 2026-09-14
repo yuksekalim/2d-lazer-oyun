@@ -18,12 +18,15 @@ This file tracks active implementation work for the 2D laser mirror target game.
 
 ## MVP: Laser Simulation
 
-- [ ] Trace the laser one cell at a time from its source.
-- [ ] Stop the beam at board boundaries and walls.
-- [ ] Implement reflection for each supported mirror orientation.
-- [ ] Detect target hits and display a completed state.
-- [ ] Detect repeated positions and prevent infinite laser loops.
-- [ ] Add deterministic tests for movement, reflection, collisions, and loops.
+- [x] Trace the laser one cell at a time from its source.
+- [x] Stop the beam at board boundaries and walls.
+- [x] Implement reflection for each supported mirror orientation.
+- [x] Detect target hits and expose a completed state.
+- [x] Detect repeated positions and prevent infinite laser loops.
+- [x] Add deterministic tests for movement, reflection, collisions, and loops.
+
+The physics MVP is implemented in `src/physics/geometry.js` and
+`src/physics/laser.js`, with tests under `tests/physics/`.
 
 ## MVP: Player Interaction
 

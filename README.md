@@ -39,9 +39,38 @@ Supported board sizes are planned to include 5×5, 8×8, and 11×11 grids.
 - Responsive desktop and mobile layout
 - Optional sound effects
 
+## Physics MVP
+
+The deterministic laser simulation is available from `src/physics/laser.js` and
+uses the geometry helpers in `src/physics/geometry.js`. It accepts a board and
+source in grid coordinates:
+
+```js
+const board = {
+    width: 5,
+    height: 5,
+    walls: [{ x: 3, y: 2 }],
+    mirrors: [{ position: { x: 2, y: 2 }, orientation: "/" }],
+    target: { x: 2, y: 0 },
+};
+const source = { position: { x: 0, y: 2 }, direction: "E" };
+```
+
+Coordinates use `x` increasing east/right and `y` increasing south/down. The
+simulation returns the visited `path`, `reflections`, `terminal` reason, and
+`targetHit` status. A slash mirror sends an eastbound beam north/up; a
+backslash mirror sends it south/down.
+
 ## Local Development
 
-The project is in its initial planning stage. The chosen web stack and canonical install, development, test, and build commands will be documented here once implementation begins.
+Run the physics tests with Node's built-in test runner:
+
+```sh
+node --test tests/physics/*.test.js
+```
+
+The browser entry point and build workflow will be documented when the UI and
+project toolchain are finalized.
 
 ## License
 
