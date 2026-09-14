@@ -1,47 +1,42 @@
 # 2D Laser Mirror Target
 
-A browser-based puzzle game where players rotate mirrors to guide a laser from its source to a target.
+An offline browser puzzle game about routing a laser through a grid of mirrors. The player rotates mirrors, fires the laser, and tries to guide it to a target on the opposite part of the board.
 
-## Game Concept
+## Game Vision
 
-Each level contains a laser source, a square board, walls, rotatable mirrors, and a target. The player wins by changing mirror orientations until the laser reaches the target without being blocked or trapped in a loop.
+The game should feel simple to understand but satisfying to solve. Each puzzle presents a fixed board with a laser source, target, walls, and rotatable mirrors. The player studies the layout, makes adjustments without seeing the beam, then presses **Fire Laser** to watch the result unfold.
 
-Supported board sizes are planned to include 5×5, 8×8, and 11×11 grids.
+The first version is intentionally small: one hand-designed 5×5 level, simple geometric visuals, no accounts, no backend, and no scoring system. The architecture should still leave room for richer animation, effects, art, and more levels later.
 
-## Gameplay
+## MVP Rules
 
-1. Inspect the board and the initial laser path.
-2. Click or tap a mirror to rotate it.
-3. Observe the updated laser beam.
-4. Continue adjusting mirrors until the target is hit.
-5. Complete the level in as few moves as possible.
+- The source and target are fixed on border cells; the source emits inward.
+- Walls and board boundaries stop the beam.
+- Mirrors have two diagonal orientations, `/` and `\`, and rotate 90° per click.
+- The laser travels up, down, left, or right and reflects 90° from mirrors.
+- The beam is hidden until **Fire Laser** is pressed.
+- The beam then animates cell by cell and remains visible after the attempt.
+- Mirror clicks and gameplay controls are disabled during the animation.
+- Any result that does not reach the target—including a wall, boundary, or loop—is a failed attempt.
+- The player starts with three lives. The first two failures preserve mirror positions; the third restores the initial mirror layout and replenishes all three lives.
+- **Reset** restores the initial mirror layout and three lives.
+- On success, show **Play Again** and **Reset**. A **Continue** button is reserved for future multi-level releases.
 
-## Board Elements
-
-- **Laser source** — emits the laser beam in a fixed direction.
-- **Mirror** — reflects the beam according to its orientation.
-- **Wall** — blocks the laser and cannot be traversed.
-- **Target** — the destination that completes the level.
-- **Empty cell** — allows the laser to pass through.
+Every level must have at least one correct solution and be deliberately uncomplicated for the MVP.
 
 ## Controls
 
 - Click or tap a mirror to rotate it.
-- Use **Reset** to restore the level’s original layout.
-- Keyboard controls and accessibility support will be added during development.
+- Press **Fire Laser** to run the current attempt.
+- Press **Reset** to restart the current puzzle.
 
-## Planned Features
+## Future Direction
 
-- Multiple board sizes and progressively harder levels
-- Move counter and level progression
-- Reset and next-level controls
-- Animated laser reflection and collision feedback
-- Responsive desktop and mobile layout
-- Optional sound effects
+Add hand-designed level sets across 5×5, 8×8, and 11×11 boards, grouped into **easy**, **medium**, and **hard** difficulties. Later releases may add polished art, richer animations, sound, keyboard accessibility, and level progression.
 
 ## Local Development
 
-The project is in its initial planning stage. The chosen web stack and canonical install, development, test, and build commands will be documented here once implementation begins.
+The game is planned as a self-contained static web project that runs in a modern browser. Installation, development, test, and build commands will be documented here when the web stack is selected.
 
 ## License
 

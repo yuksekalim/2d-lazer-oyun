@@ -1,42 +1,60 @@
 # Current Tasks
 
-This file tracks active implementation work for the 2D laser mirror target game. Move completed items to a changelog or remove them when the corresponding milestone is finished.
+This is the practical MVP plan for the offline 2D laser mirror target game. Keep unfinished work visible here while active; move paused or partially completed work to `backlog.md`.
 
-## MVP: Project Foundation
+## MVP Scope Confirmed
 
-- [ ] Choose the web stack and define the project entry point.
-- [ ] Add the initial HTML, CSS, and JavaScript structure.
-- [ ] Create a responsive square board component.
-- [ ] Add a minimal development and test command to `README.md`.
+- [x] One hand-designed 5×5 level
+- [x] Fixed source, target, walls, and mirrors; only mirrors are interactive
+- [x] Two diagonal mirror orientations with 90° click rotation
+- [x] Hidden laser until **Fire Laser**
+- [x] Cell-by-cell beam animation with controls disabled during playback
+- [x] Three-life retry system, full Reset, and success actions
+- [x] Offline static web game with no accounts or backend
+- [x] No score, move counter, or Continue button in the MVP
 
-## MVP: Board and Game State
+## Foundation
 
-- [ ] Define board sizes for 5×5, 8×8, and 11×11 grids.
-- [ ] Define level data for the laser source, target, walls, mirrors, and empty cells.
-- [ ] Render each board element from game state.
-- [ ] Validate that levels contain one source and one target.
+- [ ] Choose the minimal web stack and create the static entry point.
+- [ ] Add the project scripts and document actual local commands in `README.md`.
+- [ ] Add source, level, test, and asset directories.
 
-## MVP: Laser Simulation
+## Physics Agent
 
-- [ ] Trace the laser one cell at a time from its source.
-- [ ] Stop the beam at board boundaries and walls.
-- [ ] Implement reflection for each supported mirror orientation.
-- [ ] Detect target hits and display a completed state.
-- [ ] Detect repeated positions and prevent infinite laser loops.
-- [ ] Add deterministic tests for movement, reflection, collisions, and loops.
+- [ ] Define grid coordinates, four movement directions, and mirror orientations.
+- [ ] Implement deterministic beam tracing from the border source.
+- [ ] Stop on walls and boundaries; detect target entry and repeating states.
+- [ ] Return a structured result containing the path and terminal outcome.
+- [ ] Test straight paths, both mirror orientations, collisions, target hits, misses, and loops.
 
-## MVP: Player Interaction
+## Level Agent
 
-- [ ] Rotate mirrors by click and touch input.
-- [ ] Recalculate the beam after each rotation.
-- [ ] Add a move counter and reset control.
-- [ ] Prevent rotation of fixed board elements.
+- [ ] Define the level-file schema and validation rules.
+- [ ] Create one clear, hand-designed 5×5 level.
+- [ ] Ensure the level has exactly one source and target and at least one verified solution.
+- [ ] Keep the initial puzzle short and understandable without introducing advanced mechanics.
 
-## Polish and Content
+## UI Agent
 
-- [ ] Create tutorial levels for each board size.
-- [ ] Add level completion and progression.
-- [ ] Add laser, reflection, wall, and target visual states.
-- [ ] Add keyboard navigation and accessible labels.
-- [ ] Test responsive layouts on desktop and mobile.
-- [ ] Decide on sound effects, license, and deployment target.
+- [ ] Render the 5×5 board and all fixed and interactive elements.
+- [ ] Hide the beam until **Fire Laser** is pressed.
+- [ ] Rotate mirrors by click/tap and animate the beam one cell at a time.
+- [ ] Disable mirror and gameplay controls during beam playback.
+- [ ] Display three lives and apply the defined failure/reset behavior.
+- [ ] Add **Fire Laser**, **Reset**, **Play Again**, and success/failure feedback.
+- [ ] Use simple geometric visuals with animation hooks that can support future polish.
+
+## Integration and Verification
+
+- [ ] Connect level data, physics results, and UI rendering without duplicating physics rules.
+- [ ] Verify a successful solution, two retained-mirror failures, and third-failure reset.
+- [ ] Verify Reset restores mirrors and three lives.
+- [ ] Test the game in a modern desktop browser at common viewport sizes.
+- [ ] Update `README.md` with the final stack and verified commands.
+
+## Future, Not MVP
+
+- [ ] Add multiple levels and the **Continue** flow.
+- [ ] Add 8×8 and 11×11 boards.
+- [ ] Introduce easy, medium, and hard level groups.
+- [ ] Add custom art, sound, keyboard accessibility, and richer effects.
