@@ -35,6 +35,16 @@ Represent each portal with an `id`, `role` (`source` or `target`), `position`, `
 
 The existing cardinal directions and diagonal mirror reflection rules remain unchanged. Portal direction is part of the collision contract, not only presentation.
 
+## Current Runtime Entry Point
+
+Until portal support is implemented, the existing simulation entry point is
+`simulateLaser(board, source, options)` from `src/physics/laser.js`, using
+integer `{ x, y }` coordinates with `x` increasing east/right and `y`
+increasing south/down. Existing version-1 level data represents walls as
+`obstacles`; the UI adapter must translate that content before simulation.
+Keep this contract aligned with [`levels/README.md`](../levels/README.md) while
+the portal schema is migrated.
+
 ## Required Behavior
 
 The simulation must be deterministic, independent of rendering and input, and able to explain its result through a structured response containing a beam path, reflections, portal events, terminal reason, terminal position/direction, and target-hit status. It must handle invalid or looping paths without hanging.

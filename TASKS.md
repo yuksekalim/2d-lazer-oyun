@@ -38,6 +38,7 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 ## Level Agent
 
 - [x] Define the level-file schema and documented validation rules.
+- [x] Add the dependency-free level validator at `levels/validate_levels.py`.
 - [x] Design a clear 7×7 Level 1 with an emitter, orange target portal, three mirrors, and two walls.
 - [x] Design a clear 7×7 Level 2 with blue/orange portals, three mirrors, and four walls.
 - [x] Verify the intended reflection route for each level with the existing simulator; portal-entry runtime tests remain pending.

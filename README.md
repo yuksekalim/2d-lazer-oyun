@@ -10,6 +10,9 @@ The current teleport MVP is intentionally small: two hand-designed levels on a 7
 
 ## Teleport MVP Rules
 
+Level content is documented in [`levels/README.md`](levels/README.md); the
+runtime data will be migrated to the teleport schema during implementation.
+
 - The MVP starts directly at Easy Level 1; difficulty selection is deferred.
 - Both levels use a 7×7 board, three rotatable mirrors, and fixed walls. Level 1 has two walls; Level 2 has four.
 - Level 1 uses the existing laser emitter and one orange target portal. Level 2 uses a blue source portal and an orange target portal. There are never more than two portals in a level.

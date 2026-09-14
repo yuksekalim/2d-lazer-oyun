@@ -9,6 +9,7 @@ Own the game’s level files and level content. Create, organize, validate, and 
 - Level definitions for the current 7×7 MVP and future 7×7, 11×11, and 15×15 campaigns
 - Placement of laser sources, directional portals, targets, walls, mirrors, and empty cells
 - Level identifiers, ordering, role metadata, and intended solution routes
+- Existing version-1 level content and its `obstacles` wall representation
 - Level schema validation and level-content tests
 - Tutorial, introductory, and progression levels
 
@@ -46,10 +47,24 @@ The two layouts are independent. Level 2 never inherits Level 1 mirror positions
 
 Every MVP level must fit a 7×7 board, contain exactly three rotatable mirrors, use fixed walls, and have at most two portals. Level 1 has one emitter and one orange target portal; Level 2 has one blue source portal and one orange target portal. Portals must be on the border and face perpendicular to it. Levels should be solvable, avoid accidental ambiguity, and record an intended route.
 
+The current content contract is format version 1 in
+[`levels/levels.json`](../levels/levels.json), documented in
+[`levels/README.md`](../levels/README.md). In this format, `obstacles` are the
+data representation for walls, and `solution` is authoring metadata rather
+than player-visible state. Do not introduce a new field or orientation without
+reporting the format change to the coordinator.
+
 ## Validation
 
-Validate schema, dimensions, unique required elements, legal placements, portal roles and directions, wall/mirror separation, and solvability. Include tests for both documented routes, wrong-direction target approaches, and source re-entry.
+Validate schema, dimensions, unique required elements, legal placements, portal
+roles and directions, wall/mirror separation, and solvability. Until the
+portal schema is implemented, validate the existing version-1 content with
+`python3 levels/validate_levels.py`. Include tests for both documented routes,
+wrong-direction target approaches, and source re-entry.
 
 ## Handoff
 
-Provide stable level data and metadata to the UI Agent. Record any new element or schema requirement and coordinate with the Physics Agent before using it in a level.
+Provide stable level data and metadata to the UI Agent. Treat `levels/README.md`
+as the content handoff and record any new element or schema requirement there.
+Coordinate with the Physics Agent before using a new element or changing beam
+semantics.
