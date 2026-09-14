@@ -133,6 +133,18 @@ function portalEdge(portal, size) {
     return 'inner';
 }
 
+function portalSlot(portal, size) {
+    const edge = portalEdge(portal, size);
+    if (edge === 'north' || edge === 'south') return portal.col + 1;
+    if (edge === 'east' || edge === 'west') return portal.row + 1;
+    return null;
+}
+
+function portalSlotLabel(portal, size) {
+    const slot = portalSlot(portal, size);
+    return slot === null ? 'inner' : `slot ${String(slot).padStart(2, '0')}/${String(size).padStart(2, '0')}`;
+}
+
 function directionArrow(direction) {
     return DIRECTION_ARROWS[direction] ?? '•';
 }
@@ -148,6 +160,7 @@ function setIntroFocusMode(active) {
 function createRouteThumbnail(levelData) {
     const thumbnail = document.createElement('div');
     thumbnail.className = 'route-thumb';
+    thumbnail.setAttribute('aria-hidden', 'true');
     thumbnail.style.setProperty('--mini-size', levelData.size);
 
     const portals = levelData.portals ?? [levelData.source, levelData.target];
@@ -218,20 +231,49 @@ function createRouteNode(levelData, index) {
 function createRouteConnector(fromLevel, toLevel) {
     const connector = document.createElement('div');
     connector.className = 'route-connector';
-    connector.setAttribute('role', 'img');
+    connector.setAttribute('role', 'listitem');
+    const fromPortal = portalFor(fromLevel, 'target');
+    const toPortal = portalFor(toLevel, 'source');
+    const fromEdge = EDGE_LABELS[portalEdge(fromPortal, fromLevel.size)] ?? 'INNER';
+    const toEdge = EDGE_LABELS[portalEdge(toPortal, toLevel.size)] ?? 'INNER';
+    const fromDirection = fromPortal.facingDirection ?? fromPortal.direction;
+    const toDirection = toPortal.direction ?? toPortal.facingDirection;
+    const accessibleLabel = document.createElement('span');
+    accessibleLabel.className = 'route-handoff-accessible';
+    accessibleLabel.setAttribute('role', 'img');
+    accessibleLabel.setAttribute('aria-label', `Target ${fromEdge.toLowerCase()} ${directionArrow(fromDirection)} ${portalSlotLabel(fromPortal, fromLevel.size)} connects to next source ${toEdge.toLowerCase()} ${directionArrow(toDirection)} ${portalSlotLabel(toPortal, toLevel.size)}`);
+
+    const createHandoffPortal = (role, edge, direction, portalData, size) => {
+        const portal = document.createElement('span');
+        portal.className = `route-handoff-portal route-handoff-${role}`;
+        portal.setAttribute('aria-hidden', 'true');
+        const glyph = document.createElement('span');
+        glyph.className = 'route-handoff-glyph';
+        glyph.textContent = directionArrow(direction);
+        const label = document.createElement('span');
+        label.className = 'route-handoff-label';
+        label.textContent = `${role === 'target' ? 'TGT' : 'SRC'} ${edge[0]} · ${portalSlotLabel(portalData, size).replace('slot ', '')}`;
+        portal.append(glyph, label);
+        return portal;
+    };
+
+    const bridge = document.createElement('span');
+    bridge.className = 'route-handoff-bridge';
+    bridge.setAttribute('aria-hidden', 'true');
     const line = document.createElement('span');
-    line.className = 'route-connector-line';
-    const label = document.createElement('span');
-    label.className = 'route-connector-label';
-    const fromEdge = EDGE_LABELS[portalEdge(portalFor(fromLevel, 'target'), fromLevel.size)] ?? 'INNER';
-    const toEdge = EDGE_LABELS[portalEdge(portalFor(toLevel, 'source'), toLevel.size)] ?? 'INNER';
-    connector.setAttribute('aria-label', `Target ${fromEdge.toLowerCase()} connects to next source ${toEdge.toLowerCase()}`);
-    label.textContent = `${fromEdge[0]} → ${toEdge[0]}`;
+    line.className = 'route-handoff-line';
     const arrow = document.createElement('span');
-    arrow.className = 'route-connector-arrow';
+    arrow.className = 'route-handoff-arrow';
     arrow.textContent = '›';
     arrow.setAttribute('aria-hidden', 'true');
-    connector.append(line, label, arrow);
+    bridge.append(line, arrow);
+
+    connector.append(
+        accessibleLabel,
+        createHandoffPortal('target', fromEdge, fromDirection, fromPortal, fromLevel.size),
+        bridge,
+        createHandoffPortal('source', toEdge, toDirection, toPortal, toLevel.size),
+    );
     return connector;
 }
 
