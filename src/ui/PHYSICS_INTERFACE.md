@@ -1,18 +1,33 @@
 # Physics handoff
 
-The UI currently uses `simulatePlaceholder` from `physics-adapter.js` because the physics agent has not added an implementation yet. The adapter is deliberately kept in `src/ui/` and contains only precomputed demo paths for the presentation states.
+The UI consumes the production physics implementation from `src/physics/` through
+`physics-adapter.js`. It does not reproduce reflection, collision, portal, or loop
+rules. The adapter converts the level format's top-left `{ x, y }` coordinates to
+the renderer's `{ row, col }` coordinates and converts them back before simulation.
 
-The production adapter should expose:
+The runtime integration expects the physics and levels branches to be merged with
+this UI branch:
+
+- `src/physics/geometry.js` exports `DIRECTIONS` and `MIRROR_ORIENTATIONS`.
+- `src/physics/laser.js` exports `simulateLaser(board, source)`.
+- `levels/levels.json` contains the nine format-version-2 campaign levels.
+
+The UI-facing adapter exposes:
 
 ```js
 simulate(boardState) => {
     beamPath: [{ row, col }, ...],
-    terminalReason: 'target' | 'boundary' | 'wall' | 'loop',
+    reflections: [{ position, orientation, from, to }, ...],
+    portalEvents: [{ type, portalId, position, direction, accepted? }, ...],
+    terminalReason: 'target' | 'boundary' | 'wall' | 'wrong-target-direction'
+        | 'source-reentry' | 'loop' | 'portal-loop' | 'step-limit',
+    terminal: { reason, position, direction, portalId? },
     targetHit: boolean,
     loopDetected: boolean,
 }
 ```
 
-`boardState` should include `size`, `source`, `target`, `walls`, and `mirrors`. Each mirror needs a stable `id`, `row`, `col`, and orientation value. The UI does not infer reflections, collisions, or loops; it renders the returned path and terminal state.
-
-To connect the real engine, replace the `simulatePlaceholder` import in `app.js` with the physics agent's `simulate` function and pass it the same `boardState` object.
+`boardState` includes `size`, `source`, `target`, `portals`, `walls`, and
+`mirrors`. Each mirror has a stable `id`, `{ row, col }`, an orientation of `/`
+or `\\`, and its current state. The solution metadata is used only by authored
+level validation and is never used by the UI to reveal an answer.

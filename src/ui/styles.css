@@ -196,6 +196,7 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .board-heading-label { display: flex; align-items: center; gap: 9px; color: var(--cyan); }
 .board-heading-tools { display: flex; align-items: center; gap: 19px; }
 .board-progress { color: var(--muted-bright); }
+.level-name { max-width: 150px; overflow: hidden; color: var(--muted-bright); text-overflow: ellipsis; white-space: nowrap; }
 .board-size { color: var(--muted); }
 .board-lives { display: flex; align-items: center; gap: 5px; min-height: 26px; }
 .heart { display: inline-block; color: rgba(255, 182, 92, .25); font-family: Georgia, serif; font-size: 25px; line-height: 1; text-shadow: 0 0 0 transparent; transition: color 260ms ease, transform 260ms ease, text-shadow 260ms ease; }
@@ -395,6 +396,7 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
     .difficulty-nav { gap: 1px; }
     .difficulty-tab { min-width: 0; padding: 7px 6px; font-size: 8px; }
     .level-tag { display: none; }
+    .level-name { display: none; }
     h1 { font-size: 46px; }
     .board-wrap { padding: 5px; border-radius: 9px; }
     .beam-layer { inset: 5px; width: calc(100% - 10px); height: calc(100% - 10px); }

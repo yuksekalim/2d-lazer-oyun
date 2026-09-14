@@ -16,6 +16,7 @@ const appShell = document.querySelector('.app-shell');
 const beamLayer = document.querySelector('#beam-layer');
 const levelTagElement = document.querySelector('#level-tag');
 const levelProgressElement = document.querySelector('#level-progress');
+const levelNameElement = document.querySelector('#level-name');
 const boardSizeElement = document.querySelector('#board-size');
 const difficultyTabs = [...document.querySelectorAll('.difficulty-tab')];
 const livesRow = document.querySelector('#lives-row');
@@ -103,7 +104,7 @@ function updateDifficultyTabs() {
         const active = tab.dataset.difficulty === difficultyId;
         tab.classList.toggle('is-active', active);
         tab.setAttribute('aria-pressed', String(active));
-        tab.disabled = isAnimating || isCoolingDown || !levels.length;
+        tab.disabled = isAnimating || isCoolingDown || isSolved || !levels.length;
     });
 }
 
@@ -133,11 +134,12 @@ function render({ animatedMirrorId = null } = {}) {
     });
 
     updateProgress();
+    levelNameElement.textContent = level.name.toUpperCase();
     boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
     boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
     updateLives();
     fireButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
-    resetButton.disabled = isAnimating;
+    resetButton.disabled = isAnimating || isSolved;
     boardWrap.dataset.terminalReason = visibleSimulation.terminalReason ?? '';
     updateStatus(lastSimulation);
 

@@ -32,6 +32,10 @@ const createBeam = (beamLayer, path, size) => {
 };
 
 const mirrorAngle = (orientation) => orientation === '/' ? 0 : 90;
+const mirrorMark = (mirror) => mirror.id.startsWith('turn_')
+    ? mirror.id.slice('turn_'.length).toUpperCase()
+    : `D${mirror.id.slice('decoy_'.length).toUpperCase()}`;
+const cellLabel = ({ row, col }) => ` at row ${row + 1}, column ${col + 1}`;
 
 const updateMirrorButton = (button, mirror) => {
     const nextAngle = mirrorAngle(mirror.orientation);
@@ -51,8 +55,8 @@ const portalMarkup = (portal) => {
     const color = portal.color === 'orange' ? 'orange' : 'blue';
     const directionLabel = DIRECTION_LABELS[direction] ?? direction;
     const label = role === 'target'
-        ? `Orange target portal, accepts a beam traveling ${directionLabel}`
-        : `Blue source portal, emits ${directionLabel} into the board`;
+        ? `Orange target portal${cellLabel(portal)}, accepts a beam traveling ${directionLabel}`
+        : `Blue source portal${cellLabel(portal)}, emits ${directionLabel} into the board`;
     return {
         role,
         color,
@@ -62,7 +66,7 @@ const portalMarkup = (portal) => {
 };
 
 export function renderBoard({ boardElement, beamLayer, level, boardState, simulation, showTrace = true, onMirrorActivate = null }) {
-    const { size, source, target, walls } = level;
+    const { size, source, walls } = level;
     const portals = boardState.portals ?? level.portals ?? [source, target];
     const wallKeys = new Set(walls.map(cellKey));
     const portalByKey = new Map(portals.map((portal) => [cellKey(portal), portal]));
@@ -104,7 +108,7 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                 if (sameCell(position, source) && !portal) {
                     cell.classList.add('is-source');
                     cell.innerHTML = '<span class="source-glyph" aria-hidden="true"><span></span></span>';
-                    cell.setAttribute('aria-label', `Laser emitter, pointing ${DIRECTION_LABELS[source.direction] ?? source.direction}`);
+                    cell.setAttribute('aria-label', `Laser emitter${cellLabel(source)}, pointing ${DIRECTION_LABELS[source.direction] ?? source.direction}`);
                 }
 
                 const mirror = mirrorByKey.get(key);
@@ -113,7 +117,7 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                     button.type = 'button';
                     button.className = 'mirror-button';
                     button.dataset.mirrorId = mirror.id;
-                    button.innerHTML = `<span class="mirror-glyph"><span></span></span><span class="mirror-index">${mirror.label.slice(-1).toUpperCase()}</span>`;
+                    button.innerHTML = `<span class="mirror-glyph"><span></span></span><span class="mirror-index">${mirrorMark(mirror)}</span>`;
                     button.addEventListener('click', (event) => {
                         event.preventDefault();
                         event.stopPropagation();
