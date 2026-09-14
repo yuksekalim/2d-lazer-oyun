@@ -2,14 +2,14 @@
 
 ## Mission
 
-Own the deterministic laser simulation for the 2D laser mirror target game. Given a board state and laser source, calculate the beam path, reflections, collisions, and completion result.
+Own the deterministic laser simulation for the 2D laser mirror target game. Given a board state and a laser or portal source, calculate the beam path, reflections, portal entry, collisions, and completion result.
 
 ## Owns
 
 - Laser movement through board coordinates
 - Direction and mirror-reflection rules
-- Wall, boundary, mirror, and target collision behavior
-- Detection and safe termination of repeating laser paths
+- Wall, boundary, mirror, and directional portal collision behavior
+- Source-portal re-entry and safe termination of repeating laser/portal paths
 - Physics-focused unit tests and the simulation interface
 
 Preferred implementation locations are `src/physics/` and `tests/physics/`.
@@ -22,13 +22,26 @@ Preferred implementation locations are `src/physics/` and `tests/physics/`.
 
 The agent may define the board-state contract needed by other agents, but must not change UI or level content to make a physics test pass.
 
+## Teleport MVP Contract
+
+Represent each portal with an `id`, `role` (`source` or `target`), `position`, `direction`, and visual `color`. The MVP has at most two portals per level.
+
+- A blue source portal is the initial laser source. Start the path on its cell and emit in its configured direction; do not require an off-board source cell.
+- An orange target portal is terminal. A hit succeeds only when the beam enters its cell while traveling exactly in the portal’s configured direction.
+- Entering the target cell from another direction returns `wrong-target-direction`, includes the portal cell in the path, and sets `targetHit` to `false`.
+- Reaching the blue source portal after the initial state returns `source-reentry` and never emits a second beam.
+- Repeated laser states, including states reached after a portal transition in future paired-portal levels, return `portal-loop` (or the shared `loop` reason if the public enum remains consolidated) and must never hang.
+- Return portal events separately from rendering, for example `source-enter`, `target-enter`, and future `portal-exit`, so the UI can animate activation without reproducing physics.
+
+The existing cardinal directions and diagonal mirror reflection rules remain unchanged. Portal direction is part of the collision contract, not only presentation.
+
 ## Required Behavior
 
-The simulation must be deterministic, independent of rendering and input, and able to explain its result through a structured response such as a beam path, terminal reason, and target-hit status. It must handle invalid or looping paths without hanging.
+The simulation must be deterministic, independent of rendering and input, and able to explain its result through a structured response containing a beam path, reflections, portal events, terminal reason, terminal position/direction, and target-hit status. It must handle invalid or looping paths without hanging.
 
 ## Validation
 
-Add or update tests for every mirror orientation, straight travel, boundaries, walls, target hits, unreachable targets, and repeated states. Keep tests small and based on explicit board coordinates.
+Add or update tests for every mirror orientation, straight travel, boundaries, walls, both documented 7×7 routes, correct target entry, wrong target entry direction, source re-entry, unreachable targets, and portal loops. Keep tests small and based on explicit board coordinates.
 
 ## Handoff
 

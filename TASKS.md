@@ -18,7 +18,7 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 
 - [ ] Have the laser-UI agent review the portal colors, arrows, target-entry feedback, and automatic Level 1 → Level 2 transition.
 - [ ] Confirm the UI animation timing and accessible labels for source and target portals.
-- [ ] Record the final level coordinates and solution routes before editing runtime files.
+- [x] Record the final level coordinates and intended solution routes before editing runtime files.
 
 ## Foundation
 
@@ -29,6 +29,7 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 ## Physics Agent
 
 - [x] Define grid coordinates, four movement directions, and mirror orientations.
+- [x] Define the portal roles, colors, border-facing directions, and failure cases in `agents/physics-agent.md`.
 - [ ] Extend the physics contract for directional portal sources and target entry.
 - [ ] Animate or expose teleport source/target events without coupling physics to rendering.
 - [ ] Treat wrong-direction portal entry, source re-entry, walls, boundaries, and loops as failures.
@@ -37,9 +38,9 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 ## Level Agent
 
 - [x] Define the level-file schema and documented validation rules.
-- [ ] Design a clear 7×7 Level 1 with an emitter, orange target portal, three mirrors, and two walls.
-- [ ] Design a clear 7×7 Level 2 with blue/orange portals, three mirrors, and four walls.
-- [ ] Verify at least one correct solution for each level and document the solution route.
+- [x] Design a clear 7×7 Level 1 with an emitter, orange target portal, three mirrors, and two walls.
+- [x] Design a clear 7×7 Level 2 with blue/orange portals, three mirrors, and four walls.
+- [x] Verify the intended reflection route for each level with the existing simulator; portal-entry runtime tests remain pending.
 - [ ] Extend the schema for portal role, border position, facing direction, and transition metadata.
 - [ ] Add a dedicated runtime schema validator for level files.
 
