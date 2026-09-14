@@ -8,12 +8,20 @@ const MAX_LIVES = 3;
 const LEVELS_PER_DIFFICULTY = 3;
 const DIFFICULTIES = Object.freeze(['easy', 'medium', 'hard']);
 const DIFFICULTY_LABELS = Object.freeze({ easy: 'Easy', medium: 'Medium', hard: 'Hard' });
+const DIRECTION_ARROWS = Object.freeze({ N: '↑', E: '→', S: '↓', W: '←' });
+const EDGE_LABELS = Object.freeze({ north: 'NORTH', east: 'EAST', south: 'SOUTH', west: 'WEST' });
 const EMPTY_SIMULATION = Object.freeze({ beamPath: [], targetHit: false, terminalReason: null });
 
 const boardElement = document.querySelector('#game-board');
 const boardWrap = document.querySelector('#board-wrap');
 const appShell = document.querySelector('.app-shell');
 const beamLayer = document.querySelector('#beam-layer');
+const skipLink = document.querySelector('.skip-link');
+const brandLink = document.querySelector('.brand');
+const campaignOverview = document.querySelector('#campaign-overview');
+const campaignOverviewKicker = document.querySelector('#campaign-overview-kicker');
+const campaignOverviewTitle = document.querySelector('#campaign-overview-title');
+const routeMapElement = document.querySelector('#route-map');
 const levelTagElement = document.querySelector('#level-tag');
 const levelProgressElement = document.querySelector('#level-progress');
 const levelNameElement = document.querySelector('#level-name');
@@ -45,9 +53,12 @@ let beamVisible = false;
 let isAnimating = false;
 let isCoolingDown = false;
 let isSolved = false;
+let isCampaignIntroVisible = false;
 let cancelLaserAnimation = null;
 let cancelMirrorAnimation = null;
 let feedbackTimer = null;
+let overviewTimer = null;
+let overviewExitTimer = null;
 
 function setStatus(state, kicker, title, detail) {
     statusCard.dataset.state = state;
@@ -57,6 +68,11 @@ function setStatus(state, kicker, title, detail) {
 }
 
 function updateStatus(simulation) {
+    if (isCampaignIntroVisible) {
+        setStatus('active', 'ROUTE MAP', 'See the handoff', 'The first level is coming into focus.');
+        return;
+    }
+
     if (!beamVisible || !simulation) {
         setStatus('active', 'AWAITING FIRE', 'Aim the mirrors', 'The beam is hidden until you fire the laser.');
         return;
@@ -99,12 +115,177 @@ function currentDifficultyLevels() {
     return levelsByDifficulty[difficultyId] ?? [];
 }
 
+function prefersReducedMotion() {
+    return typeof window !== 'undefined'
+        && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
+
+function portalFor(levelData, role) {
+    return levelData.portals?.find((portal) => portal.role === role)
+        ?? (role === 'source' ? levelData.source : levelData.target);
+}
+
+function portalEdge(portal, size) {
+    if (portal.row === 0) return 'north';
+    if (portal.row === size - 1) return 'south';
+    if (portal.col === 0) return 'west';
+    if (portal.col === size - 1) return 'east';
+    return 'inner';
+}
+
+function directionArrow(direction) {
+    return DIRECTION_ARROWS[direction] ?? '•';
+}
+
+function setIntroFocusMode(active) {
+    [skipLink, brandLink].forEach((element) => {
+        if (!element) return;
+        if (active) element.setAttribute('tabindex', '-1');
+        else element.removeAttribute('tabindex');
+    });
+}
+
+function createRouteThumbnail(levelData) {
+    const thumbnail = document.createElement('div');
+    thumbnail.className = 'route-thumb';
+    thumbnail.style.setProperty('--mini-size', levelData.size);
+
+    const portals = levelData.portals ?? [levelData.source, levelData.target];
+    const portalByKey = new Map(portals.map((portal) => [`${portal.row}-${portal.col}`, portal]));
+    const wallKeys = new Set(levelData.walls.map((wall) => `${wall.row}-${wall.col}`));
+    const mirrorByKey = new Map(levelData.mirrors.map((mirror) => [`${mirror.row}-${mirror.col}`, mirror]));
+
+    for (let row = 0; row < levelData.size; row += 1) {
+        for (let col = 0; col < levelData.size; col += 1) {
+            const cell = document.createElement('span');
+            const key = `${row}-${col}`;
+            cell.className = 'route-thumb-cell';
+            if (wallKeys.has(key)) cell.classList.add('is-wall');
+            const mirror = mirrorByKey.get(key);
+            if (mirror) {
+                cell.classList.add('is-mirror', mirror.orientation === '/' ? 'is-slash' : 'is-backslash');
+            }
+
+            const portal = portalByKey.get(key);
+            if (portal) {
+                cell.classList.add(portal.role === 'target' ? 'is-target' : 'is-source');
+                cell.textContent = directionArrow(portal.facingDirection ?? portal.direction);
+            }
+            thumbnail.appendChild(cell);
+        }
+    }
+
+    return thumbnail;
+}
+
+function createRouteNode(levelData, index) {
+    const sourcePortal = portalFor(levelData, 'source');
+    const targetPortal = portalFor(levelData, 'target');
+    const node = document.createElement('article');
+    node.className = `route-node${index === 0 ? ' is-first' : ''}`;
+    node.setAttribute('role', 'listitem');
+
+    const header = document.createElement('div');
+    header.className = 'route-node-header';
+    const number = document.createElement('span');
+    number.className = 'route-node-number';
+    number.textContent = `0${index + 1}`;
+    const label = document.createElement('span');
+    label.className = 'route-node-label';
+    label.textContent = `LEVEL ${index + 1}`;
+    header.append(number, label);
+
+    const name = document.createElement('h3');
+    name.className = 'route-node-name';
+    name.textContent = levelData.name;
+
+    const size = document.createElement('span');
+    size.className = 'route-node-size';
+    size.textContent = `${levelData.size} × ${levelData.size}`;
+
+    const edges = document.createElement('div');
+    edges.className = 'route-node-edges';
+    const sourceEdge = document.createElement('span');
+    sourceEdge.textContent = `SOURCE ${EDGE_LABELS[portalEdge(sourcePortal, levelData.size)] ?? 'INNER'} ${directionArrow(sourcePortal.direction ?? sourcePortal.facingDirection)}`;
+    const targetEdge = document.createElement('span');
+    targetEdge.textContent = `TARGET ${EDGE_LABELS[portalEdge(targetPortal, levelData.size)] ?? 'INNER'} ${directionArrow(targetPortal.facingDirection ?? targetPortal.direction)}`;
+    edges.append(sourceEdge, targetEdge);
+
+    node.append(header, name, size, createRouteThumbnail(levelData), edges);
+    return node;
+}
+
+function createRouteConnector(fromLevel, toLevel) {
+    const connector = document.createElement('div');
+    connector.className = 'route-connector';
+    connector.setAttribute('role', 'img');
+    const line = document.createElement('span');
+    line.className = 'route-connector-line';
+    const label = document.createElement('span');
+    label.className = 'route-connector-label';
+    const fromEdge = EDGE_LABELS[portalEdge(portalFor(fromLevel, 'target'), fromLevel.size)] ?? 'INNER';
+    const toEdge = EDGE_LABELS[portalEdge(portalFor(toLevel, 'source'), toLevel.size)] ?? 'INNER';
+    connector.setAttribute('aria-label', `Target ${fromEdge.toLowerCase()} connects to next source ${toEdge.toLowerCase()}`);
+    label.textContent = `${fromEdge[0]} → ${toEdge[0]}`;
+    const arrow = document.createElement('span');
+    arrow.className = 'route-connector-arrow';
+    arrow.textContent = '›';
+    arrow.setAttribute('aria-hidden', 'true');
+    connector.append(line, label, arrow);
+    return connector;
+}
+
+function renderCampaignOverview() {
+    const difficultyLevels = currentDifficultyLevels();
+    campaignOverviewKicker.textContent = `${DIFFICULTY_LABELS[difficultyId].toUpperCase()} ROUTE MAP`;
+    campaignOverviewTitle.textContent = 'Follow the handoff.';
+    routeMapElement.replaceChildren();
+    difficultyLevels.forEach((levelData, index) => {
+        routeMapElement.appendChild(createRouteNode(levelData, index));
+        if (index < difficultyLevels.length - 1) {
+            routeMapElement.appendChild(createRouteConnector(levelData, difficultyLevels[index + 1]));
+        }
+    });
+}
+
+function clearOverviewTimers() {
+    if (overviewTimer !== null) window.clearTimeout(overviewTimer);
+    if (overviewExitTimer !== null) window.clearTimeout(overviewExitTimer);
+    overviewTimer = null;
+    overviewExitTimer = null;
+    campaignOverview.hidden = true;
+    campaignOverview.classList.remove('is-exiting');
+    boardWrap.classList.remove('is-board-zooming');
+}
+
+function startCampaignOverview() {
+    clearOverviewTimers();
+    renderCampaignOverview();
+    campaignOverview.hidden = false;
+    campaignOverview.focus();
+
+    overviewTimer = window.setTimeout(() => {
+        campaignOverview.classList.add('is-exiting');
+        boardWrap.classList.add('is-board-zooming');
+        overviewExitTimer = window.setTimeout(() => {
+            campaignOverview.hidden = true;
+            campaignOverview.classList.remove('is-exiting');
+            boardWrap.classList.remove('is-board-zooming');
+            isCampaignIntroVisible = false;
+            overviewExitTimer = null;
+            render();
+            fireButton.focus();
+        }, prefersReducedMotion() ? 0 : 700);
+        overviewTimer = null;
+    }, prefersReducedMotion() ? 650 : 1250);
+}
+
 function updateDifficultyTabs() {
     difficultyTabs.forEach((tab) => {
         const active = tab.dataset.difficulty === difficultyId;
         tab.classList.toggle('is-active', active);
         tab.setAttribute('aria-pressed', String(active));
-        tab.disabled = isAnimating || isCoolingDown || isSolved || !levels.length;
+        tab.disabled = isAnimating || isCoolingDown || isSolved || isCampaignIntroVisible || !levels.length;
     });
 }
 
@@ -138,13 +319,14 @@ function render({ animatedMirrorId = null } = {}) {
     boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
     boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
     updateLives();
-    fireButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
-    resetButton.disabled = isAnimating || isSolved;
+    setIntroFocusMode(isCampaignIntroVisible);
+    fireButton.disabled = isAnimating || isCoolingDown || isSolved || isCampaignIntroVisible || lives === 0;
+    resetButton.disabled = isAnimating || isSolved || isCampaignIntroVisible;
     boardWrap.dataset.terminalReason = visibleSimulation.terminalReason ?? '';
     updateStatus(lastSimulation);
 
     elements.mirrorButtons.forEach((mirrorButton) => {
-        mirrorButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
+        mirrorButton.disabled = isAnimating || isCoolingDown || isSolved || isCampaignIntroVisible || lives === 0;
     });
     updateDifficultyTabs();
     if (animatedMirrorId) {
@@ -171,7 +353,8 @@ function clearFeedbackTimer() {
     feedbackTimer = null;
 }
 
-function loadLevelAt(nextLevelIndex, { focusFire = true } = {}) {
+function loadLevelAt(nextLevelIndex, { focusFire = true, showOverview = false } = {}) {
+    clearOverviewTimers();
     const difficultyLevels = currentDifficultyLevels();
     levelIndex = nextLevelIndex;
     level = difficultyLevels[levelIndex];
@@ -183,10 +366,12 @@ function loadLevelAt(nextLevelIndex, { focusFire = true } = {}) {
     isAnimating = false;
     isCoolingDown = false;
     isSolved = false;
+    isCampaignIntroVisible = showOverview;
     winOverlay.hidden = true;
     appShell.inert = false;
     render();
-    if (focusFire) fireButton.focus();
+    if (showOverview) startCampaignOverview();
+    else if (focusFire) fireButton.focus();
 }
 
 function groupLevels(campaignLevels) {
@@ -208,7 +393,7 @@ function selectDifficulty(nextDifficultyId) {
     clearFeedbackTimer();
     difficultyId = nextDifficultyId;
     lives = MAX_LIVES;
-    loadLevelAt(0);
+    loadLevelAt(0, { focusFire: false, showOverview: true });
 }
 
 function showDifficultyComplete() {
@@ -288,12 +473,14 @@ function resetGame() {
     cancelMirrorAnimation?.();
     cancelMirrorAnimation = null;
     clearFeedbackTimer();
+    clearOverviewTimers();
     boardState = createState();
     lastSimulation = null;
     beamVisible = false;
     isAnimating = false;
     isCoolingDown = false;
     isSolved = false;
+    isCampaignIntroVisible = false;
     winOverlay.hidden = true;
     appShell.inert = false;
     render();
@@ -303,7 +490,7 @@ function resetGame() {
 function playAgain() {
     clearFeedbackTimer();
     lives = MAX_LIVES;
-    loadLevelAt(0);
+    loadLevelAt(0, { focusFire: false, showOverview: true });
 }
 
 function advanceDifficulty() {
@@ -318,6 +505,12 @@ function showLoadError(error) {
     difficultyTabs.forEach((tab) => { tab.disabled = true; });
 }
 
+function keepIntroFocus(event) {
+    if (!isCampaignIntroVisible || event.key !== 'Tab') return;
+    event.preventDefault();
+    campaignOverview.focus();
+}
+
 async function initialize() {
     try {
         levels = await loadMvpLevel();
@@ -326,7 +519,9 @@ async function initialize() {
         levelIndex = 0;
         level = currentDifficultyLevels()[levelIndex];
         boardState = createState();
+        isCampaignIntroVisible = true;
         render();
+        startCampaignOverview();
     } catch (error) {
         showLoadError(error);
     }
@@ -335,6 +530,7 @@ async function initialize() {
 difficultyTabs.forEach((tab) => {
     tab.addEventListener('click', () => selectDifficulty(tab.dataset.difficulty));
 });
+document.addEventListener('keydown', keepIntroFocus);
 fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);
 nextDifficultyButton.addEventListener('click', advanceDifficulty);

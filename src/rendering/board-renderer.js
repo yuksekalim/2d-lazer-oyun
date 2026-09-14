@@ -66,7 +66,7 @@ const portalMarkup = (portal) => {
 };
 
 export function renderBoard({ boardElement, beamLayer, level, boardState, simulation, showTrace = true, onMirrorActivate = null }) {
-    const { size, source, walls } = level;
+    const { size, source, target, walls } = level;
     const portals = boardState.portals ?? level.portals ?? [source, target];
     const wallKeys = new Set(walls.map(cellKey));
     const portalByKey = new Map(portals.map((portal) => [cellKey(portal), portal]));
