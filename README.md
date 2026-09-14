@@ -40,16 +40,41 @@ Every level must have at least one correct solution and be deliberately uncompli
 
 Add the 15-level Easy, Medium, and Hard campaigns on 7×7, 11×11, and 15×15 boards. Later releases may add the monster target at level 15, richer portal effects, sound, keyboard accessibility, and progression controls.
 
+## Physics MVP
+
+The deterministic laser simulation is available from `src/physics/laser.js` and
+uses the geometry helpers in `src/physics/geometry.js`. It accepts a board and
+source in grid coordinates:
+
+```js
+const board = {
+    width: 5,
+    height: 5,
+    walls: [{ x: 3, y: 2 }],
+    mirrors: [{ position: { x: 2, y: 2 }, orientation: "/" }],
+    target: { x: 2, y: 0 },
+};
+const source = { position: { x: 0, y: 2 }, direction: "E" };
+```
+
+Coordinates use `x` increasing east/right and `y` increasing south/down. The
+simulation returns the visited `path`, `reflections`, `terminal` reason, and
+`targetHit` status. A slash mirror sends an eastbound beam north/up; a
+backslash mirror sends it south/down.
+
 ## Local Development
 
 The game is a self-contained static web project with no runtime dependencies or backend.
 
 ```bash
 npm test
+node --test tests/physics/*.test.js
 npm run dev
 ```
 
-`npm test` runs the Node test suite. `npm run dev` starts a local static server; open `http://localhost:4173/src/ui/` in a modern browser.
+`npm test` runs the full Node test suite. The direct physics command is useful
+when working only on `src/physics/`. `npm run dev` starts a local static server;
+open `http://localhost:4173/src/ui/` in a modern browser.
 
 ## License
 

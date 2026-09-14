@@ -26,6 +26,18 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 - [x] Add the project scripts and document actual local commands in `README.md`.
 - [x] Add source, level, test, and asset directories.
 
+## Existing Physics Foundation
+
+- [x] Trace the laser one cell at a time from its source.
+- [x] Stop the beam at board boundaries and walls.
+- [x] Implement reflection for each supported mirror orientation.
+- [x] Detect target hits and expose a completed state.
+- [x] Detect repeated positions and prevent infinite laser loops.
+- [x] Add deterministic tests for movement, reflection, collisions, and loops.
+
+The physics MVP is implemented in `src/physics/geometry.js` and
+`src/physics/laser.js`, with tests under `tests/physics/`.
+
 ## Physics Agent
 
 - [x] Define grid coordinates, four movement directions, and mirror orientations.
