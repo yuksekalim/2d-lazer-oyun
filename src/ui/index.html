@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#0b1220">
+        <title>Beamline — Laser Mirror Puzzle</title>
+        <link rel="stylesheet" href="./styles.css">
+    </head>
+    <body>
+        <a class="skip-link" href="#game-board">Skip to game board</a>
+        <div class="app-shell">
+            <header class="topbar">
+                <a class="brand" href="./index.html" aria-label="Beamline home">
+                    <span class="brand-mark" aria-hidden="true"><span></span></span>
+                    <span>BEAMLINE</span>
+                </a>
+                <div class="topbar-meta" aria-label="Level progress">
+                    <span class="level-tag">SECTOR 01</span>
+                    <span class="move-count"><span id="move-count">0</span> MOVES</span>
+                </div>
+            </header>
+
+            <main class="game-layout">
+                <section class="intro-panel" aria-labelledby="game-title">
+                    <p class="eyebrow"><span class="eyebrow-dot"></span> OPTICAL CIRCUIT / 01</p>
+                    <h1 id="game-title">Find the<br><em>clear line.</em></h1>
+                    <p class="intro-copy">Rotate the mirrors to route the beam into the receiver. Every angle changes the outcome.</p>
+                    <div class="legend" aria-label="Board legend">
+                        <span><i class="legend-swatch source-swatch"></i> emitter</span>
+                        <span><i class="legend-swatch mirror-swatch"></i> mirror</span>
+                        <span><i class="legend-swatch target-swatch"></i> receiver</span>
+                    </div>
+                </section>
+
+                <section class="board-panel" aria-label="Laser mirror puzzle">
+                    <div class="board-heading">
+                        <span class="board-heading-label"><span class="live-dot"></span> LIVE BOARD</span>
+                        <span class="board-size">08 × 08 GRID</span>
+                    </div>
+                    <div class="board-wrap" id="board-wrap">
+                        <div id="game-board" class="game-board" role="grid" aria-label="8 by 8 laser puzzle board"></div>
+                        <svg id="beam-layer" class="beam-layer" viewBox="0 0 8 8" preserveAspectRatio="none" aria-hidden="true"></svg>
+                        <div class="board-glow" aria-hidden="true"></div>
+                    </div>
+                    <div class="board-caption">
+                        <span><kbd>CLICK</kbd> a mirror to rotate</span>
+                        <span class="caption-separator"></span>
+                        <span><kbd>R</kbd> reset puzzle</span>
+                    </div>
+                </section>
+
+                <aside class="control-panel" aria-label="Puzzle status and controls">
+                    <div class="status-card" id="status-card" data-state="active" aria-live="polite">
+                        <div class="status-icon" aria-hidden="true"><span></span></div>
+                        <div>
+                            <p class="status-kicker" id="status-kicker">BEAM STATUS</p>
+                            <p class="status-title" id="status-title">Searching for a path</p>
+                            <p class="status-detail" id="status-detail">The emitter is active. Tune the reflectors.</p>
+                        </div>
+                    </div>
+
+                    <div class="control-card">
+                        <div class="control-card-topline">
+                            <span class="section-label">CONTROLS</span>
+                            <span class="control-hint">4 angles / mirror</span>
+                        </div>
+                        <p class="control-copy">Select a mirror, then rotate it through four positions until the beam reaches the receiver.</p>
+                        <button class="reset-button" id="reset-button" type="button">
+                            <span class="reset-icon" aria-hidden="true">↺</span>
+                            <span>Reset board</span>
+                            <span class="button-shortcut">R</span>
+                        </button>
+                    </div>
+
+                    <div class="mission-card">
+                        <div class="mission-number">01</div>
+                        <div>
+                            <span class="section-label">MISSION</span>
+                            <p>Connect the source<br>to the receiver.</p>
+                        </div>
+                    </div>
+                </aside>
+            </main>
+
+            <footer class="footer-note">
+                <span class="footer-line"></span>
+                <span>LIGHT TRAVELS IN STRAIGHT LINES</span>
+                <span class="footer-line"></span>
+            </footer>
+        </div>
+
+        <div class="win-overlay" id="win-overlay" role="dialog" aria-modal="true" aria-labelledby="win-title" hidden>
+            <div class="win-card">
+                <div class="win-burst" aria-hidden="true"><span>✦</span></div>
+                <p class="eyebrow">TRANSMISSION COMPLETE</p>
+                <h2 id="win-title">Perfect<br><em>alignment.</em></h2>
+                <p class="win-copy">The receiver is online. You solved the circuit in <strong id="win-moves">0</strong> moves.</p>
+                <button class="reset-button win-reset" id="win-reset-button" type="button">Run it again <span>↺</span></button>
+            </div>
+        </div>
+
+        <script type="module" src="./app.js"></script>
+    </body>
+</html>
