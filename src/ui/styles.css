@@ -244,10 +244,17 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .route-node-edges { display: flex; flex-direction: column; gap: 3px; overflow: hidden; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .route-node-edges span:first-child { color: var(--cyan); }
 .route-node-edges span:last-child { color: var(--orange); }
-.route-connector { display: grid; min-width: clamp(28px, 5vw, 55px); justify-items: center; gap: 4px; color: var(--cyan); }
-.route-connector-line { width: 100%; height: 1px; background: linear-gradient(90deg, rgba(255,182,92,.75), rgba(97,229,230,.8)); box-shadow: 0 0 8px rgba(97,229,230,.35); }
-.route-connector-label { color: var(--muted-bright); font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .04em; text-align: center; white-space: nowrap; }
-.route-connector-arrow { margin-top: -9px; color: var(--cyan); font-size: 18px; line-height: 1; }
+.route-connector { display: flex; align-items: center; justify-content: center; min-width: clamp(48px, 8vw, 86px); gap: clamp(3px, .6vw, 7px); color: var(--cyan); }
+.route-handoff-portal { display: grid; justify-items: center; gap: 3px; min-width: 25px; color: var(--cyan); font-family: 'DM Mono', monospace; font-size: 6px; letter-spacing: .04em; line-height: 1; }
+.route-handoff-accessible { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; border: 0; clip: rect(0 0 0 0); white-space: nowrap; }
+.route-handoff-target { color: var(--orange); }
+.route-handoff-source { color: var(--cyan); }
+.route-handoff-glyph { position: relative; display: grid; width: 21px; height: 21px; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; font-size: 9px; font-weight: 500; box-shadow: 0 0 12px currentColor, inset 0 0 7px currentColor; animation: route-handoff-pulse 1.8s ease-in-out infinite; }
+.route-handoff-glyph::after { position: absolute; bottom: 3px; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; content: ''; transform: translateX(-50%); }
+.route-handoff-label { font-size: 5px; white-space: nowrap; }
+.route-handoff-bridge { display: grid; flex: 1; min-width: 9px; justify-items: center; gap: 1px; }
+.route-handoff-line { width: 100%; height: 1px; background: linear-gradient(90deg, var(--orange), var(--cyan)); box-shadow: 0 0 8px rgba(97,229,230,.45); }
+.route-handoff-arrow { margin-top: -7px; color: var(--cyan); font-size: 15px; line-height: 1; }
 .route-map-note { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 0; color: var(--muted-bright); font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .04em; text-align: center; }
 .route-map-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 10px var(--orange); animation: status-pulse 1.5s infinite; }
 .board-wrap.is-board-zooming .game-board { animation: board-zoom-in 700ms cubic-bezier(.2,.8,.2,1) both; }
@@ -411,6 +418,7 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
 @keyframes route-node-in { from { opacity: 0; transform: translateY(8px) scale(.9); } to { opacity: .66; transform: translateY(0) scale(.94); } }
 @keyframes route-node-first-in { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes board-zoom-in { from { opacity: .25; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes route-handoff-pulse { 0%, 100% { transform: scale(.9); filter: brightness(.9); } 50% { transform: scale(1.08); filter: brightness(1.4); } }
 
 @media (max-width: 1050px) {
     :root { --board-size: min(64vh, 560px); }
@@ -454,9 +462,15 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
     .route-node-label, .route-node-size, .route-node-edges { font-size: 5px; }
     .route-node-name { margin-top: 4px; font-size: 8px; }
     .route-thumb { margin: 5px 0; }
-    .route-connector { min-width: 17px; }
-    .route-connector-label { font-size: 5px; white-space: normal; }
-    .route-connector-arrow { font-size: 13px; }
+    .route-connector { min-width: 44px; gap: 2px; }
+    .route-handoff-portal { min-width: 20px; font-size: 5px; }
+    .route-handoff-glyph { width: 17px; height: 17px; font-size: 7px; }
+    .route-handoff-glyph::after { width: 3px; height: 3px; }
+    .route-handoff-label { font-size: 5px; }
+    .route-handoff-arrow { font-size: 12px; }
+    .route-map { display: flex; justify-content: flex-start; overflow-x: auto; overflow-y: visible; padding: 3px 2px 9px; scrollbar-color: rgba(97,229,230,.45) rgba(8,17,29,.6); scrollbar-width: thin; }
+    .route-node { flex: 0 0 84px; }
+    .route-connector { flex: 0 0 52px; }
     .route-map-note { font-size: 6px; }
 }
 
