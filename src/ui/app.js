@@ -34,6 +34,7 @@ let isAnimating = false;
 let isCoolingDown = false;
 let isSolved = false;
 let cancelLaserAnimation = null;
+let cancelMirrorAnimation = null;
 let feedbackTimer = null;
 
 function setStatus(state, kicker, title, detail) {
@@ -67,6 +68,7 @@ function updateStatus(simulation) {
         'wrong-target-direction': ['blocked', 'ATTEMPT FAILED', 'Wrong portal direction', 'The target portal rejected that approach.'],
         'source-reentry': ['loop', 'ATTEMPT FAILED', 'Source portal re-entry', 'The beam returned to its source.'],
         'portal-loop': ['loop', 'ATTEMPT FAILED', 'Portal loop detected', 'The beam repeated a portal path.'],
+        'step-limit': ['loop', 'ATTEMPT FAILED', 'Route limit reached', 'The beam exceeded the safe trace limit. Try another angle.'],
     };
     const [state, kicker, title, detail] = states[simulation.terminalReason] ?? states.boundary;
     setStatus(state, kicker, title, detail);
@@ -112,7 +114,10 @@ function render({ animatedMirrorId = null } = {}) {
     elements.mirrorButtons.forEach((mirrorButton) => {
         mirrorButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
     });
-    if (animatedMirrorId) animateMirror(elements.mirrorButtons.get(animatedMirrorId));
+    if (animatedMirrorId) {
+        cancelMirrorAnimation?.();
+        cancelMirrorAnimation = animateMirror(elements.mirrorButtons.get(animatedMirrorId));
+    }
     if (!isAnimating) animateTarget(elements.targetElement, visibleSimulation.targetHit);
 }
 
@@ -194,6 +199,8 @@ function resetGame() {
     if (!level) return;
     cancelLaserAnimation?.();
     cancelLaserAnimation = null;
+    cancelMirrorAnimation?.();
+    cancelMirrorAnimation = null;
     clearFeedbackTimer();
     boardState = createState();
     lastSimulation = null;

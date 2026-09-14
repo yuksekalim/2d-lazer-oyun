@@ -36,12 +36,12 @@ Use top-left origin coordinates `(x, y)`, with `x` increasing east and `y` incre
 
 ### Level 2 — Portal to Portal
 
-- **Board:** 7×7; blue source portal `(0, 5)` facing `E`; orange target portal `(5, 6)` facing `S`.
-- **Mirrors:** `turn_a` `(2, 5)` initial `\`, solution `/`; `turn_b` `(2, 2)` initial `\`, solution `/`; `turn_c` `(5, 2)` initial `/`, solution `\`.
-- **Walls:** `(1, 1)`, `(4, 4)`, `(6, 4)`, `(3, 6)`.
-- **Verified route:** the beam emerges `E` from the blue portal, reaches `turn_a`, reflects `N`; reaches `turn_b`, reflects `E`; reaches `turn_c`, reflects `S`; enters the orange target at `(5, 6)` in the correct direction.
+- **Board:** 7×7; blue source portal (1, 0) facing S; orange target portal (4, 6) facing S.
+- **Mirrors:** turn_a (1, 2) initial /, solution \\; turn_b (4, 2) initial /, solution \\; turn_c (5, 4) initial /, solution /.
+- **Walls:** (3, 1), (6, 4), (3, 6), (0, 4).
+- **Verified route:** the beam emerges S from the blue portal, reaches turn_a (1, 2), reflects E; reaches turn_b (4, 2), reflects S; enters the orange target at (4, 6) in the correct direction. turn_c is a rotatable decoy.
 
-The two layouts are independent. Level 2 never inherits Level 1 mirror positions. Keep the intended route documented with the level data and validate it with the physics test suite before exposing the level in the UI.
+Level 1’s target (1, 6) connects to this level’s source (1, 0), which emits S to continue the route across the level transition. Level 2 still has its own independent mirror positions. Keep the intended route documented with the level data and validate it with the physics test suite before exposing the level in the UI.
 
 ## Campaign Layout Rules
 

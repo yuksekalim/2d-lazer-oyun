@@ -133,6 +133,23 @@ def main():
     assert len(data["levels"]) == 2, "teleport MVP must contain two levels"
     for level in data["levels"]:
         print(f"{level['id']}: solvable in {validate_level(level)} beam cells")
+    for current, following in zip(data["levels"], data["levels"][1:]):
+        current_target = next(portal for portal in current["portals"] if portal["role"] == "target")
+        following_source = next(portal for portal in following["portals"] if portal["role"] == "source")
+        width = current["board"]["width"]
+        height = current["board"]["height"]
+        target_x, target_y = current_target["position"]["x"], current_target["position"]["y"]
+        source_x, source_y = following_source["position"]["x"], following_source["position"]["y"]
+        if target_y == height - 1:
+            assert source_x == target_x and source_y == 0 and following_source["direction"] == "S"
+        elif target_y == 0:
+            assert source_x == target_x and source_y == height - 1 and following_source["direction"] == "N"
+        elif target_x == width - 1:
+            assert source_y == target_y and source_x == 0 and following_source["direction"] == "E"
+        elif target_x == 0:
+            assert source_y == target_y and source_x == width - 1 and following_source["direction"] == "W"
+        else:
+            raise AssertionError(f"{current['id']}: target portal must be on a board border")
     print(f"validated {len(data['levels'])} levels; formatVersion={data['formatVersion']}")
 
 

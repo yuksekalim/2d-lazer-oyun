@@ -75,22 +75,22 @@
             "source": {
                 "role": "portal",
                 "portalId": "source-02",
-                "position": { "x": 0, "y": 5 },
-                "direction": "E",
+                "position": { "x": 1, "y": 0 },
+                "direction": "S",
                 "color": "blue"
             },
             "portals": [
                 {
                     "id": "source-02",
                     "role": "source",
-                    "position": { "x": 0, "y": 5 },
-                    "direction": "E",
+                    "position": { "x": 1, "y": 0 },
+                    "direction": "S",
                     "color": "blue"
                 },
                 {
                     "id": "target-02",
                     "role": "target",
-                    "position": { "x": 5, "y": 6 },
+                    "position": { "x": 4, "y": 6 },
                     "direction": "S",
                     "color": "orange"
                 }
@@ -99,33 +99,33 @@
             "mirrors": [
                 {
                     "id": "turn_a",
-                    "position": { "x": 2, "y": 5 },
-                    "orientation": "backslash",
+                    "position": { "x": 1, "y": 2 },
+                    "orientation": "slash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_b",
-                    "position": { "x": 2, "y": 2 },
-                    "orientation": "backslash",
+                    "position": { "x": 4, "y": 2 },
+                    "orientation": "slash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_c",
-                    "position": { "x": 5, "y": 2 },
+                    "position": { "x": 5, "y": 4 },
                     "orientation": "slash",
                     "rotatable": true
                 }
             ],
             "obstacles": [
-                { "x": 1, "y": 1 },
-                { "x": 4, "y": 4 },
+                { "x": 3, "y": 1 },
                 { "x": 6, "y": 4 },
-                { "x": 3, "y": 6 }
+                { "x": 3, "y": 6 },
+                { "x": 0, "y": 4 }
             ],
             "solution": [
-                { "mirror": "turn_a", "orientation": "slash" },
-                { "mirror": "turn_b", "orientation": "slash" },
-                { "mirror": "turn_c", "orientation": "backslash" }
+                { "mirror": "turn_a", "orientation": "backslash" },
+                { "mirror": "turn_b", "orientation": "backslash" },
+                { "mirror": "turn_c", "orientation": "slash" }
             ]
         }
     ]

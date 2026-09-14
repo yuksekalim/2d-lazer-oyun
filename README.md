@@ -24,6 +24,7 @@ runtime currently uses the format-2 teleport schema.
 - The MVP starts directly at Easy Level 1; difficulty selection and the 15-level campaign flow are the next phase.
 - Both levels use a 7×7 board, three rotatable mirrors, and fixed walls. Level 1 has two walls; Level 2 has four.
 - Level 1 uses the existing laser emitter and one orange target portal. Level 2 uses a blue source portal and an orange target portal. There are never more than two portals in a level.
+- Level 1’s target portal at `(1, 6)` continues into Level 2’s blue source portal at `(1, 0)`, which emits downward in the same column. Each level still has its own mirror layout.
 - Portals are fixed on border cells and face perpendicular to the border. A blue source portal emits inward; an orange target portal accepts a beam traveling in its facing direction. Small arrows show both directions.
 - Walls and board boundaries stop the beam.
 - Mirrors have two diagonal orientations, `/` and `\`, and rotate 90° per click.
