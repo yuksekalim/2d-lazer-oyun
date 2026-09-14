@@ -104,8 +104,8 @@ button { color: inherit; }
 
 .level-tag { color: var(--cyan); }
 
-.lives { color: var(--orange); }
-.lives span { color: var(--ink); }
+.lives, .move-count { color: var(--orange); }
+.lives span, .move-count span { color: var(--ink); }
 
 .game-layout {
     display: grid;
@@ -263,6 +263,9 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .target-glyph span { z-index: 1; width: 35%; height: 35%; border-radius: 50%; background: var(--orange); box-shadow: 0 0 10px var(--orange); }
 
 .portal-glyph { position: relative; z-index: 2; display: grid; width: 58%; height: 58%; place-items: center; border: 2px solid currentColor; border-radius: 50%; transform: rotate(var(--portal-angle)); box-shadow: 0 0 17px currentColor, inset 0 0 10px currentColor; }
+.portal-glyph::before, .portal-glyph::after { position: absolute; border: 2px solid currentColor; border-radius: 50%; content: ''; pointer-events: none; }
+.portal-glyph::before { inset: -17%; border-left-color: transparent; border-right-color: transparent; animation: portal-spin 2.2s linear infinite; }
+.portal-glyph::after { inset: -30%; border-top-color: transparent; border-bottom-color: transparent; opacity: .7; animation: portal-spin-reverse 3.2s linear infinite; }
 .blue-portal { color: var(--cyan); background: rgba(97, 229, 230, .1); }
 .orange-portal { color: var(--orange); background: rgba(255, 182, 92, .1); }
 .portal-core { width: 35%; height: 35%; border-radius: 50%; background: currentColor; box-shadow: 0 0 11px currentColor; }
@@ -280,11 +283,15 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .mirror-index { position: absolute; right: 5%; bottom: 2%; color: rgba(222, 216, 255, .7); font-family: 'DM Mono', monospace; font-size: 8px; }
 
 .beam-layer { position: absolute; z-index: 2; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); overflow: visible; pointer-events: none; }
-.beam-line, .beam-pulse { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.beam-line { stroke: var(--cyan); stroke-width: 4px; opacity: .22; filter: drop-shadow(0 0 5px var(--cyan)); }
-.beam-pulse { stroke: #e2ffff; stroke-width: 1px; opacity: .95; stroke-dasharray: .07 .93; stroke-dashoffset: 0; filter: drop-shadow(0 0 3px var(--cyan)); }
+.beam-glow, .beam-line, .beam-pulse, .beam-spark { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.beam-glow { stroke: var(--cyan); stroke-width: 12px; opacity: .1; filter: drop-shadow(0 0 10px var(--cyan)); }
+.beam-line { stroke: var(--cyan); stroke-width: 5px; opacity: .26; filter: drop-shadow(0 0 7px var(--cyan)); }
+.beam-pulse { stroke: #e2ffff; stroke-width: 2px; opacity: .98; stroke-dasharray: .025 .075; stroke-dashoffset: 0; filter: drop-shadow(0 0 5px var(--cyan)); }
+.beam-spark { stroke: #ffffff; stroke-width: 1px; opacity: .9; stroke-dasharray: .008 .18; filter: drop-shadow(0 0 4px var(--cyan)); }
+.beam-layer.is-animating .beam-glow { animation: beam-bloom 850ms ease-out both, beam-shimmer 900ms linear infinite; }
 .beam-layer.is-animating .beam-line { animation: beam-bloom 850ms ease-out both; }
-.beam-layer.is-animating .beam-pulse { animation: beam-travel 1350ms cubic-bezier(.35,.02,.2,1) both; }
+.beam-layer.is-animating .beam-pulse { animation: beam-travel 800ms linear infinite; }
+.beam-layer.is-animating .beam-spark { animation: beam-travel 560ms linear infinite; }
 .board-glow { position: absolute; z-index: 0; inset: 30% 18%; background: rgba(53, 185, 198, .12); filter: blur(45px); pointer-events: none; }
 
 .board-caption { display: flex; justify-content: center; gap: 13px; margin-top: 16px; color: var(--muted); font-size: 9px; letter-spacing: .03em; }
@@ -348,12 +355,15 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
 @keyframes cell-in { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
 @keyframes beam-bloom { from { opacity: 0; stroke-width: 1px; } to { opacity: .22; stroke-width: 4px; } }
 @keyframes beam-travel { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes beam-shimmer { from { opacity: .08; } 50% { opacity: .18; } to { opacity: .08; } }
 @keyframes mirror-turn { 0% { transform: rotate(0deg) scale(.86); filter: brightness(1); } 50% { transform: rotate(45deg) scale(1.12); filter: brightness(1.7); } 100% { transform: rotate(90deg) scale(1); filter: brightness(1); } }
 @keyframes target-hit { 0% { transform: scale(1); filter: brightness(1); } 20% { transform: scale(1.45); filter: brightness(2); } 55% { transform: scale(.88); filter: brightness(1.4); } 100% { transform: scale(1); filter: brightness(1); } }
 @keyframes portal-pulse { 0% { transform: rotate(var(--portal-angle)) scale(1); filter: brightness(1); } 25% { transform: rotate(var(--portal-angle)) scale(1.35); filter: brightness(1.8); } 60% { transform: rotate(var(--portal-angle)) scale(.9); filter: brightness(1.3); } 100% { transform: rotate(var(--portal-angle)) scale(1); filter: brightness(1); } }
 @keyframes status-pulse { 0%, 100% { opacity: .6; transform: scale(.75); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes overlay-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes burst-in { from { opacity: 0; transform: scale(.4) rotate(-25deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes portal-spin { to { transform: rotate(360deg); } }
+@keyframes portal-spin-reverse { to { transform: rotate(-360deg); } }
 
 @media (max-width: 1050px) {
     :root { --board-size: min(64vh, 560px); }

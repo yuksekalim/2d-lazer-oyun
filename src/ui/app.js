@@ -1,7 +1,6 @@
 import { animateLaser } from '../animation/laser-animation.js';
 import { animateMirror } from '../animation/mirror-animation.js';
 import { animateTarget } from '../animation/target-animation.js';
-import { bindMirrorInput } from '../input/mirror-input.js';
 import { renderBoard } from '../rendering/board-renderer.js';
 import { createInitialState, loadMvpLevel, simulate } from './physics-adapter.js';
 
@@ -98,6 +97,7 @@ function render({ animatedMirrorId = null } = {}) {
         boardState,
         simulation: visibleSimulation,
         showTrace: beamVisible && !isAnimating,
+        onMirrorActivate: rotateMirror,
     });
 
     levelTagElement.textContent = level.name.toUpperCase();
@@ -235,7 +235,6 @@ async function initialize() {
     }
 }
 
-bindMirrorInput(boardElement, rotateMirror);
 fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);
 playAgainButton.addEventListener('click', playAgain);

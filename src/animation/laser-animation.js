@@ -7,7 +7,7 @@ function pointsForPath(path, count) {
 
 /** Reveal a beam path one traversed cell at a time. Returns a cancel function. */
 export function animateLaser(beamLayer, path = [], { stepDuration = 120, onComplete } = {}) {
-    const beamLines = beamLayer?.querySelectorAll('.beam-line, .beam-pulse');
+    const beamLines = beamLayer?.querySelectorAll('.beam-glow, .beam-line, .beam-pulse, .beam-spark');
     let timer = null;
     let cancelled = false;
 
