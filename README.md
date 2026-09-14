@@ -1,26 +1,29 @@
 # 2D Laser Mirror Target
 
-An offline browser puzzle game about routing a laser through a grid of mirrors. The player rotates mirrors, fires the laser, and tries to guide it to a target on the opposite part of the board.
+An offline browser puzzle game about routing a laser through a grid of mirrors and directional portals. The player rotates mirrors, fires the laser, and guides it into the correct target portal.
 
 ## Game Vision
 
-The game should feel simple to understand but satisfying to solve. Each puzzle presents a fixed board with a laser source, target, walls, and rotatable mirrors. The player studies the layout, makes adjustments without seeing the beam, then presses **Fire Laser** to watch the result unfold.
+The game should feel simple to understand but satisfying to solve. Each puzzle presents a fixed board with a source, portals, walls, and rotatable mirrors. The player studies the layout without seeing the beam, adjusts the mirrors, then presses **Fire Laser** to watch the route unfold.
 
-The first version is intentionally small: one hand-designed 5×5 level, simple geometric visuals, no accounts, no backend, and no scoring system. The architecture should still leave room for richer animation, effects, art, and more levels later.
+The current teleport MVP is intentionally small: two hand-designed levels on a 7×7 board, simple geometric visuals, no accounts, no backend, and no scoring system. The planned full game will eventually contain Easy (7×7), Medium (11×11), and Hard (15×15) campaigns with 15 levels each, ending each campaign with a monster target.
 
-## MVP Rules
+## Teleport MVP Rules
 
-- The source and target are fixed on border cells; the source emits inward.
+- The MVP starts directly at Easy Level 1; difficulty selection is deferred.
+- Both levels use a 7×7 board, three rotatable mirrors, and fixed walls. Level 1 has two walls; Level 2 has four.
+- Level 1 uses the existing laser emitter and one orange target portal. Level 2 uses a blue source portal and an orange target portal. There are never more than two portals in a level.
+- Portals are fixed on border cells and face perpendicular to the border. A blue source portal emits inward; an orange target portal accepts a beam traveling in its facing direction. Small arrows show both directions.
 - Walls and board boundaries stop the beam.
 - Mirrors have two diagonal orientations, `/` and `\`, and rotate 90° per click.
 - The laser travels up, down, left, or right and reflects 90° from mirrors.
 - The beam is hidden until **Fire Laser** is pressed.
-- The beam then animates cell by cell and remains visible after the attempt.
+- The beam animates cell by cell. A failed beam remains visible for about 1–2 seconds, then hides for the next attempt.
 - Mirror clicks and gameplay controls are disabled during the animation.
-- Any result that does not reach the target—including a wall, boundary, or loop—is a failed attempt.
-- The player starts with three lives. The first two failures preserve mirror positions; the third restores the initial mirror layout and replenishes all three lives.
-- **Reset** restores the initial mirror layout and three lives.
-- On success, show **Play Again** and **Reset**. A **Continue** button is reserved for future multi-level releases.
+- Any result that does not enter the orange target portal from the correct direction—including a wall, boundary, wrong-direction portal entry, or loop—is a failed attempt. The blue source portal is never a valid target.
+- The player has one shared pool of three lives. Remaining lives carry from Level 1 into Level 2. Losing all lives restarts Level 1 with three lives and each level’s own initial mirror layout.
+- The first two failures preserve the current level’s mirror positions. The in-game **Reset** button restores only the current level’s initial mirror positions without costing a life.
+- A successful target entry briefly pulses the portal, compresses the beam into it, and automatically loads the next level. After Level 2, show a completion message with **Play Again**, which restarts Level 1 with three lives.
 
 Every level must have at least one correct solution and be deliberately uncomplicated for the MVP.
 
@@ -28,11 +31,11 @@ Every level must have at least one correct solution and be deliberately uncompli
 
 - Click or tap a mirror to rotate it.
 - Press **Fire Laser** to run the current attempt.
-- Press **Reset** to restart the current puzzle.
+- Press **Reset** to restore the current level’s original mirror positions.
 
 ## Future Direction
 
-Add hand-designed level sets across 5×5, 8×8, and 11×11 boards, grouped into **easy**, **medium**, and **hard** difficulties. Later releases may add polished art, richer animations, sound, keyboard accessibility, and level progression.
+Add the 15-level Easy, Medium, and Hard campaigns on 7×7, 11×11, and 15×15 boards. Later releases may add the monster target at level 15, richer portal effects, sound, keyboard accessibility, and progression controls.
 
 ## Local Development
 

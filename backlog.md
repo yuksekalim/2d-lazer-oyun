@@ -4,7 +4,7 @@ This file tracks work that has been started but is incomplete, paused, or deferr
 
 ## Current Items
 
-No partially completed items yet.
+No partially completed items yet. The 15-level difficulty campaigns and monster target are intentionally deferred and remain listed in `TASKS.md` under “Future, Not MVP.”
 
 ## Entry Template
 

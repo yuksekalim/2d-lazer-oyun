@@ -2,13 +2,14 @@
 
 ## Mission
 
-Own the player-facing interface: board presentation, menus, controls, feedback, and responsive accessibility for the laser mirror game.
+Own the player-facing interface: board presentation, controls, portal feedback, level transitions, and responsive accessibility for the teleport MVP.
 
 ## Owns
 
 - Board rendering and visual states for sources, targets, walls, mirrors, and beams
+- Blue source portals, orange target portals, directional arrows, and portal activation effects
 - Mirror rotation input through mouse, touch, and keyboard
-- Main menu, instructions, reset, next-level, completion, and error states
+- Instructions, reset, automatic next-level, completion, and error states
 - Move counter, level indicators, status messages, and feedback animations
 - Responsive layout, focus behavior, accessible labels, and visual consistency
 
@@ -25,6 +26,8 @@ Consume the Physics Agent’s simulation result and the Level Agent’s level da
 ## Interaction Requirements
 
 Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Preserve a usable board and control layout on small screens.
+
+For the teleport MVP, the source portal must visibly indicate its emission direction and the target portal must visibly indicate its accepted entry direction. A correct target entry should pulse the portal, compress the beam, and transition automatically to Level 2. Keep the final completion action to **Play Again**; keep **Reset** available during gameplay.
 
 ## Validation
 

@@ -1,17 +1,24 @@
 # Current Tasks
 
-This is the practical MVP plan for the offline 2D laser mirror target game. Keep unfinished work visible here while active; move paused or partially completed work to `backlog.md`.
+This is the practical plan for the teleport MVP. Keep unfinished work visible here while active; move paused or partially completed work to `backlog.md`. No game-code changes are authorized until the UI-agent design pass is complete.
 
-## MVP Scope Confirmed
+## Teleport MVP Scope Confirmed
 
-- [x] One hand-designed 5×5 level
-- [x] Fixed source, target, walls, and mirrors; only mirrors are interactive
-- [x] Two diagonal mirror orientations with 90° click rotation
-- [x] Hidden laser until **Fire Laser**
-- [x] Cell-by-cell beam animation with controls disabled during playback
-- [x] Three-life retry system, full Reset, and success actions
-- [x] Offline static web game with no accounts or backend
-- [x] No score, move counter, or Continue button in the MVP
+- [x] MVP uses Easy-style 7×7 boards and starts directly at Level 1; difficulty selection is deferred.
+- [x] MVP contains two hand-designed levels with exactly three rotatable mirrors each.
+- [x] Level 1 is laser emitter → orange target portal; Level 2 is blue source portal → orange target portal.
+- [x] Portals are border-fixed, perpendicular to the border, and show directional arrows; no level has more than two portals.
+- [x] A target hit requires entering the orange portal from its correct direction.
+- [x] Three lives are shared across both levels; losing all lives returns the player to Level 1 with three lives.
+- [x] Failed beams remain visible briefly, then hide; successful portals animate before automatic level progression.
+- [x] The final completion screen has **Play Again** only; **Reset** remains an in-game control.
+- [x] Offline static web game with no accounts, backend, score, or move counter.
+
+## Design Before Implementation
+
+- [ ] Have the laser-UI agent review the portal colors, arrows, target-entry feedback, and automatic Level 1 → Level 2 transition.
+- [ ] Confirm the UI animation timing and accessible labels for source and target portals.
+- [ ] Record the final level coordinates and solution routes before editing runtime files.
 
 ## Foundation
 
@@ -22,41 +29,43 @@ This is the practical MVP plan for the offline 2D laser mirror target game. Keep
 ## Physics Agent
 
 - [x] Define grid coordinates, four movement directions, and mirror orientations.
-- [x] Implement deterministic beam tracing from the border source.
-- [x] Stop on walls and boundaries; detect target entry and repeating states.
-- [x] Return a structured result containing the path and terminal outcome.
-- [x] Test straight paths, both mirror orientations, collisions, target hits, misses, and loops.
+- [ ] Extend the physics contract for directional portal sources and target entry.
+- [ ] Animate or expose teleport source/target events without coupling physics to rendering.
+- [ ] Treat wrong-direction portal entry, source re-entry, walls, boundaries, and loops as failures.
+- [ ] Add deterministic tests for portal direction, source emission, target success, and portal loops.
 
 ## Level Agent
 
 - [x] Define the level-file schema and documented validation rules.
-- [x] Create one clear, hand-designed 5×5 level.
-- [x] Ensure the level has exactly one source and target and at least one verified solution.
-- [x] Keep the initial puzzle short and understandable without introducing advanced mechanics.
+- [ ] Design a clear 7×7 Level 1 with an emitter, orange target portal, three mirrors, and two walls.
+- [ ] Design a clear 7×7 Level 2 with blue/orange portals, three mirrors, and four walls.
+- [ ] Verify at least one correct solution for each level and document the solution route.
+- [ ] Extend the schema for portal role, border position, facing direction, and transition metadata.
 - [ ] Add a dedicated runtime schema validator for level files.
 
 ## UI Agent
 
-- [x] Render the 5×5 board and all fixed and interactive elements.
+- [x] Render the existing board and all fixed and interactive elements.
+- [ ] Render blue source portals, orange target portals, and directional arrows.
+- [ ] Animate portal activation, beam entry, and the automatic transition to Level 2.
 - [x] Hide the beam until **Fire Laser** is pressed.
 - [x] Rotate mirrors by click/tap and animate the beam one cell at a time.
 - [x] Disable mirror and gameplay controls during beam playback.
-- [x] Display three lives and apply the defined failure/reset behavior.
-- [x] Add **Fire Laser**, **Reset**, **Play Again**, and success/failure feedback.
+- [ ] Display one shared life pool across both levels and restart Level 1 after the third Level 2 failure.
+- [ ] Keep **Reset** during gameplay and make final **Play Again** restart the full MVP.
 - [x] Use simple geometric visuals with animation hooks that can support future polish.
 
 ## Integration and Verification
 
-- [x] Connect level data, physics results, and UI rendering without duplicating physics rules.
-- [x] Verify a successful solution, two retained-mirror failures, and third-failure reset in a browser.
-- [x] Verify Reset restores mirrors and three lives in a browser.
-- [x] Test the game in a modern desktop browser at the available viewport.
-- [x] Run the automated suite with `npm test` (17 tests passing).
-- [x] Update `README.md` with the final stack and verified commands.
+- [x] Keep physics independent from rendering and input.
+- [ ] Connect portal level data, physics results, and UI rendering without duplicating rules.
+- [ ] Verify both successful routes, wrong-direction target entry, portal re-entry, life carry-over, and full restart.
+- [ ] Verify the Level 1 → Level 2 transition and final **Play Again** flow in Chrome.
+- [ ] Run the full automated suite after portal support is implemented.
 
 ## Future, Not MVP
 
-- [ ] Add multiple levels and the **Continue** flow.
-- [ ] Add 8×8 and 11×11 boards.
-- [ ] Introduce easy, medium, and hard level groups.
+- [ ] Add 15 levels per difficulty: Easy 7×7, Medium 11×11, and Hard 15×15.
+- [ ] Add difficulty selection and future **Continue** progression.
+- [ ] Add the monster target at level 15 of each difficulty.
 - [ ] Add custom art, sound, keyboard accessibility, and richer effects.
