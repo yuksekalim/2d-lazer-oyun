@@ -1,5 +1,5 @@
-import { DIRECTIONS, MIRROR_ORIENTATIONS } from "../physics/geometry.js";
-import { simulateLaser } from "../physics/laser.js";
+import { DIRECTIONS, MIRROR_ORIENTATIONS } from '../physics/geometry.js';
+import { simulateLaser } from '../physics/laser.js';
 
 const DIRECTION_NAMES = Object.freeze({
     north: DIRECTIONS.NORTH,
@@ -56,16 +56,17 @@ export function normalizeLevel(rawLevel) {
         facingDirection: normalizeDirection(portal.direction ?? portal.facingDirection),
         color: portal.color,
     }));
-    const targetPortal = portals.find((portal) => portal.role === "target");
     const rawTarget = rawLevel.target?.portalId
         ? portals.find((portal) => portal.id === rawLevel.target.portalId)
         : rawLevel.target;
     if (!rawTarget) throw new Error(`Level ${rawLevel.id} has no target portal`);
-    const targetCell = rawTarget.position ? toUiCell(rawTarget.position) : { row: rawTarget.row, col: rawTarget.col };
+    const targetCell = rawTarget.position
+        ? toUiCell(rawTarget.position)
+        : { row: rawTarget.row, col: rawTarget.col };
 
     const source = {
         ...toUiCell(rawSource.position),
-        role: rawSource.role ?? "emitter",
+        role: rawSource.role ?? 'emitter',
         direction: normalizeDirection(rawSource.direction),
         ...(rawSource.portalId ? { portalId: rawSource.portalId } : {}),
         ...(rawSource.color ? { color: rawSource.color } : {}),
@@ -74,20 +75,21 @@ export function normalizeLevel(rawLevel) {
     return {
         id: rawLevel.id,
         name: rawLevel.name,
+        difficulty: rawLevel.id.split('_')[0],
         size: board.width,
         source,
         target: {
             ...targetCell,
-            role: "target",
+            role: 'target',
             portalId: rawTarget.id,
             facingDirection: normalizeDirection(rawTarget.direction ?? rawTarget.facingDirection),
-            color: rawTarget.color ?? "orange",
+            color: rawTarget.color ?? 'orange',
         },
         portals,
         walls: (rawLevel.obstacles ?? []).map(toUiCell),
         mirrors: (rawLevel.mirrors ?? []).map((mirror) => ({
             id: mirror.id,
-            label: mirror.id,
+            label: mirror.id.replace(/_/g, ' '),
             row: mirror.position.y,
             col: mirror.position.x,
             orientation: normalizeOrientation(mirror.orientation),
@@ -170,16 +172,16 @@ export function simulate(boardState) {
         terminalReason: result.terminal.reason,
         terminal: toUiTerminal(result.terminal),
         targetHit: result.targetHit,
-        loopDetected: ["loop", "portal-loop"].includes(result.terminal.reason),
+        loopDetected: ['loop', 'portal-loop'].includes(result.terminal.reason),
     };
 }
 
 export async function loadMvpLevel() {
-    const response = await fetch("../../levels/levels.json");
+    const response = await fetch('../../levels/levels.json');
     if (!response.ok) throw new Error(`Unable to load levels: ${response.status}`);
 
     const content = await response.json();
-    const rawLevels = content.levels?.filter((candidate) => ["easy_01", "easy_02"].includes(candidate.id));
-    if (rawLevels?.length !== 2) throw new Error("Teleport MVP requires exactly two levels");
+    const rawLevels = content.levels?.filter((candidate) => /^(easy|medium|hard)_\d+$/.test(candidate.id));
+    if (rawLevels?.length !== 9) throw new Error('Campaign requires exactly nine levels');
     return rawLevels.map(normalizeLevel);
 }

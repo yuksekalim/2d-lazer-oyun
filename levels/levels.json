@@ -3,7 +3,7 @@
     "levels": [
         {
             "id": "easy_01",
-            "name": "First Gate",
+            "name": "Signal Garden",
             "board": {
                 "width": 7,
                 "height": 7,
@@ -16,52 +16,127 @@
             },
             "source": {
                 "role": "emitter",
-                "position": { "x": 0, "y": 3 },
+                "position": {
+                    "x": 0,
+                    "y": 3
+                },
                 "direction": "E"
             },
             "portals": [
                 {
-                    "id": "target-01",
+                    "id": "easy_01_target",
                     "role": "target",
-                    "position": { "x": 1, "y": 6 },
-                    "direction": "S",
+                    "position": {
+                        "x": 5,
+                        "y": 0
+                    },
+                    "direction": "N",
                     "color": "orange"
                 }
             ],
-            "target": { "portalId": "target-01" },
+            "target": {
+                "portalId": "easy_01_target"
+            },
             "mirrors": [
                 {
                     "id": "turn_a",
-                    "position": { "x": 2, "y": 3 },
+                    "position": {
+                        "x": 2,
+                        "y": 3
+                    },
                     "orientation": "backslash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_b",
-                    "position": { "x": 2, "y": 1 },
+                    "position": {
+                        "x": 2,
+                        "y": 1
+                    },
                     "orientation": "slash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_c",
-                    "position": { "x": 1, "y": 1 },
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 1,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 4,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 5,
+                        "y": 5
+                    },
                     "orientation": "backslash",
                     "rotatable": true
                 }
             ],
             "obstacles": [
-                { "x": 4, "y": 2 },
-                { "x": 5, "y": 5 }
+                {
+                    "x": 4,
+                    "y": 2
+                },
+                {
+                    "x": 3,
+                    "y": 2
+                },
+                {
+                    "x": 4,
+                    "y": 4
+                }
             ],
             "solution": [
-                { "mirror": "turn_a", "orientation": "slash" },
-                { "mirror": "turn_b", "orientation": "backslash" },
-                { "mirror": "turn_c", "orientation": "slash" }
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                }
             ]
         },
         {
             "id": "easy_02",
-            "name": "Portal to Portal",
+            "name": "Crosscurrent",
             "board": {
                 "width": 7,
                 "height": 7,
@@ -74,58 +149,1969 @@
             },
             "source": {
                 "role": "portal",
-                "portalId": "source-02",
-                "position": { "x": 1, "y": 0 },
-                "direction": "S",
+                "portalId": "easy_02_source",
+                "position": {
+                    "x": 5,
+                    "y": 6
+                },
+                "direction": "N",
                 "color": "blue"
             },
             "portals": [
                 {
-                    "id": "source-02",
+                    "id": "easy_02_source",
                     "role": "source",
-                    "position": { "x": 1, "y": 0 },
-                    "direction": "S",
+                    "position": {
+                        "x": 5,
+                        "y": 6
+                    },
+                    "direction": "N",
                     "color": "blue"
                 },
                 {
-                    "id": "target-02",
+                    "id": "easy_02_target",
                     "role": "target",
-                    "position": { "x": 4, "y": 6 },
-                    "direction": "S",
+                    "position": {
+                        "x": 0,
+                        "y": 1
+                    },
+                    "direction": "W",
                     "color": "orange"
                 }
             ],
-            "target": { "portalId": "target-02" },
+            "target": {
+                "portalId": "easy_02_target"
+            },
             "mirrors": [
                 {
                     "id": "turn_a",
-                    "position": { "x": 1, "y": 2 },
+                    "position": {
+                        "x": 5,
+                        "y": 4
+                    },
                     "orientation": "slash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_b",
-                    "position": { "x": 4, "y": 2 },
+                    "position": {
+                        "x": 1,
+                        "y": 4
+                    },
                     "orientation": "slash",
                     "rotatable": true
                 },
                 {
                     "id": "turn_c",
-                    "position": { "x": 5, "y": 4 },
+                    "position": {
+                        "x": 1,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 4,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 4,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 2,
+                        "y": 6
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 3,
+                        "y": 3
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 5,
+                        "y": 2
+                    },
                     "orientation": "slash",
                     "rotatable": true
                 }
             ],
             "obstacles": [
-                { "x": 3, "y": 1 },
-                { "x": 6, "y": 4 },
-                { "x": 3, "y": 6 },
-                { "x": 0, "y": 4 }
+                {
+                    "x": 4,
+                    "y": 6
+                },
+                {
+                    "x": 3,
+                    "y": 6
+                },
+                {
+                    "x": 2,
+                    "y": 5
+                },
+                {
+                    "x": 5,
+                    "y": 1
+                },
+                {
+                    "x": 0,
+                    "y": 2
+                }
             ],
             "solution": [
-                { "mirror": "turn_a", "orientation": "backslash" },
-                { "mirror": "turn_b", "orientation": "backslash" },
-                { "mirror": "turn_c", "orientation": "slash" }
+                {
+                    "mirror": "turn_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                }
+            ]
+        },
+        {
+            "id": "easy_03",
+            "name": "False Shortcut",
+            "board": {
+                "width": 7,
+                "height": 7,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "portal",
+                "portalId": "easy_03_source",
+                "position": {
+                    "x": 6,
+                    "y": 1
+                },
+                "direction": "W",
+                "color": "blue"
+            },
+            "portals": [
+                {
+                    "id": "easy_03_source",
+                    "role": "source",
+                    "position": {
+                        "x": 6,
+                        "y": 1
+                    },
+                    "direction": "W",
+                    "color": "blue"
+                },
+                {
+                    "id": "easy_03_target",
+                    "role": "target",
+                    "position": {
+                        "x": 6,
+                        "y": 5
+                    },
+                    "direction": "E",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "easy_03_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 4,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 4,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 5,
+                        "y": 4
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 5,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 2,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 2,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 2,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 3,
+                        "y": 3
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 6,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 3,
+                    "y": 1
+                },
+                {
+                    "x": 6,
+                    "y": 3
+                },
+                {
+                    "x": 3,
+                    "y": 6
+                },
+                {
+                    "x": 4,
+                    "y": 6
+                },
+                {
+                    "x": 0,
+                    "y": 4
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                }
+            ]
+        },
+        {
+            "id": "medium_01",
+            "name": "Split Horizon",
+            "board": {
+                "width": 11,
+                "height": 11,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "emitter",
+                "position": {
+                    "x": 0,
+                    "y": 5
+                },
+                "direction": "E"
+            },
+            "portals": [
+                {
+                    "id": "medium_01_target",
+                    "role": "target",
+                    "position": {
+                        "x": 6,
+                        "y": 10
+                    },
+                    "direction": "S",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "medium_01_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 2,
+                        "y": 5
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 2,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 1,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 1,
+                        "y": 8
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 8,
+                        "y": 8
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 8,
+                        "y": 4
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 9,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 9,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_i",
+                    "position": {
+                        "x": 6,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 5,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 6,
+                        "y": 6
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 10,
+                        "y": 10
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 4,
+                    "y": 5
+                },
+                {
+                    "x": 3,
+                    "y": 4
+                },
+                {
+                    "x": 7,
+                    "y": 10
+                },
+                {
+                    "x": 10,
+                    "y": 6
+                },
+                {
+                    "x": 0,
+                    "y": 9
+                },
+                {
+                    "x": 4,
+                    "y": 1
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_i",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                }
+            ]
+        },
+        {
+            "id": "medium_02",
+            "name": "The Switchback",
+            "board": {
+                "width": 11,
+                "height": 11,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "portal",
+                "portalId": "medium_02_source",
+                "position": {
+                    "x": 6,
+                    "y": 0
+                },
+                "direction": "S",
+                "color": "blue"
+            },
+            "portals": [
+                {
+                    "id": "medium_02_source",
+                    "role": "source",
+                    "position": {
+                        "x": 6,
+                        "y": 0
+                    },
+                    "direction": "S",
+                    "color": "blue"
+                },
+                {
+                    "id": "medium_02_target",
+                    "role": "target",
+                    "position": {
+                        "x": 0,
+                        "y": 1
+                    },
+                    "direction": "W",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "medium_02_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 6,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 2,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 2,
+                        "y": 8
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 8,
+                        "y": 8
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 8,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 4,
+                        "y": 9
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 4,
+                        "y": 6
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 1,
+                        "y": 6
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_i",
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 1,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 9,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 9,
+                        "y": 6
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 6,
+                    "y": 6
+                },
+                {
+                    "x": 4,
+                    "y": 5
+                },
+                {
+                    "x": 10,
+                    "y": 8
+                },
+                {
+                    "x": 7,
+                    "y": 4
+                },
+                {
+                    "x": 0,
+                    "y": 4
+                },
+                {
+                    "x": 5,
+                    "y": 10
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_i",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "backslash"
+                }
+            ]
+        },
+        {
+            "id": "medium_03",
+            "name": "Crossed Channels",
+            "board": {
+                "width": 11,
+                "height": 11,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "portal",
+                "portalId": "medium_03_source",
+                "position": {
+                    "x": 10,
+                    "y": 1
+                },
+                "direction": "W",
+                "color": "blue"
+            },
+            "portals": [
+                {
+                    "id": "medium_03_source",
+                    "role": "source",
+                    "position": {
+                        "x": 10,
+                        "y": 1
+                    },
+                    "direction": "W",
+                    "color": "blue"
+                },
+                {
+                    "id": "medium_03_target",
+                    "role": "target",
+                    "position": {
+                        "x": 10,
+                        "y": 7
+                    },
+                    "direction": "E",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "medium_03_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 8,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 8,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 9,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 9,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 3,
+                        "y": 9
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 3,
+                        "y": 3
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 7,
+                        "y": 3
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 7,
+                        "y": 7
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 6,
+                        "y": 7
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 5,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 10,
+                    "y": 5
+                },
+                {
+                    "x": 6,
+                    "y": 5
+                },
+                {
+                    "x": 1,
+                    "y": 8
+                },
+                {
+                    "x": 9,
+                    "y": 10
+                },
+                {
+                    "x": 6,
+                    "y": 10
+                },
+                {
+                    "x": 10,
+                    "y": 8
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                }
+            ]
+        },
+        {
+            "id": "hard_01",
+            "name": "Long Orbit",
+            "board": {
+                "width": 15,
+                "height": 15,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "emitter",
+                "position": {
+                    "x": 0,
+                    "y": 7
+                },
+                "direction": "E"
+            },
+            "portals": [
+                {
+                    "id": "hard_01_target",
+                    "role": "target",
+                    "position": {
+                        "x": 12,
+                        "y": 0
+                    },
+                    "direction": "N",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "hard_01_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 2,
+                        "y": 7
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 2,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 1,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 1,
+                        "y": 11
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 5,
+                        "y": 11
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 5,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 3,
+                        "y": 4
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 3,
+                        "y": 12
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_i",
+                    "position": {
+                        "x": 11,
+                        "y": 12
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_j",
+                    "position": {
+                        "x": 11,
+                        "y": 8
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_k",
+                    "position": {
+                        "x": 12,
+                        "y": 8
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 8,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 13,
+                        "y": 5
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 7,
+                        "y": 13
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 4,
+                    "y": 7
+                },
+                {
+                    "x": 2,
+                    "y": 10
+                },
+                {
+                    "x": 6,
+                    "y": 11
+                },
+                {
+                    "x": 10,
+                    "y": 6
+                },
+                {
+                    "x": 13,
+                    "y": 6
+                },
+                {
+                    "x": 4,
+                    "y": 14
+                },
+                {
+                    "x": 0,
+                    "y": 12
+                },
+                {
+                    "x": 7,
+                    "y": 11
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_i",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_j",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_k",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                }
+            ]
+        },
+        {
+            "id": "hard_02",
+            "name": "Folded Corridor",
+            "board": {
+                "width": 15,
+                "height": 15,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "portal",
+                "portalId": "hard_02_source",
+                "position": {
+                    "x": 12,
+                    "y": 14
+                },
+                "direction": "N",
+                "color": "blue"
+            },
+            "portals": [
+                {
+                    "id": "hard_02_source",
+                    "role": "source",
+                    "position": {
+                        "x": 12,
+                        "y": 14
+                    },
+                    "direction": "N",
+                    "color": "blue"
+                },
+                {
+                    "id": "hard_02_target",
+                    "role": "target",
+                    "position": {
+                        "x": 1,
+                        "y": 14
+                    },
+                    "direction": "S",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "hard_02_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 12,
+                        "y": 12
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 3,
+                        "y": 12
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 3,
+                        "y": 9
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 9,
+                        "y": 9
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 9,
+                        "y": 11
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 6,
+                        "y": 11
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 6,
+                        "y": 13
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 10,
+                        "y": 13
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_i",
+                    "position": {
+                        "x": 10,
+                        "y": 3
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_j",
+                    "position": {
+                        "x": 3,
+                        "y": 3
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_k",
+                    "position": {
+                        "x": 3,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_l",
+                    "position": {
+                        "x": 1,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 2,
+                        "y": 12
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 12,
+                        "y": 6
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 6,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_d",
+                    "position": {
+                        "x": 8,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 11,
+                    "y": 14
+                },
+                {
+                    "x": 4,
+                    "y": 6
+                },
+                {
+                    "x": 7,
+                    "y": 5
+                },
+                {
+                    "x": 11,
+                    "y": 8
+                },
+                {
+                    "x": 13,
+                    "y": 9
+                },
+                {
+                    "x": 2,
+                    "y": 10
+                },
+                {
+                    "x": 2,
+                    "y": 4
+                },
+                {
+                    "x": 8,
+                    "y": 7
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_i",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_j",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_k",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_l",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_d",
+                    "orientation": "backslash"
+                }
+            ]
+        },
+        {
+            "id": "hard_03",
+            "name": "The Knot",
+            "board": {
+                "width": 15,
+                "height": 15,
+                "boundaries": {
+                    "north": "blocked",
+                    "east": "blocked",
+                    "south": "blocked",
+                    "west": "blocked"
+                }
+            },
+            "source": {
+                "role": "portal",
+                "portalId": "hard_03_source",
+                "position": {
+                    "x": 1,
+                    "y": 0
+                },
+                "direction": "S",
+                "color": "blue"
+            },
+            "portals": [
+                {
+                    "id": "hard_03_source",
+                    "role": "source",
+                    "position": {
+                        "x": 1,
+                        "y": 0
+                    },
+                    "direction": "S",
+                    "color": "blue"
+                },
+                {
+                    "id": "hard_03_target",
+                    "role": "target",
+                    "position": {
+                        "x": 13,
+                        "y": 14
+                    },
+                    "direction": "S",
+                    "color": "orange"
+                }
+            ],
+            "target": {
+                "portalId": "hard_03_target"
+            },
+            "mirrors": [
+                {
+                    "id": "turn_a",
+                    "position": {
+                        "x": 1,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_b",
+                    "position": {
+                        "x": 6,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
+                    "position": {
+                        "x": 6,
+                        "y": 6
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_d",
+                    "position": {
+                        "x": 2,
+                        "y": 6
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_e",
+                    "position": {
+                        "x": 2,
+                        "y": 12
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_f",
+                    "position": {
+                        "x": 10,
+                        "y": 12
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_g",
+                    "position": {
+                        "x": 10,
+                        "y": 8
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_h",
+                    "position": {
+                        "x": 4,
+                        "y": 8
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_i",
+                    "position": {
+                        "x": 4,
+                        "y": 4
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_j",
+                    "position": {
+                        "x": 12,
+                        "y": 4
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_k",
+                    "position": {
+                        "x": 12,
+                        "y": 11
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_l",
+                    "position": {
+                        "x": 9,
+                        "y": 11
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_m",
+                    "position": {
+                        "x": 9,
+                        "y": 5
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_n",
+                    "position": {
+                        "x": 7,
+                        "y": 5
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_o",
+                    "position": {
+                        "x": 7,
+                        "y": 13
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_p",
+                    "position": {
+                        "x": 5,
+                        "y": 13
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_q",
+                    "position": {
+                        "x": 5,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_r",
+                    "position": {
+                        "x": 13,
+                        "y": 1
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_a",
+                    "position": {
+                        "x": 8,
+                        "y": 2
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_b",
+                    "position": {
+                        "x": 11,
+                        "y": 7
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_c",
+                    "position": {
+                        "x": 2,
+                        "y": 1
+                    },
+                    "orientation": "backslash",
+                    "rotatable": true
+                },
+                {
+                    "id": "decoy_d",
+                    "position": {
+                        "x": 11,
+                        "y": 2
+                    },
+                    "orientation": "slash",
+                    "rotatable": true
+                }
+            ],
+            "obstacles": [
+                {
+                    "x": 0,
+                    "y": 4
+                },
+                {
+                    "x": 0,
+                    "y": 10
+                },
+                {
+                    "x": 2,
+                    "y": 4
+                },
+                {
+                    "x": 3,
+                    "y": 3
+                },
+                {
+                    "x": 6,
+                    "y": 10
+                },
+                {
+                    "x": 8,
+                    "y": 10
+                },
+                {
+                    "x": 11,
+                    "y": 12
+                },
+                {
+                    "x": 13,
+                    "y": 0
+                },
+                {
+                    "x": 14,
+                    "y": 10
+                }
+            ],
+            "solution": [
+                {
+                    "mirror": "turn_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_b",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_c",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_d",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_e",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_f",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_g",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_h",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_i",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_j",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_k",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_l",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_m",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_n",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_o",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_p",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "turn_q",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "turn_r",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_a",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_b",
+                    "orientation": "slash"
+                },
+                {
+                    "mirror": "decoy_c",
+                    "orientation": "backslash"
+                },
+                {
+                    "mirror": "decoy_d",
+                    "orientation": "slash"
+                }
             ]
         }
     ]
