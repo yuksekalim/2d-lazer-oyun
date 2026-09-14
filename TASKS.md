@@ -12,9 +12,12 @@ This file tracks active implementation work for the 2D laser mirror target game.
 ## MVP: Board and Game State
 
 - [ ] Define board sizes for 5×5, 8×8, and 11×11 grids.
-- [ ] Define level data for the laser source, target, walls, mirrors, and empty cells.
+- [x] Define level data for the laser source, target, obstacles (walls), mirrors, and empty cells.
 - [ ] Render each board element from game state.
-- [ ] Validate that levels contain one source and one target.
+- [x] Validate that levels contain one source and one target.
+
+Level content and intended solution paths are validated with
+`python3 levels/validate_levels.py`.
 
 ## MVP: Laser Simulation
 

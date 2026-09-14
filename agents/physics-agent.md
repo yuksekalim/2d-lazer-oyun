@@ -22,6 +22,15 @@ Preferred implementation locations are `src/physics/` and `tests/physics/`.
 
 The agent may define the board-state contract needed by other agents, but must not change UI or level content to make a physics test pass.
 
+## Current board-state contract
+
+The version 1 level data uses a top-left origin with `x` increasing right and
+`y` increasing down. The emitter occupies a cell and the beam begins in the
+next cell in its declared direction. Mirror orientations are `slash` and
+`backslash`; `obstacles` are blocking wall cells; and the four board
+boundaries are explicitly marked `blocked`. Keep this contract aligned with
+[`levels/README.md`](../levels/README.md) when changing simulation behavior.
+
 ## Required Behavior
 
 The simulation must be deterministic, independent of rendering and input, and able to explain its result through a structured response such as a beam path, terminal reason, and target-hit status. It must handle invalid or looping paths without hanging.

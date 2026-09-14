@@ -20,9 +20,11 @@ The root object contains `formatVersion` and a `levels` array. Each level has:
 - `mirrors` — cells containing a rotatable mirror. MVP mirrors have two states:
   `slash` (`/`) and `backslash` (`\\`). `orientation` is the initial state and
   `rotatable` indicates whether the player may change it.
-- `obstacles` — optional cells that stop the beam before it can pass through.
-- `solution` — optional authoring metadata listing the final orientation for
-  each mirror in an intended solution. It is not required at runtime.
+- `obstacles` — optional wall cells that stop the beam before it can pass
+  through.
+- `solution` — authoring metadata listing the final orientation for each mirror
+  in an intended solution. It is runtime-optional, but required on committed
+  MVP levels so the validator can prove solvability.
 
 All occupied cells are unique. A level is solvable when its mirrors can be
 rotated from their initial orientations to the orientations in `solution` and
@@ -38,3 +40,16 @@ the resulting beam enters the target before hitting an obstacle or boundary.
 The five included levels progress from one-turn 5×5 layouts to a four-turn
 8×8 layout. The intended solutions are recorded in each level's `solution`
 array for content review and future hint support.
+
+## Validation
+
+Run the dependency-free validator from the repository root after changing
+level content:
+
+```text
+python3 levels/validate_levels.py
+```
+
+It checks the version 1 structure, board bounds, unique occupied cells, legal
+mirror and obstacle placement, complete solution metadata, target reachability,
+and repeating beam states.

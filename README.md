@@ -8,6 +8,11 @@ Each level contains a laser source, a square board, walls, rotatable mirrors, an
 
 Supported board sizes are planned to include 5×5, 8×8, and 11×11 grids.
 
+Starter content is available in [`levels/levels.json`](levels/levels.json),
+with its version 1 format documented in [`levels/README.md`](levels/README.md).
+The current set contains five beginner levels on 5×5 and 8×8 boards; its
+`obstacles` field represents blocking wall cells.
+
 ## Gameplay
 
 1. Inspect the board and the initial laser path.

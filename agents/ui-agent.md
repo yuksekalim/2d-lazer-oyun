@@ -22,6 +22,12 @@ Preferred implementation locations are `src/ui/`, `styles/`, `public/`, and UI-f
 
 Consume the Physics Agent’s simulation result and the Level Agent’s level data. The UI may request a simulation after input, but it must not reproduce simulation rules locally.
 
+For the current level format, load `levels/levels.json` as documented in
+[`levels/README.md`](../levels/README.md). Render `obstacles` as wall cells,
+initialize each mirror from its `orientation`, and use `rotatable` to decide
+whether it is interactive. The authoring-only `solution` metadata must not be
+shown as the player's starting state or as an automatic answer.
+
 ## Interaction Requirements
 
 Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Preserve a usable board and control layout on small screens.
