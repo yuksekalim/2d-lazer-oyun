@@ -1,4 +1,4 @@
-const ORIENTATION_LABELS = ['northwest ↗', 'northeast ↘', 'northwest ↗', 'northeast ↘'];
+const ORIENTATION_LABELS = ['slash /', 'backslash \\', 'slash /', 'backslash \\'];
 
 const sameCell = (a, b) => a && b && a.row === b.row && a.col === b.col;
 

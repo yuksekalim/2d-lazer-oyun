@@ -15,6 +15,9 @@
  * Replace `simulatePlaceholder` with the physics agent's `simulate` export
  * when it becomes available. The paths below are precomputed presentation
  * fixtures, not reflection logic. They exist only to exercise UI states.
+ * Orientation convention for this fixture: 0 renders `/` and 1 renders `\\`.
+ * A beam entering `/` from the right reflects upward; entering `\\` from the
+ * right reflects downward.
  */
 
 export const DEMO_LEVEL = Object.freeze({
