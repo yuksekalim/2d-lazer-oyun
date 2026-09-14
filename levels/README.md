@@ -1,45 +1,30 @@
 # MVP level data
 
-`levels.json` is the first level-data format. It is intentionally small and
-renderer-agnostic so the game can load it without coupling level content to
-laser physics or UI code.
+`levels.json` contains the two authored teleport MVP levels. It is
+renderer-agnostic and uses top-left origin coordinates: `x` increases east and
+`y` increases south.
 
-## Format version 1
+## Format version 2
 
-The root object contains `formatVersion` and a `levels` array. Each level has:
+Each level contains:
 
-- `id` and `name` — stable content identifiers and a player-facing title.
-- `board.width` and `board.height` — dimensions in cells. Coordinates use an
-  origin at the top-left; `x` increases right and `y` increases down.
-- `board.boundaries` — the four edges. `blocked` means the beam stops when it
-  tries to leave the board.
-- `emitter.position` and `emitter.direction` — the source cell and initial
-  direction (`north`, `east`, `south`, or `west`). The beam starts in the next
-  cell in that direction.
-- `target.position` — the cell that completes the level when the beam enters it.
-- `mirrors` — cells containing a rotatable mirror. MVP mirrors have two states:
-  `slash` (`/`) and `backslash` (`\\`). `orientation` is the initial state and
-  `rotatable` indicates whether the player may change it.
-- `obstacles` — optional wall cells that stop the beam before it can pass
-  through.
-- `solution` — authoring metadata listing the final orientation for each mirror
-  in an intended solution. It is runtime-optional, but required on committed
-  MVP levels so the validator can prove solvability.
+- `board.width`, `board.height`, and four blocked `boundaries`.
+- `source` with `role` (`emitter` or `portal`), `position`, and cardinal
+  `direction`. A portal source also has `portalId` and `color`.
+- `portals`, with at most one `source` and one `target`. Each portal has an
+  `id`, `role`, `position`, cardinal `direction`, and `color`.
+- `target.portalId`, identifying the orange target portal.
+- `mirrors`, each with an `id`, position, initial `orientation` (`slash` or
+  `backslash`), and `rotatable: true`.
+- `obstacles`, which are fixed wall cells.
+- `solution`, authoring metadata listing the final orientation of every mirror.
 
-All occupied cells are unique. A level is solvable when its mirrors can be
-rotated from their initial orientations to the orientations in `solution` and
-the resulting beam enters the target before hitting an obstacle or boundary.
+Portals sit on the border and face perpendicular to it. A source points into
+the board; a target’s direction is the exact direction a beam must travel when
+entering it. The target cell alone is not sufficient for success.
 
-## Mirror directions
-
-| Orientation | Reflections |
-| --- | --- |
-| `slash` (`/`) | north → east, east → north, south → west, west → south |
-| `backslash` (`\\`) | north → west, west → north, south → east, east → south |
-
-The five included levels progress from one-turn 5×5 layouts to a four-turn
-8×8 layout. The intended solutions are recorded in each level's `solution`
-array for content review and future hint support.
+The MVP levels each use a 7×7 board, three rotatable mirrors, and an intended
+solution route documented in `agents/level-agent.md`.
 
 ## Validation
 
@@ -50,6 +35,6 @@ level content:
 python3 levels/validate_levels.py
 ```
 
-It checks the version 1 structure, board bounds, unique occupied cells, legal
-mirror and obstacle placement, complete solution metadata, target reachability,
-and repeating beam states.
+It checks the format, dimensions, border-facing portal directions, unique
+occupied cells, legal mirror and wall placement, complete solution metadata,
+and target reachability.

@@ -16,8 +16,7 @@
                     <span>BEAMLINE</span>
                 </a>
                 <div class="topbar-meta" aria-label="Level progress">
-                    <span class="level-tag" id="level-tag">BEGINNER 01</span>
-                    <span class="lives"><span id="lives">3</span> LIVES</span>
+                    <span class="level-tag" id="level-tag">EASY 01</span>
                 </div>
             </header>
 
@@ -25,7 +24,7 @@
                 <section class="intro-panel" aria-labelledby="game-title">
                     <p class="eyebrow"><span class="eyebrow-dot"></span> OPTICAL CIRCUIT / 01</p>
                     <h1 id="game-title">Find the<br><em>clear line.</em></h1>
-                    <p class="intro-copy">Rotate the mirrors without seeing the beam, then fire when you think the route is clear.</p>
+                    <p class="intro-copy">Set the mirrors without seeing the beam, then fire when you think the route is clear.</p>
                     <div class="legend" aria-label="Board legend">
                         <span><i class="legend-swatch source-swatch"></i> emitter</span>
                         <span><i class="legend-swatch mirror-swatch"></i> mirror</span>
@@ -36,11 +35,18 @@
                 <section class="board-panel" aria-label="Laser mirror puzzle">
                     <div class="board-heading">
                         <span class="board-heading-label"><span class="live-dot"></span> LIVE BOARD</span>
-                        <span class="board-size" id="board-size">05 × 05 GRID</span>
+                        <div class="board-heading-tools">
+                            <div class="board-lives" id="lives-row" aria-live="polite" aria-label="3 lives remaining" role="img">
+                                <span class="heart is-filled" data-life="1" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="2" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="3" aria-hidden="true">♥</span>
+                            </div>
+                            <span class="board-size" id="board-size">07 × 07 GRID</span>
+                        </div>
                     </div>
                     <div class="board-wrap" id="board-wrap">
-                        <div id="game-board" class="game-board" role="grid" aria-label="5 by 5 laser puzzle board"></div>
-                        <svg id="beam-layer" class="beam-layer" viewBox="0 0 5 5" preserveAspectRatio="none" aria-hidden="true"></svg>
+                        <div id="game-board" class="game-board" role="grid" aria-label="7 by 7 laser puzzle board"></div>
+                        <svg id="beam-layer" class="beam-layer" viewBox="0 0 7 7" preserveAspectRatio="none" aria-hidden="true"></svg>
                         <div class="board-glow" aria-hidden="true"></div>
                     </div>
                     <div class="board-caption">
@@ -54,7 +60,7 @@
                     <div class="status-card" id="status-card" data-state="active" aria-live="polite">
                         <div class="status-icon" aria-hidden="true"><span></span></div>
                         <div>
-                            <p class="status-kicker" id="status-kicker">BEAM STATUS</p>
+                            <p class="status-kicker" id="status-kicker">AWAITING FIRE</p>
                             <p class="status-title" id="status-title">Aim the mirrors</p>
                             <p class="status-detail" id="status-detail">The beam is hidden until you fire the laser.</p>
                         </div>
@@ -81,7 +87,7 @@
                         <div class="mission-number" id="mission-lives">3</div>
                         <div>
                             <span class="section-label">LIVES</span>
-                            <p>Three attempts<br>per reset cycle.</p>
+                            <p>Shared across<br>both levels.</p>
                         </div>
                     </div>
                 </aside>
@@ -102,7 +108,6 @@
                 <p class="win-copy">The receiver is online. The laser found a clear route to the target.</p>
                 <div class="win-actions">
                     <button class="reset-button win-reset" id="play-again-button" type="button">Play again <span>↺</span></button>
-                    <button class="reset-button win-reset win-reset-secondary" id="win-reset-button" type="button">Reset <span>↺</span></button>
                 </div>
             </div>
         </div>

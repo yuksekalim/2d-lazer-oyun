@@ -1,12 +1,12 @@
 {
-    "formatVersion": 1,
+    "formatVersion": 2,
     "levels": [
         {
-            "id": "beginner_01",
-            "name": "First Turn",
+            "id": "easy_01",
+            "name": "First Gate",
             "board": {
-                "width": 5,
-                "height": 5,
+                "width": 7,
+                "height": 7,
                 "boundaries": {
                     "north": "blocked",
                     "east": "blocked",
@@ -14,74 +14,57 @@
                     "west": "blocked"
                 }
             },
-            "emitter": {
-                "position": { "x": 0, "y": 2 },
-                "direction": "east"
+            "source": {
+                "role": "emitter",
+                "position": { "x": 0, "y": 3 },
+                "direction": "E"
             },
-            "target": {
-                "position": { "x": 2, "y": 0 }
-            },
-            "mirrors": [
+            "portals": [
                 {
-                    "id": "turn",
-                    "position": { "x": 2, "y": 2 },
-                    "orientation": "backslash",
-                    "rotatable": true
+                    "id": "target-01",
+                    "role": "target",
+                    "position": { "x": 1, "y": 6 },
+                    "direction": "S",
+                    "color": "orange"
                 }
             ],
-            "obstacles": [],
-            "solution": [
-                { "mirror": "turn", "orientation": "slash" }
-            ]
-        },
-        {
-            "id": "beginner_02",
-            "name": "Climb the Steps",
-            "board": {
-                "width": 5,
-                "height": 5,
-                "boundaries": {
-                    "north": "blocked",
-                    "east": "blocked",
-                    "south": "blocked",
-                    "west": "blocked"
-                }
-            },
-            "emitter": {
-                "position": { "x": 0, "y": 4 },
-                "direction": "east"
-            },
-            "target": {
-                "position": { "x": 4, "y": 1 }
-            },
+            "target": { "portalId": "target-01" },
             "mirrors": [
                 {
-                    "id": "lower_turn",
-                    "position": { "x": 1, "y": 4 },
+                    "id": "turn_a",
+                    "position": { "x": 2, "y": 3 },
                     "orientation": "backslash",
                     "rotatable": true
                 },
                 {
-                    "id": "upper_turn",
+                    "id": "turn_b",
+                    "position": { "x": 2, "y": 1 },
+                    "orientation": "slash",
+                    "rotatable": true
+                },
+                {
+                    "id": "turn_c",
                     "position": { "x": 1, "y": 1 },
                     "orientation": "backslash",
                     "rotatable": true
                 }
             ],
             "obstacles": [
-                { "x": 3, "y": 3 }
+                { "x": 4, "y": 2 },
+                { "x": 5, "y": 5 }
             ],
             "solution": [
-                { "mirror": "lower_turn", "orientation": "slash" },
-                { "mirror": "upper_turn", "orientation": "slash" }
+                { "mirror": "turn_a", "orientation": "slash" },
+                { "mirror": "turn_b", "orientation": "backslash" },
+                { "mirror": "turn_c", "orientation": "slash" }
             ]
         },
         {
-            "id": "beginner_03",
-            "name": "Three Corners",
+            "id": "easy_02",
+            "name": "Portal to Portal",
             "board": {
-                "width": 5,
-                "height": 5,
+                "width": 7,
+                "height": 7,
                 "boundaries": {
                     "north": "blocked",
                     "east": "blocked",
@@ -89,151 +72,60 @@
                     "west": "blocked"
                 }
             },
-            "emitter": {
-                "position": { "x": 4, "y": 0 },
-                "direction": "south"
+            "source": {
+                "role": "portal",
+                "portalId": "source-02",
+                "position": { "x": 0, "y": 5 },
+                "direction": "E",
+                "color": "blue"
             },
-            "target": {
-                "position": { "x": 0, "y": 4 }
-            },
+            "portals": [
+                {
+                    "id": "source-02",
+                    "role": "source",
+                    "position": { "x": 0, "y": 5 },
+                    "direction": "E",
+                    "color": "blue"
+                },
+                {
+                    "id": "target-02",
+                    "role": "target",
+                    "position": { "x": 5, "y": 6 },
+                    "direction": "S",
+                    "color": "orange"
+                }
+            ],
+            "target": { "portalId": "target-02" },
             "mirrors": [
                 {
-                    "id": "top_turn",
-                    "position": { "x": 4, "y": 2 },
+                    "id": "turn_a",
+                    "position": { "x": 2, "y": 5 },
                     "orientation": "backslash",
                     "rotatable": true
                 },
                 {
-                    "id": "middle_turn",
+                    "id": "turn_b",
                     "position": { "x": 2, "y": 2 },
                     "orientation": "backslash",
                     "rotatable": true
                 },
                 {
-                    "id": "bottom_turn",
-                    "position": { "x": 2, "y": 4 },
-                    "orientation": "backslash",
+                    "id": "turn_c",
+                    "position": { "x": 5, "y": 2 },
+                    "orientation": "slash",
                     "rotatable": true
                 }
             ],
             "obstacles": [
                 { "x": 1, "y": 1 },
-                { "x": 3, "y": 4 }
-            ],
-            "solution": [
-                { "mirror": "top_turn", "orientation": "slash" },
-                { "mirror": "middle_turn", "orientation": "slash" },
-                { "mirror": "bottom_turn", "orientation": "slash" }
-            ]
-        },
-        {
-            "id": "beginner_04",
-            "name": "Around the Block",
-            "board": {
-                "width": 8,
-                "height": 8,
-                "boundaries": {
-                    "north": "blocked",
-                    "east": "blocked",
-                    "south": "blocked",
-                    "west": "blocked"
-                }
-            },
-            "emitter": {
-                "position": { "x": 0, "y": 7 },
-                "direction": "east"
-            },
-            "target": {
-                "position": { "x": 6, "y": 7 }
-            },
-            "mirrors": [
-                {
-                    "id": "rise",
-                    "position": { "x": 2, "y": 7 },
-                    "orientation": "backslash",
-                    "rotatable": true
-                },
-                {
-                    "id": "cross",
-                    "position": { "x": 2, "y": 2 },
-                    "orientation": "backslash",
-                    "rotatable": true
-                },
-                {
-                    "id": "fall",
-                    "position": { "x": 6, "y": 2 },
-                    "orientation": "slash",
-                    "rotatable": true
-                }
-            ],
-            "obstacles": [
-                { "x": 4, "y": 7 },
                 { "x": 4, "y": 4 },
-                { "x": 1, "y": 1 }
+                { "x": 6, "y": 4 },
+                { "x": 3, "y": 6 }
             ],
             "solution": [
-                { "mirror": "rise", "orientation": "slash" },
-                { "mirror": "cross", "orientation": "slash" },
-                { "mirror": "fall", "orientation": "backslash" }
-            ]
-        },
-        {
-            "id": "beginner_05",
-            "name": "The Long Way Home",
-            "board": {
-                "width": 8,
-                "height": 8,
-                "boundaries": {
-                    "north": "blocked",
-                    "east": "blocked",
-                    "south": "blocked",
-                    "west": "blocked"
-                }
-            },
-            "emitter": {
-                "position": { "x": 7, "y": 7 },
-                "direction": "west"
-            },
-            "target": {
-                "position": { "x": 0, "y": 6 }
-            },
-            "mirrors": [
-                {
-                    "id": "northbound",
-                    "position": { "x": 5, "y": 7 },
-                    "orientation": "slash",
-                    "rotatable": true
-                },
-                {
-                    "id": "eastbound",
-                    "position": { "x": 5, "y": 3 },
-                    "orientation": "backslash",
-                    "rotatable": true
-                },
-                {
-                    "id": "southbound",
-                    "position": { "x": 6, "y": 3 },
-                    "orientation": "slash",
-                    "rotatable": true
-                },
-                {
-                    "id": "homebound",
-                    "position": { "x": 6, "y": 6 },
-                    "orientation": "backslash",
-                    "rotatable": true
-                }
-            ],
-            "obstacles": [
-                { "x": 2, "y": 7 },
-                { "x": 3, "y": 5 },
-                { "x": 4, "y": 4 },
-                { "x": 1, "y": 1 }
-            ],
-            "solution": [
-                { "mirror": "northbound", "orientation": "backslash" },
-                { "mirror": "eastbound", "orientation": "slash" },
-                { "mirror": "southbound", "orientation": "backslash" },
-                { "mirror": "homebound", "orientation": "slash" }
+                { "mirror": "turn_a", "orientation": "slash" },
+                { "mirror": "turn_b", "orientation": "slash" },
+                { "mirror": "turn_c", "orientation": "backslash" }
             ]
         }
     ]

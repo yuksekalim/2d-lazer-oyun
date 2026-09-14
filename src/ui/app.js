@@ -13,7 +13,7 @@ const boardWrap = document.querySelector('#board-wrap');
 const beamLayer = document.querySelector('#beam-layer');
 const levelTagElement = document.querySelector('#level-tag');
 const boardSizeElement = document.querySelector('#board-size');
-const livesElement = document.querySelector('#lives');
+const livesRow = document.querySelector('#lives-row');
 const missionLivesElement = document.querySelector('#mission-lives');
 const statusCard = document.querySelector('#status-card');
 const statusKicker = document.querySelector('#status-kicker');
@@ -23,35 +23,40 @@ const fireButton = document.querySelector('#fire-button');
 const resetButton = document.querySelector('#reset-button');
 const winOverlay = document.querySelector('#win-overlay');
 const playAgainButton = document.querySelector('#play-again-button');
-const winResetButton = document.querySelector('#win-reset-button');
 
+let levels = [];
+let levelIndex = 0;
 let level = null;
 let boardState = null;
 let lastSimulation = null;
 let lives = MAX_LIVES;
 let beamVisible = false;
 let isAnimating = false;
+let isCoolingDown = false;
 let isSolved = false;
 let cancelLaserAnimation = null;
+let feedbackTimer = null;
 
-function createState() {
-    return createInitialState(level);
+function setStatus(state, kicker, title, detail) {
+    statusCard.dataset.state = state;
+    statusKicker.textContent = kicker;
+    statusTitle.textContent = title;
+    statusDetail.textContent = detail;
 }
 
 function updateStatus(simulation) {
     if (!beamVisible || !simulation) {
-        statusCard.dataset.state = 'active';
-        statusKicker.textContent = 'AWAITING FIRE';
-        statusTitle.textContent = 'Aim the mirrors';
-        statusDetail.textContent = 'The beam is hidden until you fire the laser.';
+        setStatus('active', 'AWAITING FIRE', 'Aim the mirrors', 'The beam is hidden until you fire the laser.');
         return;
     }
 
     if (isAnimating) {
-        statusCard.dataset.state = 'active';
-        statusKicker.textContent = 'BEAM IN TRANSIT';
-        statusTitle.textContent = 'Tracing the route';
-        statusDetail.textContent = 'Watch the beam move through each cell.';
+        setStatus('active', 'BEAM IN TRANSIT', 'Tracing the route', 'Watch the beam move through each cell.');
+        return;
+    }
+
+    if (isCoolingDown) {
+        setStatus('blocked', 'ATTEMPT RECORDED', 'Beam fading', 'The next attempt unlocks when the route clears.');
         return;
     }
 
@@ -60,13 +65,26 @@ function updateStatus(simulation) {
         boundary: ['blocked', 'ATTEMPT FAILED', 'Beam left the board', 'Rotate a mirror and try again.'],
         wall: ['blocked', 'ATTEMPT FAILED', 'Beam blocked', 'A wall interrupted the transmission.'],
         loop: ['loop', 'ATTEMPT FAILED', 'Loop detected', 'The beam repeated a path. Try another angle.'],
-        'step-limit': ['blocked', 'ATTEMPT FAILED', 'Beam stopped', 'The route exceeded the safe step limit.'],
+        'wrong-target-direction': ['blocked', 'ATTEMPT FAILED', 'Wrong portal direction', 'The target portal rejected that approach.'],
+        'source-reentry': ['loop', 'ATTEMPT FAILED', 'Source portal re-entry', 'The beam returned to its source.'],
+        'portal-loop': ['loop', 'ATTEMPT FAILED', 'Portal loop detected', 'The beam repeated a portal path.'],
     };
     const [state, kicker, title, detail] = states[simulation.terminalReason] ?? states.boundary;
-    statusCard.dataset.state = state;
-    statusKicker.textContent = kicker;
-    statusTitle.textContent = title;
-    statusDetail.textContent = detail;
+    setStatus(state, kicker, title, detail);
+}
+
+function updateLives() {
+    livesRow.setAttribute('aria-label', `${lives} ${lives === 1 ? 'life' : 'lives'} remaining`);
+    livesRow.querySelectorAll('.heart').forEach((heart) => {
+        const filled = Number(heart.dataset.life) <= lives;
+        heart.classList.toggle('is-filled', filled);
+        heart.textContent = filled ? '♥' : '♡';
+    });
+    missionLivesElement.textContent = lives;
+}
+
+function createState() {
+    return createInitialState(level);
 }
 
 function render({ animatedMirrorId = null } = {}) {
@@ -82,19 +100,24 @@ function render({ animatedMirrorId = null } = {}) {
         showTrace: beamVisible && !isAnimating,
     });
 
-    livesElement.textContent = lives;
-    missionLivesElement.textContent = lives;
-    fireButton.disabled = isAnimating || isSolved;
+    levelTagElement.textContent = level.name.toUpperCase();
+    boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
+    boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
+    updateLives();
+    fireButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
     resetButton.disabled = isAnimating;
     boardWrap.dataset.terminalReason = visibleSimulation.terminalReason ?? '';
     updateStatus(lastSimulation);
 
+    elements.mirrorButtons.forEach((mirrorButton) => {
+        mirrorButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
+    });
     if (animatedMirrorId) animateMirror(elements.mirrorButtons.get(animatedMirrorId));
     if (!isAnimating) animateTarget(elements.targetElement, visibleSimulation.targetHit);
 }
 
 function rotateMirror(mirrorId) {
-    if (isAnimating || isSolved) return;
+    if (isAnimating || isCoolingDown || isSolved || lives === 0) return;
 
     const mirror = boardState.mirrors.find((candidate) => candidate.id === mirrorId);
     if (!mirror || !mirror.rotatable) return;
@@ -105,6 +128,11 @@ function rotateMirror(mirrorId) {
     render({ animatedMirrorId: mirrorId });
 }
 
+function clearFeedbackTimer() {
+    if (feedbackTimer !== null) window.clearTimeout(feedbackTimer);
+    feedbackTimer = null;
+}
+
 function finishAttempt() {
     cancelLaserAnimation = null;
     isAnimating = false;
@@ -112,23 +140,46 @@ function finishAttempt() {
     if (lastSimulation?.targetHit) {
         isSolved = true;
         render();
-        winOverlay.hidden = false;
-        playAgainButton.focus();
+        feedbackTimer = window.setTimeout(() => {
+            if (levelIndex < levels.length - 1) {
+                levelIndex += 1;
+                level = levels[levelIndex];
+                boardState = createState();
+                beamVisible = false;
+                lastSimulation = null;
+                isSolved = false;
+                render();
+                fireButton.focus();
+            } else {
+                winOverlay.hidden = false;
+                playAgainButton.focus();
+            }
+            feedbackTimer = null;
+        }, 720);
         return;
     }
 
-    lives -= 1;
-    if (lives === 0) {
-        boardState = createState();
-        lives = MAX_LIVES;
+    isCoolingDown = true;
+    feedbackTimer = window.setTimeout(() => {
+        isCoolingDown = false;
+        lives -= 1;
+        if (lives === 0) {
+            levelIndex = 0;
+            level = levels[levelIndex];
+            boardState = createState();
+            lives = MAX_LIVES;
+        }
         beamVisible = false;
         lastSimulation = null;
-    }
+        render();
+        fireButton.focus();
+        feedbackTimer = null;
+    }, 1400);
     render();
 }
 
 function fireLaser() {
-    if (isAnimating || isSolved || !level) return;
+    if (isAnimating || isCoolingDown || isSolved || lives === 0 || !level) return;
 
     beamVisible = true;
     lastSimulation = simulate(boardState);
@@ -143,29 +194,37 @@ function resetGame() {
     if (!level) return;
     cancelLaserAnimation?.();
     cancelLaserAnimation = null;
+    clearFeedbackTimer();
     boardState = createState();
     lastSimulation = null;
-    lives = MAX_LIVES;
     beamVisible = false;
     isAnimating = false;
+    isCoolingDown = false;
     isSolved = false;
     winOverlay.hidden = true;
     render();
     fireButton.focus();
 }
 
+function playAgain() {
+    clearFeedbackTimer();
+    lives = MAX_LIVES;
+    levelIndex = 0;
+    level = levels[levelIndex];
+    resetGame();
+}
+
 function showLoadError(error) {
-    statusCard.dataset.state = 'blocked';
-    statusKicker.textContent = 'LOAD ERROR';
-    statusTitle.textContent = 'Level unavailable';
-    statusDetail.textContent = error.message;
+    setStatus('blocked', 'LOAD ERROR', 'Levels unavailable', error.message);
     fireButton.disabled = true;
     resetButton.disabled = true;
 }
 
 async function initialize() {
     try {
-        level = await loadMvpLevel();
+        levels = await loadMvpLevel();
+        levelIndex = 0;
+        level = levels[levelIndex];
         boardState = createState();
         levelTagElement.textContent = level.name.toUpperCase();
         boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
@@ -179,7 +238,5 @@ async function initialize() {
 bindMirrorInput(boardElement, rotateMirror);
 fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);
-playAgainButton.addEventListener('click', resetGame);
-winResetButton.addEventListener('click', resetGame);
-
+playAgainButton.addEventListener('click', playAgain);
 initialize();

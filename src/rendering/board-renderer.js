@@ -1,10 +1,7 @@
-const ORIENTATION_LABELS = {
-    '/': 'slash',
-    '\\': 'backslash',
-};
+const ORIENTATION_LABELS = Object.freeze({ '/': 'slash', '\\': 'backslash' });
+const DIRECTION_ARROWS = Object.freeze({ N: '↑', E: '→', S: '↓', W: '←' });
 
 const sameCell = (a, b) => a && b && a.row === b.row && a.col === b.col;
-
 const cellKey = ({ row, col }) => `${row}-${col}`;
 
 const createCell = (row, col, size) => {
@@ -20,30 +17,40 @@ const createCell = (row, col, size) => {
 const createBeam = (beamLayer, path, size) => {
     beamLayer.replaceChildren();
     beamLayer.setAttribute('viewBox', `0 0 ${size} ${size}`);
-
     if (!path || path.length < 2) return null;
 
     const points = path.map(({ row, col }) => `${col + 0.5},${row + 0.5}`).join(' ');
-    const beam = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    beam.classList.add('beam-line');
-    beam.setAttribute('points', points);
-    beam.setAttribute('pathLength', '1');
-    beamLayer.appendChild(beam);
-
-    const pulse = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    pulse.classList.add('beam-pulse');
-    pulse.setAttribute('points', points);
-    pulse.setAttribute('pathLength', '1');
-    beamLayer.appendChild(pulse);
-
+    ['beam-line', 'beam-pulse'].forEach((className) => {
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        line.classList.add(className);
+        line.setAttribute('points', points);
+        line.setAttribute('pathLength', '1');
+        beamLayer.appendChild(line);
+    });
     return beamLayer;
 };
 
+const portalMarkup = (portal) => {
+    const role = portal.role === 'target' ? 'target' : 'source';
+    const direction = portal.facingDirection ?? portal.direction;
+    const arrow = DIRECTION_ARROWS[direction] ?? '•';
+    const color = portal.color === 'orange' ? 'orange' : 'blue';
+    const label = role === 'target'
+        ? `Orange target portal, accepts a beam traveling ${direction}`
+        : `Blue source portal, emits ${direction} into the board`;
+    return {
+        role,
+        color,
+        label,
+        markup: `<span class="portal-glyph ${role}-portal ${color}-portal" style="--portal-angle: ${direction === 'N' ? 0 : direction === 'E' ? 90 : direction === 'S' ? 180 : 270}deg" aria-hidden="true"><span class="portal-core"></span><span class="portal-arrow">${arrow}</span></span>`,
+    };
+};
 export function renderBoard({ boardElement, beamLayer, level, boardState, simulation, showTrace = true }) {
     const { size, source, target, walls } = level;
-    const mirrors = boardState.mirrors;
+    const portals = boardState.portals ?? level.portals ?? [source, target];
     const wallKeys = new Set(walls.map(cellKey));
-    const mirrorByKey = new Map(mirrors.map((mirror) => [cellKey(mirror), mirror]));
+    const portalByKey = new Map(portals.map((portal) => [cellKey(portal), portal]));
+    const mirrorByKey = new Map(boardState.mirrors.map((mirror) => [cellKey(mirror), mirror]));
     const beamKeys = showTrace ? new Set((simulation.beamPath || []).map(cellKey)) : new Set();
     const mirrorButtons = new Map();
     let targetElement = null;
@@ -62,18 +69,22 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                 cell.innerHTML = '<span class="wall-glyph" aria-hidden="true"></span>';
             }
 
-            if (sameCell(position, source)) {
+            const portal = portalByKey.get(key);
+            if (portal) {
+                const renderedPortal = portalMarkup(portal);
+                cell.classList.add('is-portal', `${renderedPortal.role}-portal-cell`);
+                cell.innerHTML = renderedPortal.markup;
+                cell.setAttribute('aria-label', renderedPortal.label);
+                if (renderedPortal.role === 'target') {
+                    targetElement = cell;
+                    if (simulation.targetHit) cell.classList.add('target-hit');
+            }
+            }
+
+            if (sameCell(position, source) && !portal) {
                 cell.classList.add('is-source');
                 cell.innerHTML = '<span class="source-glyph" aria-hidden="true"><span></span></span>';
                 cell.setAttribute('aria-label', `Laser emitter, pointing ${source.direction}`);
-            }
-
-            if (sameCell(position, target)) {
-                cell.classList.add('is-target');
-                cell.innerHTML = '<span class="target-glyph" aria-hidden="true"><span></span></span>';
-                cell.setAttribute('aria-label', simulation.targetHit ? 'Receiver, hit' : 'Receiver, not hit');
-                targetElement = cell;
-                if (simulation.targetHit) cell.classList.add('target-hit');
             }
 
             const mirror = mirrorByKey.get(key);
