@@ -9,6 +9,7 @@ const boardElement = document.querySelector('#game-board');
 const boardWrap = document.querySelector('#board-wrap');
 const beamLayer = document.querySelector('#beam-layer');
 const moveCountElement = document.querySelector('#move-count');
+const livesRow = document.querySelector('#lives-row');
 const statusCard = document.querySelector('#status-card');
 const statusKicker = document.querySelector('#status-kicker');
 const statusTitle = document.querySelector('#status-title');
@@ -20,6 +21,7 @@ const winResetButton = document.querySelector('#win-reset-button');
 
 let boardState = createInitialState();
 let moveCount = 0;
+let lives = 3;
 let lastSimulation = simulatePlaceholder(boardState);
 
 function createInitialState() {
@@ -62,6 +64,13 @@ function updateStatus(simulation) {
     };
     const copy = states[simulation.terminalReason] || states.boundary;
     statusCard.dataset.state = copy.state;
+    if (lives === 0 && !simulation.targetHit) {
+        statusCard.dataset.state = 'blocked';
+        statusKicker.textContent = 'NO ATTEMPTS LEFT';
+        statusTitle.textContent = 'Reset to recalibrate';
+        statusDetail.textContent = 'The circuit needs a fresh start before you can try again.';
+        return;
+    }
     statusKicker.textContent = copy.kicker;
     statusTitle.textContent = copy.title;
     statusDetail.textContent = copy.detail;
@@ -78,12 +87,23 @@ function render({ animatedMirrorId = null } = {}) {
     });
 
     moveCountElement.textContent = moveCount;
+    livesRow.setAttribute('aria-label', `${lives} ${lives === 1 ? 'life' : 'lives'} remaining`);
+    livesRow.querySelectorAll('.heart').forEach((heart) => {
+        const isFilled = Number(heart.dataset.life) <= lives;
+        heart.classList.toggle('is-filled', isFilled);
+        heart.textContent = isFilled ? '♥' : '♡';
+    });
     boardWrap.dataset.terminalReason = lastSimulation.terminalReason;
     updateStatus(lastSimulation);
     animateLaser(beamLayer);
 
     if (animatedMirrorId) animateMirror(elements.mirrorButtons.get(animatedMirrorId));
     animateTarget(elements.targetElement, lastSimulation.targetHit);
+
+    elements.mirrorButtons.forEach((mirrorButton) => {
+        mirrorButton.disabled = lives === 0 || lastSimulation.targetHit;
+        if (lives === 0) mirrorButton.setAttribute('aria-label', 'No attempts remaining. Reset the board to continue.');
+    });
 
     if (lastSimulation.targetHit) {
         winMoves.textContent = moveCount;
@@ -100,12 +120,15 @@ function rotateMirror(mirrorId) {
 
     mirror.orientation = (mirror.orientation + 1) % 4;
     moveCount += 1;
+    const nextSimulation = simulatePlaceholder(boardState);
+    if (!nextSimulation.targetHit) lives = Math.max(0, lives - 1);
     render({ animatedMirrorId: mirrorId });
 }
 
 function resetGame() {
     boardState = createInitialState();
     moveCount = 0;
+    lives = 3;
     winOverlay.hidden = true;
     render();
     boardElement.querySelector('.mirror-button')?.focus();

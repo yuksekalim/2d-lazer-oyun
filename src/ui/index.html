@@ -36,7 +36,14 @@
                 <section class="board-panel" aria-label="Laser mirror puzzle">
                     <div class="board-heading">
                         <span class="board-heading-label"><span class="live-dot"></span> LIVE BOARD</span>
-                        <span class="board-size">08 × 08 GRID</span>
+                        <div class="board-heading-tools">
+                            <div class="board-lives" id="lives-row" aria-live="polite" aria-label="3 lives remaining">
+                                <span class="heart is-filled" data-life="1" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="2" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="3" aria-hidden="true">♥</span>
+                            </div>
+                            <span class="board-size">08 × 08 GRID</span>
+                        </div>
                     </div>
                     <div class="board-wrap" id="board-wrap">
                         <div id="game-board" class="game-board" role="grid" aria-label="8 by 8 laser puzzle board"></div>
