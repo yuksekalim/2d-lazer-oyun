@@ -1,114 +1,124 @@
 /**
- * Temporary UI-side physics adapter.
+ * UI adapter for the teleport MVP.
  *
- * The physics agent has not shipped an implementation yet. The UI consumes
- * this contract so the demo is interactive without duplicating the eventual
- * simulation in the renderer:
- *
- *   simulate(boardState) -> {
- *       beamPath: Array<{ row: number, col: number }>,
- *       terminalReason: 'target' | 'boundary' | 'wall' | 'loop',
- *       targetHit: boolean,
- *       loopDetected: boolean
- *   }
- *
- * Replace `simulatePlaceholder` with the physics agent's `simulate` export
- * when it becomes available. The paths below are precomputed presentation
- * fixtures, not reflection logic. They exist only to exercise UI states.
- * Orientation convention for this fixture: 0 renders `/` and 1 renders `\\`.
- * A beam entering `/` from the right reflects upward; entering `\\` from the
- * right reflects downward.
+ * The committed physics branch documents the production contract but does
+ * not yet expose portal-aware runtime code. Until that implementation lands,
+ * these two small fixtures keep the UI testable. The UI consumes the same
+ * shape that the production adapter will return and never calculates a
+ * reflection or portal collision itself.
  */
 
-export const DEMO_LEVEL = Object.freeze({
-    id: 'sector-01',
-    size: 8,
-    source: Object.freeze({ row: 7, col: 0, direction: 'right' }),
-    target: Object.freeze({ row: 1, col: 6 }),
-    walls: Object.freeze([
-        Object.freeze({ row: 0, col: 0 }),
-        Object.freeze({ row: 0, col: 1 }),
-        Object.freeze({ row: 1, col: 1 }),
-        Object.freeze({ row: 2, col: 1 }),
-        Object.freeze({ row: 3, col: 5 }),
-        Object.freeze({ row: 4, col: 5 }),
-        Object.freeze({ row: 6, col: 5 }),
-        Object.freeze({ row: 7, col: 5 }),
+const freezeCells = (cells) => Object.freeze(cells.map((cell) => Object.freeze(cell)));
+
+const LEVEL_FIXTURES = Object.freeze([
+    Object.freeze({
+        id: 'easy_01',
+        name: 'Easy 01 / First Gate',
+        size: 7,
+        source: Object.freeze({ row: 3, col: 0, role: 'emitter', direction: 'E' }),
+        target: Object.freeze({ row: 0, col: 6, role: 'target', facingDirection: 'E', color: 'orange' }),
+        portals: Object.freeze([
+            Object.freeze({ id: 'target-01', role: 'target', row: 0, col: 6, facingDirection: 'E', color: 'orange' }),
+        ]),
+        walls: freezeCells([{ row: 1, col: 5 }, { row: 4, col: 5 }]),
+        mirrors: Object.freeze([
+            Object.freeze({ id: 'mirror-a', label: 'Alpha', row: 3, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+            Object.freeze({ id: 'mirror-b', label: 'Beta', row: 0, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+            Object.freeze({ id: 'mirror-c', label: 'Gamma', row: 5, col: 4, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+        ]),
+        solution: Object.freeze([
+            Object.freeze({ mirror: 'mirror-a', orientation: '/' }),
+            Object.freeze({ mirror: 'mirror-b', orientation: '/' }),
+        ]),
+    }),
+    Object.freeze({
+        id: 'easy_02',
+        name: 'Easy 02 / Blue Shift',
+        size: 7,
+        source: Object.freeze({ row: 6, col: 0, role: 'source', direction: 'E', color: 'blue' }),
+        target: Object.freeze({ row: 0, col: 4, role: 'target', facingDirection: 'N', color: 'orange' }),
+        portals: Object.freeze([
+            Object.freeze({ id: 'source-02', role: 'source', row: 6, col: 0, direction: 'E', color: 'blue' }),
+            Object.freeze({ id: 'target-02', role: 'target', row: 0, col: 4, facingDirection: 'N', color: 'orange' }),
+        ]),
+        walls: freezeCells([{ row: 1, col: 6 }, { row: 3, col: 0 }, { row: 4, col: 3 }, { row: 5, col: 6 }]),
+        mirrors: Object.freeze([
+            Object.freeze({ id: 'mirror-d', label: 'Delta', row: 6, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+            Object.freeze({ id: 'mirror-e', label: 'Echo', row: 2, col: 2, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+            Object.freeze({ id: 'mirror-f', label: 'Foxtrot', row: 2, col: 4, orientation: '\\', initialOrientation: '\\', rotatable: true }),
+        ]),
+        solution: Object.freeze([
+            Object.freeze({ mirror: 'mirror-d', orientation: '/' }),
+            Object.freeze({ mirror: 'mirror-e', orientation: '/' }),
+            Object.freeze({ mirror: 'mirror-f', orientation: '/' }),
+        ]),
+    }),
+]);
+
+const ROUTES = Object.freeze({
+    easy_01: Object.freeze([
+        { row: 3, col: 0 }, { row: 3, col: 1 }, { row: 3, col: 2 },
+        { row: 2, col: 2 }, { row: 1, col: 2 }, { row: 0, col: 2 },
+        { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 },
     ]),
-    mirrors: Object.freeze([
-        Object.freeze({ id: 'mirror-alpha', label: 'Alpha', row: 7, col: 2, orientation: 0 }),
-        Object.freeze({ id: 'mirror-beta', label: 'Beta', row: 5, col: 2, orientation: 0 }),
-        Object.freeze({ id: 'mirror-gamma', label: 'Gamma', row: 5, col: 6, orientation: 0 }),
+    easy_02: Object.freeze([
+        { row: 6, col: 0 }, { row: 6, col: 1 }, { row: 6, col: 2 },
+        { row: 5, col: 2 }, { row: 4, col: 2 }, { row: 3, col: 2 }, { row: 2, col: 2 },
+        { row: 2, col: 3 }, { row: 2, col: 4 }, { row: 1, col: 4 }, { row: 0, col: 4 },
     ]),
 });
 
-const SOLUTION = Object.freeze([0, 1, 0]);
-const START_PATH = Object.freeze([
-    { row: 7, col: 0 }, { row: 7, col: 1 }, { row: 7, col: 2 },
-]);
-const ALPHA_PATH = Object.freeze([
-    ...START_PATH,
-    { row: 6, col: 2 }, { row: 5, col: 2 },
-]);
-const BETA_PATH = Object.freeze([
-    ...ALPHA_PATH,
-    { row: 5, col: 3 }, { row: 5, col: 4 }, { row: 5, col: 5 }, { row: 5, col: 6 },
-]);
-const SOLUTION_PATH = Object.freeze([
-    ...BETA_PATH,
-    { row: 4, col: 6 }, { row: 3, col: 6 }, { row: 2, col: 6 }, { row: 1, col: 6 },
-]);
+const cloneLevel = (level) => ({
+    ...level,
+    source: { ...level.source },
+    target: { ...level.target },
+    portals: level.portals.map((portal) => ({ ...portal })),
+    walls: level.walls.map((wall) => ({ ...wall })),
+    mirrors: level.mirrors.map((mirror) => ({ ...mirror })),
+});
 
-const pathToBoundary = (path, row, col, direction) => {
-    const result = [...path];
-    let currentRow = row;
-    let currentCol = col;
+export function createInitialState(level) {
+    return {
+        levelId: level.id,
+        size: level.size,
+        source: { ...level.source },
+        target: { ...level.target },
+        portals: level.portals.map((portal) => ({ ...portal })),
+        walls: level.walls.map((wall) => ({ ...wall })),
+        mirrors: level.mirrors.map((mirror) => ({ ...mirror, orientation: mirror.initialOrientation })),
+    };
+}
 
-    while (currentRow >= 0 && currentRow < DEMO_LEVEL.size && currentCol >= 0 && currentCol < DEMO_LEVEL.size) {
-        result.push({ row: currentRow, col: currentCol });
-        if (direction === 'up') currentRow -= 1;
-        if (direction === 'right') currentCol += 1;
-    }
+const isSolved = (level, boardState) => level.solution.every(({ mirror, orientation }) => (
+    boardState.mirrors.find((candidate) => candidate.id === mirror)?.orientation === orientation
+));
 
-    return result;
+const failedPath = (level, boardState) => {
+    const route = ROUTES[level.id];
+    const firstUnsolved = level.solution.findIndex(({ mirror, orientation }) => (
+        boardState.mirrors.find((candidate) => candidate.id === mirror)?.orientation !== orientation
+    ));
+    const stop = Math.max(2, Math.min(route.length - 1, (firstUnsolved + 1) * 2));
+    return route.slice(0, stop);
 };
 
-const mirrorOrientations = (boardState) => boardState.mirrors.map((mirror) => mirror.orientation);
-
-export function simulatePlaceholder(boardState) {
-    const orientations = mirrorOrientations(boardState);
-
-    if (orientations.every((orientation, index) => orientation === SOLUTION[index])) {
-        return {
-            beamPath: SOLUTION_PATH,
-            terminalReason: 'target',
-            targetHit: true,
-            loopDetected: false,
-        };
-    }
-
-    if (orientations[0] !== SOLUTION[0]) {
-        return {
-            beamPath: pathToBoundary(START_PATH, 7, 3, 'right'),
-            terminalReason: 'boundary',
-            targetHit: false,
-            loopDetected: false,
-        };
-    }
-
-    if (orientations[1] !== SOLUTION[1]) {
-        return {
-            beamPath: pathToBoundary(ALPHA_PATH, 4, 2, 'up'),
-            terminalReason: 'boundary',
-            targetHit: false,
-            loopDetected: false,
-        };
-    }
-
+export function simulate(boardState) {
+    const level = LEVEL_FIXTURES.find((candidate) => candidate.id === boardState.levelId);
+    if (!level) throw new Error(`Unknown placeholder level: ${boardState.levelId}`);
+    const targetHit = isSolved(level, boardState);
+    const targetPortal = level.portals.find((portal) => portal.role === 'target');
+    const beamPath = targetHit ? ROUTES[level.id] : failedPath(level, boardState);
     return {
-        beamPath: pathToBoundary(BETA_PATH, 5, 7, 'right'),
-        terminalReason: 'boundary',
-        targetHit: false,
-        loopDetected: false,
+        beamPath,
+        targetHit,
+        terminalReason: targetHit ? 'target' : 'boundary',
+        terminal: targetHit
+            ? { position: { row: level.target.row, col: level.target.col }, direction: level.target.facingDirection, portalId: targetPortal.id }
+            : { position: beamPath[beamPath.length - 1], direction: 'E' },
+        portalEvents: targetHit ? [{ type: 'target-enter', portalId: targetPortal.id }] : [],
     };
+}
+
+export async function loadMvpLevel() {
+    return LEVEL_FIXTURES.map(cloneLevel);
 }
