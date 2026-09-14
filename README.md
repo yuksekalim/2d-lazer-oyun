@@ -8,12 +8,20 @@ The game should feel simple to understand but satisfying to solve. Each puzzle p
 
 The current teleport MVP is intentionally small: two hand-designed levels on a 7×7 board, simple geometric visuals, no accounts, no backend, and no scoring system. The planned full game will eventually contain Easy (7×7), Medium (11×11), and Hard (15×15) campaigns with 15 levels each, ending each campaign with a monster target.
 
+## Campaign Progression Plan
+
+The next phase expands the game into three independent campaigns. The player first sees a difficulty screen, then always starts that campaign at Level 1; there is no level-select screen. Each campaign contains 15 hand-designed levels: Easy uses 7×7 boards, Medium 11×11, and Hard 15×15. The game is desktop-only, with a fixed overview layout sized to show all 15 real boards.
+
+Before Level 1 begins, the selected campaign appears as a connected overview of its actual mini-grids, including mirrors, walls, and portals. The camera then zooms into Level 1. A target portal on a non-corner border cell determines the next level's source portal on the opposite border at the same row or column: bottom→top, top→bottom, right→left, or left→right. The overview route may turn and must not overlap boards; level data should provide any authored overview placement needed to guarantee this.
+
+Each campaign has one shared pool of three lives. Completing Level 5 activates a checkpoint and restores three lives; completing Level 10 does the same. Losing all lives on Levels 1–5 restarts at Level 1, on Levels 6–10 at Level 6, and on Levels 11–15 at Level 11. A page refresh clears the selected difficulty, lives, and checkpoint progress. Completing Level 15 shows a completion message with **Play Again** and **Choose Difficulty**.
+
 ## Teleport MVP Rules
 
-Level content is documented in [`levels/README.md`](levels/README.md); the
-runtime data will be migrated to the teleport schema during implementation.
+Level content is documented in [`levels/README.md`](levels/README.md), and the
+runtime currently uses the format-2 teleport schema.
 
-- The MVP starts directly at Easy Level 1; difficulty selection is deferred.
+- The MVP starts directly at Easy Level 1; difficulty selection and the 15-level campaign flow are the next phase.
 - Both levels use a 7×7 board, three rotatable mirrors, and fixed walls. Level 1 has two walls; Level 2 has four.
 - Level 1 uses the existing laser emitter and one orange target portal. Level 2 uses a blue source portal and an orange target portal. There are never more than two portals in a level.
 - Portals are fixed on border cells and face perpendicular to the border. A blue source portal emits inward; an orange target portal accepts a beam traveling in its facing direction. Small arrows show both directions.
@@ -38,7 +46,7 @@ Every level must have at least one correct solution and be deliberately uncompli
 
 ## Future Direction
 
-Add the 15-level Easy, Medium, and Hard campaigns on 7×7, 11×11, and 15×15 boards. Later releases may add the monster target at level 15, richer portal effects, sound, keyboard accessibility, and progression controls.
+Implement the 15-level Easy, Medium, and Hard campaigns using the progression rules above. Later releases may add the monster target at level 15, richer portal effects, sound, and persistent progress.
 
 ## Physics MVP
 

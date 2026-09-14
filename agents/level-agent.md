@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. For the current MVP, focus only on two hand-designed 7×7 teleport levels.
+Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. The current MVP has two 7×7 teleport levels; the next phase adds three independent 15-level campaigns.
 
 ## Owns
 
@@ -43,11 +43,21 @@ Use top-left origin coordinates `(x, y)`, with `x` increasing east and `y` incre
 
 The two layouts are independent. Level 2 never inherits Level 1 mirror positions. Keep the intended route documented with the level data and validate it with the physics test suite before exposing the level in the UI.
 
+## Campaign Layout Rules
+
+- Easy uses 7×7 boards, Medium 11×11, and Hard 15×15; each campaign has exactly 15 ordered levels.
+- Campaigns are independent. Each starts at Level 1 with its own source portal and route.
+- Every target portal is on a non-corner border cell. Its border side determines the next level's source portal on the opposite side at the same row or column, with the source facing inward.
+- The next level may be placed below, above, right, or left of the current level in the overview. Turns are allowed, but mini-grids must not overlap.
+- Store authored overview placement/connection metadata in the level schema so the UI does not guess a collision-free map.
+- Levels 5 and 10 are checkpoint completions. Checkpoints are progression metadata, not physics behavior.
+- The overview is read-only and must show the actual level contents at reduced scale, not placeholder cards.
+
 ## Level Requirements
 
 Every MVP level must fit a 7×7 board, contain exactly three rotatable mirrors, use fixed walls, and have at most two portals. Level 1 has one emitter and one orange target portal; Level 2 has one blue source portal and one orange target portal. Portals must be on the border and face perpendicular to it. Levels should be solvable, avoid accidental ambiguity, and record an intended route.
 
-The current content contract is format version 1 in
+The current content contract is format version 2 in
 [`levels/levels.json`](../levels/levels.json), documented in
 [`levels/README.md`](../levels/README.md). In this format, `obstacles` are the
 data representation for walls, and `solution` is authoring metadata rather
@@ -57,10 +67,12 @@ reporting the format change to the coordinator.
 ## Validation
 
 Validate schema, dimensions, unique required elements, legal placements, portal
-roles and directions, wall/mirror separation, and solvability. Until the
-portal schema is implemented, validate the existing version-1 content with
-`python3 levels/validate_levels.py`. Include tests for both documented routes,
-wrong-direction target approaches, and source re-entry.
+roles and directions, wall/mirror separation, and solvability. Use
+`python3 levels/validate_levels.py` for the current format-2 content. Extend it
+before adding campaigns to validate counts, board sizes, non-corner border
+portals, consecutive portal connections, overview placement, and solvability.
+Include tests for both documented routes, wrong-direction target approaches,
+and source re-entry.
 
 ## Handoff
 

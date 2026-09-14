@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the player-facing interface: board presentation, controls, portal feedback, level transitions, and responsive accessibility for the teleport MVP.
+Own the player-facing interface: board presentation, controls, portal feedback, level transitions, campaign overview, and desktop accessibility.
 
 ## Owns
 
@@ -10,8 +10,8 @@ Own the player-facing interface: board presentation, controls, portal feedback, 
 - Blue source portals, orange target portals, directional arrows, and portal activation effects
 - Mirror rotation input through mouse, touch, and keyboard
 - Instructions, reset, automatic next-level, completion, and error states
-- Move counter, level indicators, status messages, and feedback animations
-- Responsive layout, focus behavior, accessible labels, and visual consistency
+- Level indicators, status messages, checkpoint feedback, and feedback animations
+- Desktop layout, focus behavior, accessible labels, and visual consistency
 
 Preferred implementation locations are `src/ui/`, `styles/`, `public/`, and UI-focused tests.
 
@@ -31,13 +31,15 @@ shown as the player's starting state or as an automatic answer.
 
 ## Interaction Requirements
 
-Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Preserve a usable board and control layout on small screens.
+Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Optimize the board and control layout for desktop screens; mobile support is out of scope.
 
 For the teleport MVP, the source portal must visibly indicate its emission direction and the target portal must visibly indicate its accepted entry direction. A correct target entry should pulse the portal, compress the beam, and transition automatically to Level 2. Keep the final completion action to **Play Again**; keep **Reset** available during gameplay.
 
+For the campaign phase, show a difficulty screen first. After selection, render all 15 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1, 6, and 11, restore three lives after Levels 5 and 10, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 15.
+
 ## Validation
 
-Test mirror rotation, reset, level progression, completion feedback, keyboard navigation, focus order, touch targets, and responsive layouts. Use screenshots or recordings for significant visual changes.
+Test mirror rotation, reset, level progression, completion feedback, keyboard navigation, focus order, desktop overview/zoom, checkpoint restarts, and campaign completion actions. Use screenshots or recordings for significant visual changes.
 
 ## Handoff
 

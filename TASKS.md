@@ -14,6 +14,19 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 - [x] The final completion screen has **Play Again** only; **Reset** remains an in-game control.
 - [x] Offline static web game with no accounts, backend, score, or move counter.
 
+## Campaign System Scope Confirmed
+
+- [ ] Show a difficulty screen before gameplay; do not add level selection.
+- [ ] Build independent Easy, Medium, and Hard campaigns with 15 levels each on 7×7, 11×11, and 15×15 boards.
+- [ ] Render a desktop-only overview containing all 15 actual mini-grids, then zoom into Level 1.
+- [ ] Connect consecutive levels using border portals: the next source is on the opposite border at the same row or column; corner portals are forbidden.
+- [ ] Author overview placements so connected boards can turn without overlapping.
+- [ ] Preserve the connected overview/zoom transition between levels and after checkpoint restarts.
+- [ ] Use one shared pool of three lives per campaign; checkpoints activate after Levels 5 and 10 and restore three lives.
+- [ ] Restart at Level 1, 6, or 11 after losing all lives in the corresponding campaign segment.
+- [ ] Reset campaign selection, lives, and checkpoint progress on page refresh; do not persist data yet.
+- [ ] Show **Play Again** and **Choose Difficulty** after Level 15.
+
 ## Design Before Implementation
 
 - [x] Have the laser-UI agent review the portal colors, arrows, target-entry feedback, and automatic Level 1 → Level 2 transition.
@@ -77,9 +90,16 @@ The physics MVP is implemented in `src/physics/geometry.js` and
 - [x] Verify the Level 1 → Level 2 transition and final **Play Again** flow in Chrome.
 - [x] Run the full automated suite after portal support is implemented (17 tests passing).
 
-## Future, Not MVP
+## Campaign Implementation Order
 
-- [ ] Add 15 levels per difficulty: Easy 7×7, Medium 11×11, and Hard 15×15.
-- [ ] Add difficulty selection and future **Continue** progression.
-- [ ] Add the monster target at level 15 of each difficulty.
-- [ ] Add custom art, sound, keyboard accessibility, and richer effects.
+- [ ] Extend the level schema with campaign metadata, checkpoint markers, and non-overlapping overview positions.
+- [ ] Add validator/tests for campaign counts, grid sizes, border connections, corner exclusion, and solvability.
+- [ ] Add the desktop difficulty screen and campaign overview renderer.
+- [ ] Implement camera zoom, automatic level transitions, checkpoint restart, and campaign completion actions.
+- [ ] Author and verify all 15 Easy levels, then Medium and Hard.
+- [ ] Add the monster target at Level 15 of each campaign.
+
+## Later, Not in Campaign Foundation
+
+- [ ] Persistent progress or user accounts.
+- [ ] Sound, custom art, and additional gameplay systems.

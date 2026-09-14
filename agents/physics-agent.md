@@ -35,15 +35,19 @@ Represent each portal with an `id`, `role` (`source` or `target`), `position`, `
 
 The existing cardinal directions and diagonal mirror reflection rules remain unchanged. Portal direction is part of the collision contract, not only presentation.
 
+Campaign ordering, difficulty selection, overview placement, checkpoints, and
+life resets belong to the UI/level orchestration layer. Physics should only
+simulate the supplied board and portal source; it must not infer the next
+level or persist campaign progress.
+
 ## Current Runtime Entry Point
 
-Until portal support is implemented, the existing simulation entry point is
-`simulateLaser(board, source, options)` from `src/physics/laser.js`, using
-integer `{ x, y }` coordinates with `x` increasing east/right and `y`
-increasing south/down. Existing version-1 level data represents walls as
-`obstacles`; the UI adapter must translate that content before simulation.
-Keep this contract aligned with [`levels/README.md`](../levels/README.md) while
-the portal schema is migrated.
+The simulation entry point is `simulateLaser(board, source, options)` from
+`src/physics/laser.js`, using integer `{ x, y }` coordinates with `x` increasing
+east/right and `y` increasing south/down. The UI adapter translates the
+format-2 level data, including `obstacles` walls and directional portals,
+before simulation. Keep this contract aligned with
+[`levels/README.md`](../levels/README.md).
 
 ## Required Behavior
 
