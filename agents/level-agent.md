@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. The current MVP has two 7×7 teleport levels; the next phase adds three independent 15-level campaigns.
+Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. The current MVP has two 7×7 teleport levels; the next phase adds three independent 10-level campaigns.
 
 ## Owns
 
@@ -45,7 +45,7 @@ Level 1’s target (1, 6) connects to this level’s source (1, 0), which emits 
 
 ## Campaign Layout Rules
 
-- Easy uses 7×7 boards, Medium 11×11, and Hard 15×15; each campaign has exactly 15 ordered levels.
+- Easy uses 7×7 boards, Medium 11×11, and Hard 15×15; each campaign has exactly 10 ordered levels.
 - Campaigns are independent. Each starts at Level 1 with its own source portal and route.
 - Every target portal is on a non-corner border cell. Its border side determines the next level's source portal on the opposite side at the same row or column, with the source facing inward.
 - The next level may be placed below, above, right, or left of the current level in the overview. Turns are allowed, but mini-grids must not overlap.

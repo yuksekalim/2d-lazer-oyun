@@ -6,22 +6,22 @@ An offline browser puzzle game about routing a laser through a grid of mirrors a
 
 The game should feel simple to understand but satisfying to solve. Each puzzle presents a fixed board with a source, portals, walls, and rotatable mirrors. The player studies the layout without seeing the beam, adjusts the mirrors, then presses **Fire Laser** to watch the route unfold.
 
-The current teleport MVP is intentionally small: two hand-designed levels on a 7×7 board, simple geometric visuals, no accounts, no backend, and no scoring system. The planned full game will eventually contain Easy (7×7), Medium (11×11), and Hard (15×15) campaigns with 15 levels each, ending each campaign with a monster target.
+The current teleport MVP is intentionally small: two hand-designed levels on a 7×7 board, simple geometric visuals, no accounts, no backend, and no scoring system. The planned full game will eventually contain Easy (7×7), Medium (11×11), and Hard (15×15) campaigns with 10 levels each, ending each campaign with a monster target.
 
 ## Campaign Progression Plan
 
-The next phase expands the game into three independent campaigns. The player first sees a difficulty screen, then always starts that campaign at Level 1; there is no level-select screen. Each campaign contains 15 hand-designed levels: Easy uses 7×7 boards, Medium 11×11, and Hard 15×15. The game is desktop-only, with a fixed overview layout sized to show all 15 real boards.
+The next phase expands the game into three independent campaigns. The player first sees a difficulty screen, then always starts that campaign at Level 1; there is no level-select screen. Each campaign contains 10 hand-designed levels: Easy uses 7×7 boards, Medium 11×11, and Hard 15×15. The game is desktop-only, with a fixed overview layout sized to show all 10 real boards.
 
 Before Level 1 begins, the selected campaign appears as a connected overview of its actual mini-grids, including mirrors, walls, and portals. The camera then zooms into Level 1. A target portal on a non-corner border cell determines the next level's source portal on the opposite border at the same row or column: bottom→top, top→bottom, right→left, or left→right. The overview route may turn and must not overlap boards; level data should provide any authored overview placement needed to guarantee this.
 
-Each campaign has one shared pool of three lives. Completing Level 5 activates a checkpoint and restores three lives; completing Level 10 does the same. Losing all lives on Levels 1–5 restarts at Level 1, on Levels 6–10 at Level 6, and on Levels 11–15 at Level 11. A page refresh clears the selected difficulty, lives, and checkpoint progress. Completing Level 15 shows a completion message with **Play Again** and **Choose Difficulty**.
+Each campaign has one shared pool of three lives. Completing Level 5 activates a checkpoint and restores three lives; completing Level 10 completes the campaign. Losing all lives on Levels 1–5 restarts at Level 1, and on Levels 6–10 at Level 6. A page refresh clears the selected difficulty, lives, and checkpoint progress. Completing Level 10 shows a completion message with **Play Again** and **Choose Difficulty**.
 
 ## Teleport MVP Rules
 
 Level content is documented in [`levels/README.md`](levels/README.md), and the
 runtime currently uses the format-2 teleport schema.
 
-- The MVP starts directly at Easy Level 1; difficulty selection and the 15-level campaign flow are the next phase.
+- The MVP starts directly at Easy Level 1; difficulty selection and the 10-level campaign flow are the next phase.
 - Both levels use a 7×7 board, three rotatable mirrors, and fixed walls. Level 1 has two walls; Level 2 has four.
 - Level 1 uses the existing laser emitter and one orange target portal. Level 2 uses a blue source portal and an orange target portal. There are never more than two portals in a level.
 - Level 1’s target portal at `(1, 6)` continues into Level 2’s blue source portal at `(1, 0)`, which emits downward in the same column. Each level still has its own mirror layout.
@@ -47,7 +47,7 @@ Every level must have at least one correct solution and be deliberately uncompli
 
 ## Future Direction
 
-Implement the 15-level Easy, Medium, and Hard campaigns using the progression rules above. Later releases may add the monster target at level 15, richer portal effects, sound, and persistent progress.
+Implement the 10-level Easy, Medium, and Hard campaigns using the progression rules above. Later releases may add the monster target at level 10, richer portal effects, sound, and persistent progress.
 
 ## Physics MVP
 

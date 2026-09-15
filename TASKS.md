@@ -18,15 +18,15 @@ This is the practical plan for the teleport MVP. Keep unfinished work visible he
 ## Campaign System Scope Confirmed
 
 - [ ] Show a difficulty screen before gameplay; do not add level selection.
-- [ ] Build independent Easy, Medium, and Hard campaigns with 15 levels each on 7×7, 11×11, and 15×15 boards.
-- [ ] Render a desktop-only overview containing all 15 actual mini-grids, then zoom into Level 1.
+- [ ] Build independent Easy, Medium, and Hard campaigns with 10 levels each on 7×7, 11×11, and 15×15 boards.
+- [ ] Render a desktop-only overview containing all 10 actual mini-grids, then zoom into Level 1.
 - [ ] Connect consecutive levels using border portals: the next source is on the opposite border at the same row or column; corner portals are forbidden.
 - [ ] Author overview placements so connected boards can turn without overlapping.
 - [ ] Preserve the connected overview/zoom transition between levels and after checkpoint restarts.
 - [ ] Use one shared pool of three lives per campaign; checkpoints activate after Levels 5 and 10 and restore three lives.
-- [ ] Restart at Level 1, 6, or 11 after losing all lives in the corresponding campaign segment.
+- [ ] Restart at Level 1 or 6 after losing all lives in the corresponding campaign segment.
 - [ ] Reset campaign selection, lives, and checkpoint progress on page refresh; do not persist data yet.
-- [ ] Show **Play Again** and **Choose Difficulty** after Level 15.
+- [ ] Show **Play Again** and **Choose Difficulty** after Level 10.
 
 ## Design Before Implementation
 
@@ -97,15 +97,15 @@ The physics MVP is implemented in `src/physics/geometry.js` and
 - [ ] Add validator/tests for campaign counts, grid sizes, border connections, corner exclusion, and solvability.
 - [ ] Add the desktop difficulty screen and campaign overview renderer.
 - [ ] Implement camera zoom, automatic level transitions, checkpoint restart, and campaign completion actions.
-- [ ] Author and verify all 15 Easy levels, then Medium and Hard.
-- [ ] Add the monster target at Level 15 of each campaign.
+- [ ] Author and verify all 10 Easy levels, then Medium and Hard.
+- [ ] Add the monster target at Level 10 of each campaign.
 
 ## Agent Review
 
 - [x] Review the physics agent commit and apply its directional portal validation, portal events, and loop tests.
 - [x] Review the UI agent commit; retain only compatible animation/status improvements in the current MVP.
-- [ ] Rework the UI campaign prototype around the confirmed difficulty screen, real 15-board overview, checkpoint flow, and final actions.
-- [ ] Rework the level prototype so each campaign has 15 levels and consecutive border portals connect on the same row or column without corners.
+- [ ] Rework the UI campaign prototype around the confirmed difficulty screen, real 10-board overview, checkpoint flow, and final actions.
+- [ ] Rework the level prototype so each campaign has 10 levels and consecutive border portals connect on the same row or column without corners.
 
 ## Later, Not in Campaign Foundation
 

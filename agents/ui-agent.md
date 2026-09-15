@@ -35,7 +35,7 @@ Make every interactive mirror and control discoverable and usable without relyin
 
 For the teleport MVP, the source portal must visibly indicate its emission direction and the target portal must visibly indicate its accepted entry direction. A correct target entry should pulse the portal, compress the beam, and transition automatically to Level 2. Keep the final completion action to **Play Again**; keep **Reset** available during gameplay.
 
-For the campaign phase, show a difficulty screen first. After selection, render all 15 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1, 6, and 11, restore three lives after Levels 5 and 10, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 15.
+For the campaign phase, show a difficulty screen first. After selection, render all 10 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1 and 6, restore three lives after Level 5, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 10.
 
 ## Validation
 

@@ -215,49 +215,6 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
     box-shadow: 0 0 0 7px rgba(97, 229, 230, 0.02), 0 24px 80px rgba(0, 0, 0, .28), inset 0 0 45px rgba(26, 80, 107, .12);
 }
 
-.campaign-overview { position: absolute; z-index: 5; inset: 8px; display: flex; flex-direction: column; justify-content: center; gap: 13px; padding: clamp(18px, 3vw, 34px); overflow: hidden; border-radius: 6px; background: radial-gradient(circle at 50% 42%, rgba(31, 73, 91, .96), rgba(8, 17, 29, .99) 72%); box-shadow: inset 0 0 46px rgba(97,229,230,.08); outline: none; animation: overview-in 520ms ease both; }
-.campaign-overview[hidden] { display: none; }
-.campaign-overview.is-exiting { pointer-events: none; animation: overview-out 700ms cubic-bezier(.2,.8,.2,1) both; }
-.campaign-overview-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.campaign-overview-kicker { margin: 0; color: var(--cyan); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: .14em; }
-.campaign-overview-hint { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .1em; }
-.campaign-overview h2 { color: var(--ink); font-size: clamp(27px, 4.5vw, 45px); }
-.campaign-overview-copy { max-width: 390px; margin: 0; color: var(--muted-bright); font-size: 11px; line-height: 1.5; }
-.route-map { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: clamp(5px, 1vw, 12px); width: 100%; margin: 4px 0; }
-.route-node { min-width: 0; padding: 9px 7px 8px; border: 1px solid rgba(155,187,198,.2); border-radius: 7px; background: rgba(13, 28, 44, .76); opacity: .66; transform: scale(.94); animation: route-node-in 560ms cubic-bezier(.2,.8,.2,1) both; }
-.route-node:nth-child(3) { animation-delay: 100ms; }
-.route-node:nth-child(5) { animation-delay: 200ms; }
-.route-node.is-first { border-color: rgba(97,229,230,.62); box-shadow: 0 0 24px rgba(97,229,230,.13), inset 0 0 16px rgba(97,229,230,.06); opacity: 1; transform: scale(1); animation-name: route-node-first-in; }
-.route-node-header { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
-.route-node-number { color: var(--cyan); font-family: 'DM Mono', monospace; font-size: 9px; }
-.route-node-label, .route-node-size, .route-node-edges { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 7px; letter-spacing: .08em; }
-.route-node-name { overflow: hidden; margin: 6px 0 2px; color: var(--ink); font-size: clamp(10px, 1.5vw, 14px); letter-spacing: -.03em; text-overflow: ellipsis; white-space: nowrap; }
-.route-node-size { display: block; color: var(--muted-bright); }
-.route-thumb { display: grid; grid-template-columns: repeat(var(--mini-size), minmax(0, 1fr)); aspect-ratio: 1; gap: 1px; margin: 8px 0; padding: 2px; border: 1px solid rgba(97,229,230,.2); border-radius: 3px; background: rgba(5, 13, 23, .9); }
-.route-thumb-cell { position: relative; min-width: 0; min-height: 0; border: 1px solid rgba(120,168,179,.1); background: rgba(18,39,57,.34); }
-.route-thumb-cell.is-wall { background: rgba(5,12,20,.95); }
-.route-thumb-cell.is-mirror::after { position: absolute; top: 20%; left: 50%; width: 2px; height: 68%; border-radius: 2px; background: var(--violet); box-shadow: 0 0 4px rgba(169,151,255,.8); content: ''; transform: translateX(-50%) rotate(45deg); }
-.route-thumb-cell.is-mirror.is-backslash::after { transform: translateX(-50%) rotate(-45deg); }
-.route-thumb-cell.is-source, .route-thumb-cell.is-target { display: grid; place-items: center; color: currentColor; font-family: 'DM Mono', monospace; font-size: clamp(6px, .8vw, 10px); font-weight: 600; }
-.route-thumb-cell.is-source { background: rgba(97,229,230,.2); color: var(--cyan); box-shadow: inset 0 0 8px rgba(97,229,230,.4); }
-.route-thumb-cell.is-target { background: rgba(255,182,92,.18); color: var(--orange); box-shadow: inset 0 0 8px rgba(255,182,92,.35); }
-.route-node-edges { display: flex; flex-direction: column; gap: 3px; overflow: hidden; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
-.route-node-edges span:first-child { color: var(--cyan); }
-.route-node-edges span:last-child { color: var(--orange); }
-.route-connector { display: flex; align-items: center; justify-content: center; min-width: clamp(48px, 8vw, 86px); gap: clamp(3px, .6vw, 7px); color: var(--cyan); }
-.route-handoff-portal { display: grid; justify-items: center; gap: 3px; min-width: 25px; color: var(--cyan); font-family: 'DM Mono', monospace; font-size: 6px; letter-spacing: .04em; line-height: 1; }
-.route-handoff-accessible { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; border: 0; clip: rect(0 0 0 0); white-space: nowrap; }
-.route-handoff-target { color: var(--orange); }
-.route-handoff-source { color: var(--cyan); }
-.route-handoff-glyph { position: relative; display: grid; width: 21px; height: 21px; place-items: center; border: 1.5px solid currentColor; border-radius: 50%; font-size: 9px; font-weight: 500; box-shadow: 0 0 12px currentColor, inset 0 0 7px currentColor; animation: route-handoff-pulse 1.8s ease-in-out infinite; }
-.route-handoff-glyph::after { position: absolute; bottom: 3px; left: 50%; width: 4px; height: 4px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; content: ''; transform: translateX(-50%); }
-.route-handoff-label { font-size: 5px; white-space: nowrap; }
-.route-handoff-bridge { display: grid; flex: 1; min-width: 9px; justify-items: center; gap: 1px; }
-.route-handoff-line { width: 100%; height: 1px; background: linear-gradient(90deg, var(--orange), var(--cyan)); box-shadow: 0 0 8px rgba(97,229,230,.45); }
-.route-handoff-arrow { margin-top: -7px; color: var(--cyan); font-size: 15px; line-height: 1; }
-.route-map-note { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 0; color: var(--muted-bright); font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: .04em; text-align: center; }
-.route-map-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 10px var(--orange); animation: status-pulse 1.5s infinite; }
-.board-wrap.is-board-zooming .game-board { animation: board-zoom-in 700ms cubic-bezier(.2,.8,.2,1) both; }
 
 .board-wrap::before, .board-wrap::after {
     position: absolute;
@@ -413,12 +370,6 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
 @keyframes burst-in { from { opacity: 0; transform: scale(.4) rotate(-25deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
 @keyframes portal-spin { to { transform: rotate(360deg); } }
 @keyframes portal-spin-reverse { to { transform: rotate(-360deg); } }
-@keyframes overview-in { from { opacity: 0; transform: scale(1.04); } to { opacity: 1; transform: scale(1); } }
-@keyframes overview-out { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(1.12); } }
-@keyframes route-node-in { from { opacity: 0; transform: translateY(8px) scale(.9); } to { opacity: .66; transform: translateY(0) scale(.94); } }
-@keyframes route-node-first-in { from { opacity: 0; transform: translateY(8px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes board-zoom-in { from { opacity: .25; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
-@keyframes route-handoff-pulse { 0%, 100% { transform: scale(.9); filter: brightness(.9); } 50% { transform: scale(1.08); filter: brightness(1.4); } }
 
 @media (max-width: 1050px) {
     :root { --board-size: min(64vh, 560px); }
@@ -455,23 +406,6 @@ kbd { padding: 3px 5px; border: 1px solid rgba(155,187,198,.28); border-radius: 
     .status-card { order: 0; }
     .control-card { order: 1; }
     .footer-note { margin-top: 4px; font-size: 7px; }
-    .campaign-overview { inset: 5px; gap: 8px; padding: 13px 7px; }
-    .campaign-overview-copy { font-size: 9px; }
-    .route-map { gap: 3px; }
-    .route-node { padding: 6px 3px; }
-    .route-node-label, .route-node-size, .route-node-edges { font-size: 5px; }
-    .route-node-name { margin-top: 4px; font-size: 8px; }
-    .route-thumb { margin: 5px 0; }
-    .route-connector { min-width: 44px; gap: 2px; }
-    .route-handoff-portal { min-width: 20px; font-size: 5px; }
-    .route-handoff-glyph { width: 17px; height: 17px; font-size: 7px; }
-    .route-handoff-glyph::after { width: 3px; height: 3px; }
-    .route-handoff-label { font-size: 5px; }
-    .route-handoff-arrow { font-size: 12px; }
-    .route-map { display: flex; justify-content: flex-start; overflow-x: auto; overflow-y: visible; padding: 3px 2px 9px; scrollbar-color: rgba(97,229,230,.45) rgba(8,17,29,.6); scrollbar-width: thin; }
-    .route-node { flex: 0 0 84px; }
-    .route-connector { flex: 0 0 52px; }
-    .route-map-note { font-size: 6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
