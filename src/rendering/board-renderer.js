@@ -41,9 +41,6 @@ const createBeam = (beamLayer, path, size) => {
 };
 
 const mirrorAngle = (orientation) => orientation === '/' ? 0 : 90;
-const mirrorMark = (mirror) => mirror.id.startsWith('turn_')
-    ? mirror.id.slice('turn_'.length).toUpperCase()
-    : `D${mirror.id.slice('decoy_'.length).toUpperCase()}`;
 const cellLabel = ({ row, col }) => ` at row ${row + 1}, column ${col + 1}`;
 
 const updateMirrorButton = (button, mirror) => {
@@ -132,7 +129,7 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                     button.type = 'button';
                     button.className = 'mirror-button';
                     button.dataset.mirrorId = mirror.id;
-                    button.innerHTML = `<span class="mirror-glyph"><span></span></span><span class="mirror-index">${mirrorMark(mirror)}</span>`;
+                    button.innerHTML = '<span class="mirror-glyph"><span></span></span>';
                     button.addEventListener('click', (event) => {
                         event.preventDefault();
                         event.stopPropagation();
