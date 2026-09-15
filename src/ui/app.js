@@ -5,9 +5,10 @@ import { renderBoard } from '../rendering/board-renderer.js';
 import { createInitialState, loadMvpLevel, simulate } from './physics-adapter.js';
 
 const MAX_LIVES = 3;
-const LEVELS_PER_DIFFICULTY = 3;
+const LEVELS_PER_DIFFICULTY = 10;
 const DIFFICULTIES = Object.freeze(['easy', 'medium', 'hard']);
 const DIFFICULTY_LABELS = Object.freeze({ easy: 'Easy', medium: 'Medium', hard: 'Hard' });
+const DIFFICULTY_BOARD_SIZES = Object.freeze({ easy: 7, medium: 11, hard: 15 });
 const EMPTY_SIMULATION = Object.freeze({ beamPath: [], targetHit: false, terminalReason: null });
 
 const boardElement = document.querySelector('#game-board');
@@ -111,8 +112,10 @@ function updateDifficultyTabs() {
 function updateProgress() {
     const difficultyLabel = DIFFICULTY_LABELS[difficultyId].toUpperCase();
     const levelNumber = levelIndex + 1;
-    levelTagElement.textContent = `${difficultyLabel} · LEVEL ${levelNumber} / ${LEVELS_PER_DIFFICULTY}`;
-    levelProgressElement.textContent = `LEVEL ${levelNumber} / ${LEVELS_PER_DIFFICULTY}`;
+    const formattedLevel = String(levelNumber).padStart(2, '0');
+    const formattedTotal = String(LEVELS_PER_DIFFICULTY).padStart(2, '0');
+    levelTagElement.textContent = `${difficultyLabel} · LEVEL ${formattedLevel} / ${formattedTotal}`;
+    levelProgressElement.textContent = `LEVEL ${formattedLevel} / ${formattedTotal}`;
 }
 
 function createState() {
@@ -196,7 +199,11 @@ function groupLevels(campaignLevels) {
     });
     DIFFICULTIES.forEach((id) => {
         grouped[id].sort((first, second) => first.id.localeCompare(second.id, undefined, { numeric: true }));
-        if (grouped[id].length !== LEVELS_PER_DIFFICULTY) {
+        const expectedIds = Array.from({ length: LEVELS_PER_DIFFICULTY }, (_, index) => `${id}_${String(index + 1).padStart(2, '0')}`);
+        const actualIds = new Set(grouped[id].map((campaignLevel) => campaignLevel.id));
+        const hasExpectedIds = expectedIds.every((expectedId) => actualIds.has(expectedId));
+        const hasExpectedSize = grouped[id].every((campaignLevel) => campaignLevel.size === DIFFICULTY_BOARD_SIZES[id]);
+        if (grouped[id].length !== LEVELS_PER_DIFFICULTY || actualIds.size !== LEVELS_PER_DIFFICULTY || !hasExpectedIds || !hasExpectedSize) {
             throw new Error(`${DIFFICULTY_LABELS[id]} requires exactly ${LEVELS_PER_DIFFICULTY} levels`);
         }
     });
@@ -218,8 +225,8 @@ function showDifficultyComplete() {
     winKicker.textContent = isFinalDifficulty ? 'CAMPAIGN COMPLETE' : 'DIFFICULTY CLEARED';
     winTitle.innerHTML = isFinalDifficulty ? 'All lines<br><em>aligned.</em>' : `${DIFFICULTY_LABELS[difficultyId]}<br><em>cleared.</em>`;
     winCopy.innerHTML = isFinalDifficulty
-        ? 'Every route is online. You completed the full three-difficulty campaign.'
-        : `All three ${DIFFICULTY_LABELS[difficultyId]} routes are online. Ready for the next challenge?`;
+        ? 'Every route is online. You completed the full thirty-level campaign.'
+        : `All ten ${DIFFICULTY_LABELS[difficultyId]} routes are online. Ready for the next challenge?`;
     nextDifficultyButton.hidden = isFinalDifficulty;
     nextDifficultyButton.disabled = isFinalDifficulty;
     playAgainButton.textContent = `Replay ${DIFFICULTY_LABELS[difficultyId]}`;

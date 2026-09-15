@@ -10,7 +10,8 @@ this UI branch:
 
 - `src/physics/geometry.js` exports `DIRECTIONS` and `MIRROR_ORIENTATIONS`.
 - `src/physics/laser.js` exports `simulateLaser(board, source)`.
-- `levels/levels.json` contains the nine format-version-2 campaign levels.
+- `levels/levels.json` contains the thirty format-version-2 campaign levels
+  (ten per difficulty).
 
 The UI-facing adapter exposes:
 

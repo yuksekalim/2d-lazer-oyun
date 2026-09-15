@@ -8,6 +8,8 @@ function pointsForPath(path, count) {
 const prefersReducedMotion = () => typeof window !== 'undefined'
     && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
+const MAX_REVEAL_DURATION = 3600;
+
 /** Reveal a beam path one traversed cell at a time. Returns a cancel function. */
 export function animateLaser(beamLayer, path = [], { stepDuration = 120, onComplete } = {}) {
     const beamLines = beamLayer?.querySelectorAll('.beam-glow, .beam-line, .beam-pulse, .beam-spark');
@@ -32,6 +34,10 @@ export function animateLaser(beamLayer, path = [], { stepDuration = 120, onCompl
     }
 
     let visibleCount = 1;
+    const revealStepDuration = Math.min(
+        stepDuration,
+        Math.floor(MAX_REVEAL_DURATION / Math.max(path.length - 1, 1)),
+    );
     const updatePath = () => {
         const points = pointsForPath(path, visibleCount);
         beamLines.forEach((line) => line.setAttribute('points', points));
@@ -55,7 +61,7 @@ export function animateLaser(beamLayer, path = [], { stepDuration = 120, onCompl
             finish();
             return;
         }
-        timer = setTimeout(revealNextCell, stepDuration);
+        timer = setTimeout(revealNextCell, revealStepDuration);
     };
 
     timer = setTimeout(revealNextCell, stepDuration);

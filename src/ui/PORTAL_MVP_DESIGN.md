@@ -4,10 +4,10 @@ This document records the UI decisions for the live teleport campaign. It is
 implementation-neutral about physics: the UI renders portal metadata and physics
 results; it does not infer portal behavior.
 
-The current campaign contains three independent difficulties with three levels
+The current campaign contains three independent difficulties with ten levels
 each. Easy uses 7×7 boards, Medium uses 11×11 boards, and Hard uses 15×15 boards.
 Each difficulty starts at Level 1 with three lives. A valid target entry advances
-automatically through Levels 1 → 2 → 3; completing Easy or Medium offers the next
+automatically through Levels 1 → 10; completing Easy or Medium offers the next
 difficulty, while the final Hard completion offers Play Again.
 
 ## Visual language
@@ -36,8 +36,8 @@ Portal arrows are data-driven and must not be inferred from the cell’s row or 
 | Failed result | Beam remains visible for about 1.4 seconds; terminal cell gets a brief amber/red interruption pulse; beam then hides | Controls re-enable after the beam is hidden |
 | Valid target entry | Beam compresses into the orange portal over about 220ms; target portal pulses for about 720ms | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
 | Level transition | After the target pulse, update the level label and render the next board with the shared life count intact | New level starts in aiming state |
-| Difficulty completion | After Level 3, show a completion dialog; Easy and Medium offer **Next difficulty**, all difficulties offer replay | Next difficulty starts its Level 1 with three lives; replay restarts the selected difficulty |
-| Campaign completion | After Hard Level 3, show a completion dialog with **Play Again** | Play Again restarts Hard Level 1 with three lives |
+| Difficulty completion | After Level 10, show a completion dialog; Easy and Medium offer **Next difficulty**, all difficulties offer replay | Next difficulty starts its Level 1 with three lives; replay restarts the selected difficulty |
+| Campaign completion | After Hard Level 10, show a completion dialog with **Play Again** | Play Again restarts Hard Level 1 with three lives |
 
 The animation module should expose cancellation so Reset cannot leave a stale timer or portal effect running. The UI should use the physics path and terminal result as the only source of truth for beam playback and success/failure.
 
@@ -88,7 +88,7 @@ wall, and mirror dynamically, including the 22 mirrors in `hard_03`. The target
 edge and accepted direction are data-driven; the UI does not copy coordinates or
 solution routes into its own fixtures.
 
-The level validator confirms the nine levels, their eight consecutive portal
-handoffs, and their target reachability. The physics adapter passes those levels
+The level validator confirms the thirty levels, their twenty-seven consecutive
+portal handoffs, and their target reachability. The physics adapter passes those levels
 to the production simulator and exposes the returned path and terminal result to
 the animation layer.

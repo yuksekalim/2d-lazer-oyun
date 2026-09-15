@@ -243,6 +243,8 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
     background: rgba(12, 26, 42, .9);
 }
 
+.board-row { display: contents; }
+
 .board-cell {
     position: relative;
     display: grid;
