@@ -243,6 +243,8 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
     background: rgba(12, 26, 42, .9);
 }
 
+.board-row { display: contents; }
+
 .board-cell {
     position: relative;
     display: grid;
@@ -290,8 +292,6 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .mirror-glyph { position: relative; display: block; width: 68%; height: 68%; transform: rotate(0deg); transition: transform 420ms cubic-bezier(.2,.8,.2,1); }
 .mirror-glyph::before { position: absolute; top: 10%; left: 50%; width: 4px; height: 80%; border-radius: 5px; background: linear-gradient(180deg, #d8d0ff, var(--violet) 45%, #7063c8); box-shadow: 0 0 8px rgba(169,151,255,.8); content: ''; transform: translateX(-50%) rotate(45deg); }
 .mirror-glyph::after { position: absolute; top: 8%; left: 50%; width: 1px; height: 84%; background: rgba(255,255,255,.65); content: ''; transform: translateX(-50%) rotate(45deg); }
-.mirror-index { position: absolute; right: 5%; bottom: 2%; color: rgba(222, 216, 255, .7); font-family: 'DM Mono', monospace; font-size: 8px; }
-
 .beam-layer { position: absolute; z-index: 2; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); overflow: visible; pointer-events: none; }
 .beam-glow, .beam-line, .beam-pulse, .beam-spark { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .beam-glow { stroke: var(--cyan); stroke-width: 12px; opacity: .1; filter: drop-shadow(0 0 10px var(--cyan)); }

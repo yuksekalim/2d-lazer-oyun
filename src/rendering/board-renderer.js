@@ -11,8 +11,17 @@ const createCell = (row, col, size) => {
     cell.dataset.row = row;
     cell.dataset.col = col;
     cell.setAttribute('role', 'gridcell');
+    cell.setAttribute('aria-colindex', String(col + 1));
     cell.style.setProperty('--cell-index', row * size + col);
     return cell;
+};
+
+const createRow = (row) => {
+    const rowElement = document.createElement('div');
+    rowElement.className = 'board-row';
+    rowElement.setAttribute('role', 'row');
+    rowElement.setAttribute('aria-rowindex', String(row + 1));
+    return rowElement;
 };
 
 const createBeam = (beamLayer, path, size) => {
@@ -32,9 +41,6 @@ const createBeam = (beamLayer, path, size) => {
 };
 
 const mirrorAngle = (orientation) => orientation === '/' ? 0 : 90;
-const mirrorMark = (mirror) => mirror.id.startsWith('turn_')
-    ? mirror.id.slice('turn_'.length).toUpperCase()
-    : `D${mirror.id.slice('decoy_'.length).toUpperCase()}`;
 const cellLabel = ({ row, col }) => ` at row ${row + 1}, column ${col + 1}`;
 
 const updateMirrorButton = (button, mirror) => {
@@ -80,12 +86,15 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
     const shouldBuildBoard = boardElement.dataset.renderKey !== renderKey;
 
     boardElement.style.setProperty('--grid-size', size);
+    boardElement.setAttribute('aria-rowcount', String(size));
+    boardElement.setAttribute('aria-colcount', String(size));
 
     if (shouldBuildBoard) {
         boardElement.replaceChildren();
         boardElement.dataset.renderKey = renderKey;
 
         for (let row = 0; row < size; row += 1) {
+            const rowElement = createRow(row);
             for (let col = 0; col < size; col += 1) {
                 const position = { row, col };
                 const key = cellKey(position);
@@ -102,7 +111,10 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                     cell.classList.add('is-portal', `${renderedPortal.role}-portal-cell`);
                     cell.innerHTML = renderedPortal.markup;
                     cell.setAttribute('aria-label', renderedPortal.label);
-                    if (renderedPortal.role === 'target') targetElement = cell;
+                    if (renderedPortal.role === 'target') {
+                        cell.dataset.defaultAriaLabel = renderedPortal.label;
+                        targetElement = cell;
+                    }
                 }
 
                 if (sameCell(position, source) && !portal) {
@@ -117,7 +129,7 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                     button.type = 'button';
                     button.className = 'mirror-button';
                     button.dataset.mirrorId = mirror.id;
-                    button.innerHTML = `<span class="mirror-glyph"><span></span></span><span class="mirror-index">${mirrorMark(mirror)}</span>`;
+                    button.innerHTML = '<span class="mirror-glyph"><span></span></span>';
                     button.addEventListener('click', (event) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -127,8 +139,9 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
                     cell.appendChild(button);
                 }
 
-                boardElement.appendChild(cell);
+                rowElement.appendChild(cell);
             }
+            boardElement.appendChild(rowElement);
         }
     } else {
         boardElement.querySelectorAll('.mirror-button').forEach((button) => {
@@ -143,7 +156,9 @@ export function renderBoard({ boardElement, beamLayer, level, boardState, simula
     });
     if (targetElement) {
         targetElement.classList.toggle('target-hit', simulation.targetHit);
+        const defaultLabel = targetElement.dataset.defaultAriaLabel;
         if (simulation.targetHit) targetElement.setAttribute('aria-label', 'Orange target portal reached');
+        else if (defaultLabel) targetElement.setAttribute('aria-label', defaultLabel);
     }
     boardElement.querySelectorAll('.mirror-button').forEach((button) => mirrorButtons.set(button.dataset.mirrorId, button));
 

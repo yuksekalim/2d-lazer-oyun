@@ -19,6 +19,12 @@ const ORIENTATION_NAMES = Object.freeze({
     [MIRROR_ORIENTATIONS.BACKSLASH]: MIRROR_ORIENTATIONS.BACKSLASH,
 });
 
+const DIFFICULTIES = Object.freeze(['easy', 'medium', 'hard']);
+const LEVELS_PER_DIFFICULTY = 10;
+const EXPECTED_LEVEL_IDS = new Set(DIFFICULTIES.flatMap((difficulty) => (
+    Array.from({ length: LEVELS_PER_DIFFICULTY }, (_, index) => `${difficulty}_${String(index + 1).padStart(2, '0')}`)
+)));
+
 function normalizeDirection(direction) {
     const normalized = DIRECTION_NAMES[String(direction).toLowerCase()] ?? direction;
     if (!Object.values(DIRECTIONS).includes(normalized)) {
@@ -177,11 +183,19 @@ export function simulate(boardState) {
 }
 
 export async function loadMvpLevel() {
-    const response = await fetch('../../levels/levels.json');
+    const response = await fetch('../../levels/levels.json?v=10-level-campaign-2');
     if (!response.ok) throw new Error(`Unable to load levels: ${response.status}`);
 
     const content = await response.json();
-    const rawLevels = content.levels?.filter((candidate) => /^(easy|medium|hard)_\d+$/.test(candidate.id));
-    if (rawLevels?.length !== 9) throw new Error('Campaign requires exactly nine levels');
+    const campaignCandidates = Array.isArray(content.levels)
+        ? content.levels.filter((candidate) => typeof candidate?.id === 'string' && /^(easy|medium|hard)_\d+$/.test(candidate.id))
+        : [];
+    const candidateIds = campaignCandidates.map((candidate) => candidate.id);
+    const candidateIdSet = new Set(candidateIds);
+    const hasExactCampaign = candidateIds.length === EXPECTED_LEVEL_IDS.size
+        && candidateIdSet.size === EXPECTED_LEVEL_IDS.size
+        && candidateIds.every((id) => EXPECTED_LEVEL_IDS.has(id));
+    if (!hasExactCampaign) throw new Error('Campaign requires exactly easy_01–10, medium_01–10, and hard_01–10');
+    const rawLevels = campaignCandidates.filter((candidate) => EXPECTED_LEVEL_IDS.has(candidate.id));
     return rawLevels.map(normalizeLevel);
 }

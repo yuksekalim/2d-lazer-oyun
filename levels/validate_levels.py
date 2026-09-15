@@ -12,9 +12,27 @@ REFLECTIONS = {
     "backslash": {"N": "W", "W": "N", "S": "E", "E": "S"},
 }
 CAMPAIGN_RULES = {
-    "easy": {"size": 7, "count": 3, "min_mirrors": 5},
-    "medium": {"size": 11, "count": 3, "min_mirrors": 7},
-    "hard": {"size": 15, "count": 3, "min_mirrors": 11},
+    "easy": {
+        "size": 7,
+        "count": 10,
+        "min_mirrors": 5,
+        "new_min_used_mirrors": 8,
+        "new_min_walls": 8,
+    },
+    "medium": {
+        "size": 11,
+        "count": 10,
+        "min_mirrors": 7,
+        "new_min_used_mirrors": 8,
+        "new_min_walls": 18,
+    },
+    "hard": {
+        "size": 15,
+        "count": 10,
+        "min_mirrors": 11,
+        "new_min_used_mirrors": 18,
+        "new_min_walls": 35,
+    },
 }
 
 
@@ -66,15 +84,12 @@ def validate_level(level):
     assert all(value == "blocked" for value in board["boundaries"].values())
 
     source = level["source"]
-    level_number = int(level_id.rsplit("_", 1)[1])
-    is_first_level = level_number == 1
-    assert source["role"] == ("emitter" if is_first_level else "portal")
+    assert source["role"] == "portal"
     assert source["direction"] in DIRECTIONS
     assert inside(source["position"], width, height)
 
     portals = level["portals"]
-    expected_portal_count = 1 if is_first_level else 2
-    assert len(portals) == expected_portal_count, f"{level_id}: expected {expected_portal_count} portal(s)"
+    assert len(portals) == 2, f"{level_id}: expected one source and one target portal"
     portal_by_id = {}
     portal_by_cell = {}
     for portal in portals:
@@ -91,15 +106,13 @@ def validate_level(level):
 
     source_portals = [portal for portal in portals if portal["role"] == "source"]
     target_portals = [portal for portal in portals if portal["role"] == "target"]
-    assert len(target_portals) == 1
-    assert len(source_portals) == (0 if is_first_level else 1)
-    source_portal = source_portals[0] if source_portals else None
+    assert len(source_portals) == len(target_portals) == 1
+    source_portal = source_portals[0]
     target_portal = target_portals[0]
-    if source_portal:
-        assert source["portalId"] == source_portal["id"]
-        assert key(source["position"]) == key(source_portal["position"])
-        assert source["direction"] == source_portal["direction"]
-        assert source_portal["color"] == "blue"
+    assert source["portalId"] == source_portal["id"]
+    assert key(source["position"]) == key(source_portal["position"])
+    assert source["direction"] == source_portal["direction"]
+    assert source_portal["color"] == "blue"
     assert target_portal["color"] == "orange"
 
     target = portal_by_id[level["target"]["portalId"]]
@@ -156,7 +169,7 @@ def validate_level(level):
             )
             reached_target = True
             break
-        if position in walls or (source_portal and position == key(source_portal["position"])):
+        if position in walls or position == key(source_portal["position"]):
             break
         mirror_id = mirror_by_cell.get(position)
         if mirror_id is not None:
@@ -172,6 +185,13 @@ def validate_level(level):
         mirrors[mirror_id]["orientation"] != solution[mirror_id]
         for mirror_id in used_mirrors
     ), f"{level_id}: used mirror starts in its solution orientation"
+    if int(level_id.rsplit("_", 1)[1]) >= 4:
+        assert len(used_mirrors) >= rules["new_min_used_mirrors"], (
+            f"{level_id}: new level needs more solution-critical mirrors"
+        )
+        assert len(walls) >= rules["new_min_walls"], (
+            f"{level_id}: new level needs more fixed wall pressure"
+        )
     return len(beam_cells), len(used_mirrors), len(decoys)
 
 
@@ -187,15 +207,15 @@ def main():
     data = json.loads(args.path.read_text(encoding="utf-8"))
     assert data["formatVersion"] == 2, "unsupported level format"
     levels = data["levels"]
-    assert len(levels) == 9, "campaign must contain nine levels"
+    assert len(levels) == 30, "campaign must contain thirty levels"
 
     ids = [level["id"] for level in levels]
     expected_ids = {
         f"{difficulty}_{index:02d}"
         for difficulty in CAMPAIGN_RULES
-        for index in range(1, 4)
+        for index in range(1, 11)
     }
-    assert set(ids) == expected_ids, "campaign ids must contain three levels per difficulty"
+    assert set(ids) == expected_ids, "campaign ids must contain ten levels per difficulty"
     for difficulty, rules in CAMPAIGN_RULES.items():
         assert sum(level["id"].startswith(f"{difficulty}_") for level in levels) == rules["count"]
 
@@ -205,19 +225,17 @@ def main():
             f"{level['id']}: solvable in {beam_cells} beam cells; "
             f"{used_mirrors} used mirrors, {decoys} decoys"
         )
-    for difficulty in CAMPAIGN_RULES:
-        campaign = [level for level in levels if level["id"].startswith(f"{difficulty}_")]
-        for current, following in zip(campaign, campaign[1:]):
-            target_portal = next(portal for portal in current["portals"] if portal["role"] == "target")
-            expected = expected_next_source(target_portal, following["board"])
-            actual = following["source"]
-            assert key(actual["position"]) == (expected["x"], expected["y"]), (
-                f"{current['id']} -> {following['id']}: source position breaks portal continuity"
-            )
-            assert actual["direction"] == expected["direction"], (
-                f"{current['id']} -> {following['id']}: source direction breaks portal continuity"
-            )
-            print(f"{current['id']} -> {following['id']}: portal handoff aligned")
+    for current, following in zip(levels, levels[1:]):
+        target_portal = next(portal for portal in current["portals"] if portal["role"] == "target")
+        expected = expected_next_source(target_portal, following["board"])
+        actual = following["source"]
+        assert key(actual["position"]) == (expected["x"], expected["y"]), (
+            f"{current['id']} -> {following['id']}: source position breaks portal continuity"
+        )
+        assert actual["direction"] == expected["direction"], (
+            f"{current['id']} -> {following['id']}: source direction breaks portal continuity"
+        )
+        print(f"{current['id']} -> {following['id']}: portal handoff aligned")
     print(f"validated {len(levels)} levels; formatVersion={data['formatVersion']}")
 
 

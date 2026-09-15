@@ -1,32 +1,34 @@
 # Physics handoff
 
-The UI consumes the deterministic adapter in `physics-adapter.js`. The adapter
-translates row/column UI cells into the physics engine's `{ x, y }` grid,
-where `x` increases right and `y` increases down. It must not reproduce laser
-movement, reflection, collision, target-direction, or loop rules.
+The UI consumes the production physics implementation from `src/physics/` through
+`physics-adapter.js`. It does not reproduce reflection, collision, portal, or loop
+rules. The adapter converts the level format's top-left `{ x, y }` coordinates to
+the renderer's `{ row, col }` coordinates and converts them back before simulation.
 
-The adapter exposes:
+The runtime integration expects the physics and levels branches to be merged with
+this UI branch:
+
+- `src/physics/geometry.js` exports `DIRECTIONS` and `MIRROR_ORIENTATIONS`.
+- `src/physics/laser.js` exports `simulateLaser(board, source)`.
+- `levels/levels.json` contains the thirty format-version-2 campaign levels
+  (ten per difficulty).
+
+The UI-facing adapter exposes:
 
 ```js
 simulate(boardState) => {
     beamPath: [{ row, col }, ...],
-    reflections: [{ position: { row, col }, from, to, orientation }, ...],
-    portalEvents: [{ type, portalId, color, position, direction, accepted? }, ...],
-    terminalReason:
-        'target' | 'boundary' | 'wall' | 'wrong-target-direction'
+    reflections: [{ position, orientation, from, to }, ...],
+    portalEvents: [{ type, portalId, position, direction, accepted? }, ...],
+    terminalReason: 'target' | 'boundary' | 'wall' | 'wrong-target-direction'
         | 'source-reentry' | 'loop' | 'portal-loop' | 'step-limit',
-    terminal: { reason, position: { row, col }, direction, portalId? },
+    terminal: { reason, position, direction, portalId? },
     targetHit: boolean,
     loopDetected: boolean,
 }
 ```
 
 `boardState` includes `size`, `source`, `target`, `portals`, `walls`, and
-`mirrors`. A portal has a stable `id`, `role`, border cell, facing direction,
-and visual color. The blue source portal emits from its own cell; the orange
-target portal succeeds only when entered from its configured direction.
-
-Portal events are returned separately so animations can react to
-`source-emit`, `source-enter`, and `target-enter` without duplicating physics.
-The canonical engine contract and mirror convention are documented in
-`agents/physics-agent.md`.
+`mirrors`. Each mirror has a stable `id`, `{ row, col }`, an orientation of `/`
+or `\\`, and its current state. The solution metadata is used only by authored
+level validation and is never used by the UI to reveal an answer.

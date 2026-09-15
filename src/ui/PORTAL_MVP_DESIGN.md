@@ -1,6 +1,14 @@
-# Teleport MVP UI design pass
+# Teleport campaign UI design pass
 
-This document records the UI decisions required before the teleport MVP runtime is edited. It is intentionally implementation-neutral: the UI renders portal metadata and physics results; it does not infer portal behavior.
+This document records the UI decisions for the live teleport campaign. It is
+implementation-neutral about physics: the UI renders portal metadata and physics
+results; it does not infer portal behavior.
+
+The current campaign contains three independent difficulties with ten levels
+each. Easy uses 7×7 boards, Medium uses 11×11 boards, and Hard uses 15×15 boards.
+Each difficulty starts at Level 1 with three lives. A valid target entry advances
+automatically through Levels 1 → 10; completing Easy or Medium offers the next
+difficulty, while the final Hard completion offers Play Again.
 
 ## Visual language
 
@@ -26,9 +34,10 @@ Portal arrows are data-driven and must not be inferred from the cell’s row or 
 | Aiming | Beam hidden; portals show their role and arrows | Mirrors, Fire Laser, and Reset available |
 | Beam playback | Beam reveals one traversed cell at a time; source emits a short blue pulse | Mirrors, Fire Laser, and Reset disabled |
 | Failed result | Beam remains visible for about 1.4 seconds; terminal cell gets a brief amber/red interruption pulse; beam then hides | Controls re-enable after the beam is hidden |
-| Valid target entry | Beam compresses into the orange portal over about 220ms; target portal pulses for about 720ms | Controls remain disabled during feedback |
+| Valid target entry | Beam compresses into the orange portal over about 220ms; target portal pulses for about 720ms | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
 | Level transition | After the target pulse, update the level label and render the next board with the shared life count intact | New level starts in aiming state |
-| Final success | After Level 2, show a completion dialog with **Play Again** only | Play Again restarts Level 1 and restores three lives |
+| Difficulty completion | After Level 10, show a completion dialog; Easy and Medium offer **Next difficulty**, all difficulties offer replay | Next difficulty starts its Level 1 with three lives; replay restarts the selected difficulty |
+| Campaign completion | After Hard Level 10, show a completion dialog with **Play Again** | Play Again restarts Hard Level 1 with three lives |
 
 The animation module should expose cancellation so Reset cannot leave a stale timer or portal effect running. The UI should use the physics path and terminal result as the only source of truth for beam playback and success/failure.
 
@@ -66,20 +75,20 @@ The physics result needs to preserve the existing path/terminal shape and expose
 {
     beamPath: [{ row, col }, ...],
     targetHit: boolean,
-    terminalReason: 'target' | 'boundary' | 'wall' | 'wrong-portal-direction' | 'source-reentry' | 'loop',
+    terminalReason: 'target' | 'boundary' | 'wall' | 'wrong-target-direction' | 'source-reentry' | 'loop' | 'portal-loop' | 'step-limit',
     terminal: { position: { row, col }, direction, portalId? },
 }
 ```
 
-## Level and route gate
+## Level and route handoff
 
-Runtime UI work must wait for the Level Agent to provide the final two 7×7 portal levels. The current repository level file still contains the earlier non-portal content, so no coordinates or solution routes are copied into the UI as guesses.
+The runtime reads the Level Agent's format-version-2 data directly from
+`levels/levels.json`. It renders every authored source portal, target portal,
+wall, and mirror dynamically, including the 22 mirrors in `hard_03`. The target
+edge and accepted direction are data-driven; the UI does not copy coordinates or
+solution routes into its own fixtures.
 
-Before implementation starts, record here (or in the level handoff) for each level:
-
-| Level | Source portal | Target portal | Mirrors | Walls | Intended route |
-| --- | --- | --- | --- | --- | --- |
-| Easy 1 | Pending Level Agent | Pending Level Agent | Pending | Pending | Pending physics verification |
-| Easy 2 | Pending Level Agent | Pending Level Agent | Pending | Pending | Pending physics verification |
-
-The Physics Agent must also confirm the target-entry direction convention and provide a verified result for: both successful routes, wrong-direction target entry, source re-entry, walls, boundaries, and loops. Once those handoffs land, the UI runtime can be updated without duplicating teleport or reflection rules.
+The level validator confirms the thirty levels, their twenty-seven consecutive
+portal handoffs, and their target reachability. The physics adapter passes those levels
+to the production simulator and exposes the returned path and terminal result to
+the animation layer.

@@ -7,20 +7,23 @@ const levelsUrl = new URL('../../levels/levels.json', import.meta.url);
 const content = JSON.parse(readFileSync(levelsUrl, 'utf8'));
 
 describe('authored levels', () => {
-    it('contains three levels per campaign difficulty', () => {
+    it('contains ten levels per campaign difficulty', () => {
         assert.equal(content.formatVersion, 2);
-        assert.equal(content.levels.length, 9);
+        assert.equal(content.levels.length, 30);
         assert.deepEqual(content.levels.map((level) => level.id), [
-            'easy_01', 'easy_02', 'easy_03',
-            'medium_01', 'medium_02', 'medium_03',
-            'hard_01', 'hard_02', 'hard_03',
+            'easy_01', 'easy_02', 'easy_03', 'easy_04', 'easy_05',
+            'easy_06', 'easy_07', 'easy_08', 'easy_09', 'easy_10',
+            'medium_01', 'medium_02', 'medium_03', 'medium_04', 'medium_05',
+            'medium_06', 'medium_07', 'medium_08', 'medium_09', 'medium_10',
+            'hard_01', 'hard_02', 'hard_03', 'hard_04', 'hard_05',
+            'hard_06', 'hard_07', 'hard_08', 'hard_09', 'hard_10',
         ]);
         assert.deepEqual(
             content.levels.map((level) => [level.board.width, level.board.height]),
             [
-                [7, 7], [7, 7], [7, 7],
-                [11, 11], [11, 11], [11, 11],
-                [15, 15], [15, 15], [15, 15],
+                ...Array.from({ length: 10 }, () => [7, 7]),
+                ...Array.from({ length: 10 }, () => [11, 11]),
+                ...Array.from({ length: 10 }, () => [15, 15]),
             ],
         );
     });
