@@ -281,7 +281,7 @@ h1 em, h2 em { color: var(--cyan); font-style: normal; }
 .blue-portal { color: var(--cyan); background: rgba(97, 229, 230, .1); }
 .orange-portal { color: var(--orange); background: rgba(255, 182, 92, .1); }
 .portal-core { width: 35%; height: 35%; border-radius: 50%; background: currentColor; box-shadow: 0 0 11px currentColor; }
-.portal-arrow { position: absolute; top: -34%; left: 50%; color: currentColor; font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; line-height: 1; transform: translateX(-50%) rotate(calc(var(--portal-angle) * -1)); }
+.portal-arrow { position: absolute; top: -34%; left: 50%; color: currentColor; font-family: 'DM Mono', monospace; font-size: clamp(12px, 1.3vw, 16px); font-weight: 500; line-height: 1; transform: translateX(-50%) rotate(calc(var(--portal-angle) * -1)); }
 .target-hit .portal-glyph { animation: portal-pulse 720ms cubic-bezier(.2,.8,.2,1); }
 
 .mirror-button { position: relative; z-index: 3; display: grid; width: 84%; height: 84%; padding: 0; place-items: center; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
