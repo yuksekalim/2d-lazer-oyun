@@ -24,13 +24,21 @@ the board; a target’s direction is the exact direction a beam must travel when
 entering it. The target cell alone is not sufficient for success.
 
 The campaign contains ten levels per difficulty: Easy uses 7×7 boards,
-Medium uses 11×11 boards, and Hard uses 15×15 boards. The first three levels in
-each difficulty are retained as the introductory set; levels 04–10 add longer
-routes, denser wall fields, and several rotatable decoy mirrors that are not
-visited by the intended route. The intended route is encoded in `solution` and
-validated against the directional portal contract. New Easy levels require at
-least eight solution-critical mirrors, new Medium levels at least eight, and
-new Hard levels at least eighteen.
+Medium uses 11×11 boards, and Hard uses 15×15 boards. All thirty boards use
+different route seeds and spatial motifs, with increasing route length, wall
+pressure, and decoy density by difficulty. Every level has at least eight
+solution-critical mirrors, several rotatable decoys that are not visited by
+the intended route, and at least two critical mirrors whose opposite
+orientation creates a meaningful non-target continuation. The intended route
+is encoded in `solution` and validated against the directional portal
+contract. Between 20% and 40% of the critical mirrors begin in their correct
+solution orientation; the exact subset is randomized per level.
+Target portal cells and complete solution turn signatures do not repeat within
+the same difficulty band. Critical mirrors are also kept sparse within a
+Chebyshev-2 neighborhood of the source and target (at most three critical
+mirrors), so the opening and finish do not become a single cluster of obvious
+moves. The validator also rejects repeated turn-direction motifs of twelve or
+more decisions.
 
 ## Campaign continuity
 
@@ -63,4 +71,6 @@ It checks the format, the three-by-ten campaign grouping, dimensions,
 border-facing portal directions, unique occupied cells, legal mirror and wall
 placement, complete solution metadata, target reachability, loop safety, the
 presence of unused decoy mirrors, the increased complexity floor for levels
-04–10, and every adjacent portal handoff.
+04–10, the 20–40% initial critical-mirror ratio, at least two meaningful
+wrong-turn branches per level, portal-neighborhood density, unique target
+cells and route signatures, and every adjacent portal handoff.

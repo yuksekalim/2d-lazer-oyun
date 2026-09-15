@@ -84,11 +84,12 @@ The physics result needs to preserve the existing path/terminal shape and expose
 
 The runtime reads the Level Agent's format-version-2 data directly from
 `levels/levels.json`. It renders every authored source portal, target portal,
-wall, and mirror dynamically, including the 22 mirrors in `hard_03`. The target
-edge and accepted direction are data-driven; the UI does not copy coordinates or
+wall, and mirror dynamically across all thirty boards. The target edge and
+accepted direction are data-driven; the UI does not copy coordinates or
 solution routes into its own fixtures.
 
 The level validator confirms the thirty levels, their twenty-seven consecutive
-portal handoffs, and their target reachability. The physics adapter passes those levels
+portal handoffs (nine within each independent difficulty), and their target
+reachability. The physics adapter passes those levels
 to the production simulator and exposes the returned path and terminal result to
 the animation layer.

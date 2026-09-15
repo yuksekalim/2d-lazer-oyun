@@ -183,7 +183,7 @@ export function simulate(boardState) {
 }
 
 export async function loadMvpLevel() {
-    const response = await fetch('../../levels/levels.json?v=10-level-campaign-2');
+    const response = await fetch('../../levels/levels.json?v=30-campaign-final');
     if (!response.ok) throw new Error(`Unable to load levels: ${response.status}`);
 
     const content = await response.json();

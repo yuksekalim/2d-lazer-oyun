@@ -1,8 +1,8 @@
-import { animateLaser } from '../animation/laser-animation.js?v=10-level-campaign-2';
-import { animateMirror } from '../animation/mirror-animation.js?v=10-level-campaign-2';
-import { animateTarget } from '../animation/target-animation.js?v=10-level-campaign-2';
-import { renderBoard } from '../rendering/board-renderer.js?v=10-level-campaign-2';
-import { createInitialState, loadMvpLevel, simulate } from './physics-adapter.js?v=10-level-campaign-2';
+import { animateLaser } from '../animation/laser-animation.js?v=30-campaign-final';
+import { animateMirror } from '../animation/mirror-animation.js?v=30-campaign-final';
+import { animateTarget } from '../animation/target-animation.js?v=30-campaign-final';
+import { renderBoard } from '../rendering/board-renderer.js?v=30-campaign-final';
+import { createInitialState, loadMvpLevel, simulate } from './physics-adapter.js?v=30-campaign-final';
 
 const MAX_LIVES = 3;
 const LEVELS_PER_DIFFICULTY = 10;

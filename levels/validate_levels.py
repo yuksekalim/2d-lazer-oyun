@@ -16,22 +16,28 @@ CAMPAIGN_RULES = {
         "size": 7,
         "count": 10,
         "min_mirrors": 5,
-        "new_min_used_mirrors": 8,
-        "new_min_walls": 8,
+        "min_used_mirrors": 8,
+        "min_walls": 8,
+        "min_portal_distance": 4,
+        "max_portal_near_mirrors": 3,
     },
     "medium": {
         "size": 11,
         "count": 10,
         "min_mirrors": 7,
-        "new_min_used_mirrors": 8,
-        "new_min_walls": 18,
+        "min_used_mirrors": 12,
+        "min_walls": 18,
+        "min_portal_distance": 7,
+        "max_portal_near_mirrors": 3,
     },
     "hard": {
         "size": 15,
         "count": 10,
         "min_mirrors": 11,
-        "new_min_used_mirrors": 18,
-        "new_min_walls": 35,
+        "min_used_mirrors": 18,
+        "min_walls": 35,
+        "min_portal_distance": 10,
+        "max_portal_near_mirrors": 3,
     },
 }
 
@@ -69,6 +75,96 @@ def expected_next_source(target, next_board):
     if target["direction"] == "S":
         return {"x": x, "y": 0, "direction": "S"}
     raise AssertionError("target direction must identify a board edge")
+
+
+def trace_level(level, orientations):
+    """Trace one orientation map and return enough detail to audit wrong turns."""
+
+    board = level["board"]
+    width, height = board["width"], board["height"]
+    source = level["source"]
+    target = next(portal for portal in level["portals"] if portal["role"] == "target")
+    source_position = key(source["position"])
+    target_position = key(target["position"])
+    walls = {key(cell) for cell in level["obstacles"]}
+    mirror_by_cell = {key(mirror["position"]): mirror["id"] for mirror in level["mirrors"]}
+    position = source_position
+    direction = source["direction"]
+    path = [position]
+    visited_mirrors = []
+    seen = set()
+
+    for _ in range(width * height * 4 + 1):
+        state = position, direction
+        if state in seen:
+            return {
+                "target_hit": False,
+                "reason": "loop",
+                "path": path,
+                "visited_mirrors": visited_mirrors,
+            }
+        seen.add(state)
+        dx, dy = DIRECTIONS[direction]
+        position = position[0] + dx, position[1] + dy
+        if not (0 <= position[0] < width and 0 <= position[1] < height):
+            return {
+                "target_hit": False,
+                "reason": "boundary",
+                "path": path,
+                "visited_mirrors": visited_mirrors,
+            }
+        path.append(position)
+        if position == target_position:
+            return {
+                "target_hit": direction == target["direction"],
+                "reason": "target" if direction == target["direction"] else "wrong-target-direction",
+                "path": path,
+                "visited_mirrors": visited_mirrors,
+            }
+        if position in walls:
+            return {
+                "target_hit": False,
+                "reason": "wall",
+                "path": path,
+                "visited_mirrors": visited_mirrors,
+            }
+        if position == source_position:
+            return {
+                "target_hit": False,
+                "reason": "source-reentry",
+                "path": path,
+                "visited_mirrors": visited_mirrors,
+            }
+        mirror_id = mirror_by_cell.get(position)
+        if mirror_id is not None:
+            visited_mirrors.append(mirror_id)
+            direction = REFLECTIONS[orientations[mirror_id]][direction]
+
+    return {
+        "target_hit": False,
+        "reason": "step-limit",
+        "path": path,
+        "visited_mirrors": visited_mirrors,
+    }
+
+
+def solution_shape(level, solution_result, solution):
+    """Return the ordered turn signature used to detect repeated macro routes."""
+
+    mirror_by_cell = {key(mirror["position"]): mirror["id"] for mirror in level["mirrors"]}
+    path = solution_result["path"]
+    shape = []
+    for index, cell in enumerate(path[1:], start=1):
+        mirror_id = mirror_by_cell.get(cell)
+        if mirror_id is None:
+            continue
+        incoming = next(
+            direction
+            for direction, delta in DIRECTIONS.items()
+            if (path[index - 1][0] + delta[0], path[index - 1][1] + delta[1]) == cell
+        )
+        shape.append((incoming, REFLECTIONS[solution[mirror_id]][incoming]))
+    return tuple(shape)
 
 
 def validate_level(level):
@@ -118,6 +214,12 @@ def validate_level(level):
     target = portal_by_id[level["target"]["portalId"]]
     assert target is target_portal
     assert key(source["position"]) != key(target["position"])
+    portal_distance = sum(
+        abs(source["position"][axis] - target["position"][axis]) for axis in ("x", "y")
+    )
+    assert portal_distance >= rules["min_portal_distance"], (
+        f"{level_id}: source and target portals are too close"
+    )
 
     occupied = {key(source["position"]), key(target["position"])}
     mirrors = {}
@@ -147,52 +249,72 @@ def validate_level(level):
     assert set(solution) == set(mirrors), f"{level_id}: incomplete solution metadata"
     assert all(orientation in REFLECTIONS for orientation in solution.values())
 
-    position = key(source["position"])
-    direction = source["direction"]
-    seen = set()
-    visited_mirrors = []
-    beam_cells = []
-    reached_target = False
-    for _ in range(width * height * 4 + 1):
-        state = position, direction
-        assert state not in seen, f"{level_id}: solution loops at {state}"
-        seen.add(state)
-        dx, dy = DIRECTIONS[direction]
-        position = position[0] + dx, position[1] + dy
-        if not (0 <= position[0] < width and 0 <= position[1] < height):
-            break
-        beam_cells.append(position)
-
-        if position == key(target["position"]):
-            assert direction == target["direction"], (
-                f"{level_id}: solution enters target from the wrong direction"
-            )
-            reached_target = True
-            break
-        if position in walls or position == key(source_portal["position"]):
-            break
-        mirror_id = mirror_by_cell.get(position)
-        if mirror_id is not None:
-            visited_mirrors.append(mirror_id)
-            direction = REFLECTIONS[solution[mirror_id]][direction]
-
-    assert reached_target, f"{level_id}: documented solution did not reach target"
+    solution_result = trace_level(level, solution)
+    assert solution_result["target_hit"], (
+        f"{level_id}: documented solution did not reach target ({solution_result['reason']})"
+    )
+    visited_mirrors = solution_result["visited_mirrors"]
     used_mirrors = set(visited_mirrors)
     decoys = set(mirrors) - used_mirrors
     assert len(used_mirrors) >= 4, f"{level_id}: solution needs more mirror decisions"
     assert decoys, f"{level_id}: expected at least one unused decoy mirror"
-    assert all(
-        mirrors[mirror_id]["orientation"] != solution[mirror_id]
+    assert len(used_mirrors) >= rules["min_used_mirrors"], (
+        f"{level_id}: solution needs more mirror decisions"
+    )
+    assert len(walls) >= rules["min_walls"], f"{level_id}: needs more fixed wall pressure"
+
+    critical_positions = [key(mirrors[mirror_id]["position"]) for mirror_id in used_mirrors]
+    source_cell = key(source["position"])
+    target_cell = key(target["position"])
+    source_near = sum(
+        max(abs(x - source_cell[0]), abs(y - source_cell[1])) <= 2
+        for x, y in critical_positions
+    )
+    target_near = sum(
+        max(abs(x - target_cell[0]), abs(y - target_cell[1])) <= 2
+        for x, y in critical_positions
+    )
+    assert source_near <= rules["max_portal_near_mirrors"], (
+        f"{level_id}: source portal neighborhood is too dense"
+    )
+    assert target_near <= rules["max_portal_near_mirrors"], (
+        f"{level_id}: target portal neighborhood is too dense"
+    )
+
+    initial_correct = sum(
+        mirrors[mirror_id]["orientation"] == solution[mirror_id]
         for mirror_id in used_mirrors
-    ), f"{level_id}: used mirror starts in its solution orientation"
-    if int(level_id.rsplit("_", 1)[1]) >= 4:
-        assert len(used_mirrors) >= rules["new_min_used_mirrors"], (
-            f"{level_id}: new level needs more solution-critical mirrors"
+    )
+    correct_ratio = initial_correct / len(used_mirrors)
+    assert 0.20 <= correct_ratio <= 0.40, (
+        f"{level_id}: {initial_correct}/{len(used_mirrors)} critical mirrors start correct"
+    )
+
+    branch_ids = []
+    for mirror_id in used_mirrors:
+        alternate = dict(solution)
+        alternate[mirror_id] = (
+            "slash" if solution[mirror_id] == "backslash" else "backslash"
         )
-        assert len(walls) >= rules["new_min_walls"], (
-            f"{level_id}: new level needs more fixed wall pressure"
-        )
-    return len(beam_cells), len(used_mirrors), len(decoys)
+        branch_result = trace_level(level, alternate)
+        mirror_position = key(mirrors[mirror_id]["position"])
+        if mirror_position not in branch_result["path"]:
+            continue
+        origin_index = branch_result["path"].index(mirror_position)
+        branch_length = len(branch_result["path"]) - origin_index - 1
+        if not branch_result["target_hit"] and branch_length >= 3:
+            branch_ids.append(mirror_id)
+    assert len(set(branch_ids)) >= 2, (
+        f"{level_id}: expected at least two meaningful wrong-turn branches"
+    )
+    return (
+        len(solution_result["path"]) - 1,
+        len(used_mirrors),
+        len(decoys),
+        initial_correct,
+        len(branch_ids),
+        solution_shape(level, solution_result, solution),
+    )
 
 
 def main():
@@ -219,12 +341,48 @@ def main():
     for difficulty, rules in CAMPAIGN_RULES.items():
         assert sum(level["id"].startswith(f"{difficulty}_") for level in levels) == rules["count"]
 
+    seen_targets = {difficulty: set() for difficulty in CAMPAIGN_RULES}
+    seen_shapes = {difficulty: set() for difficulty in CAMPAIGN_RULES}
+    direction_signatures = {difficulty: [] for difficulty in CAMPAIGN_RULES}
     for level in levels:
-        beam_cells, used_mirrors, decoys = validate_level(level)
+        difficulty = level["id"].split("_", 1)[0]
+        target_portal = next(portal for portal in level["portals"] if portal["role"] == "target")
+        target_cell = key(target_portal["position"])
+        assert target_cell not in seen_targets[difficulty], (
+            f"{level['id']}: target portal cell repeats within {difficulty}"
+        )
+        seen_targets[difficulty].add(target_cell)
+        result = validate_level(level)
+        beam_cells, used_mirrors, decoys, initial_correct, branches, shape = result
+        assert shape not in seen_shapes[difficulty], (
+            f"{level['id']}: solution route topology repeats within {difficulty}"
+        )
+        seen_shapes[difficulty].add(shape)
+        direction_signatures[difficulty].append(
+            tuple(incoming for incoming, _ in shape)
+        )
         print(
             f"{level['id']}: solvable in {beam_cells} beam cells; "
-            f"{used_mirrors} used mirrors, {decoys} decoys"
+            f"{used_mirrors} used mirrors, {decoys} decoys; "
+            f"{initial_correct} initially aligned, {branches} wrong-turn branches"
         )
+    for difficulty, signatures in direction_signatures.items():
+        for first_index, first in enumerate(signatures):
+            for second in signatures[first_index + 1 :]:
+                longest = 0
+                for first_start in range(len(first)):
+                    for second_start in range(len(second)):
+                        run = 0
+                        while (
+                            first_start + run < len(first)
+                            and second_start + run < len(second)
+                            and first[first_start + run] == second[second_start + run]
+                        ):
+                            run += 1
+                        longest = max(longest, run)
+                assert longest < 12, (
+                    f"{difficulty}: repeated turn motif is too long ({longest})"
+                )
     for current, following in zip(levels, levels[1:]):
         target_portal = next(portal for portal in current["portals"] if portal["role"] == "target")
         expected = expected_next_source(target_portal, following["board"])
