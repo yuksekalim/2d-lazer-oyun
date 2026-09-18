@@ -25,7 +25,7 @@ difficulty switching, automatic level progression, and campaign completion
 overlay are implemented; the overview and checkpoint portions remain to be
 implemented.
 
-The next phase expands the game into three independent campaigns. The player first sees a difficulty screen, then always starts that campaign at Level 1; there is no level-select screen. Each campaign contains 10 hand-designed levels: Easy uses 7×7 boards, Medium 11×11, and Hard 15×15. The game is desktop-only, with a fixed overview layout sized to show all 10 real boards.
+The next phase expands the game into three independent campaigns. The player first sees a difficulty screen, then always starts that campaign at Level 1; there is no level-select screen. Each campaign contains 10 hand-designed levels: Easy uses 7×7 boards, Medium 11×11, and Hard 15×15. The game is desktop-first, with a responsive fallback for narrower screens and a fixed overview layout sized to show all 10 real boards.
 
 Before Level 1 begins, the selected campaign should appear as a connected overview of its actual mini-grids, including mirrors, walls, and portals. The camera should then zoom into Level 1. A target portal on a non-corner border cell determines the next level's source portal on the opposite border at the same row or column: bottom→top, top→bottom, right→left, or left→right. The overview route may turn and must not overlap boards; level data should provide any authored overview placement needed to guarantee this.
 
@@ -38,6 +38,9 @@ runtime currently uses the format-2 teleport schema with 30 campaign levels.
 
 - The game starts at Easy Level 1. Easy, Medium, and Hard can currently be selected directly from the difficulty tabs; there is not yet a separate difficulty screen.
 - Easy levels use 7×7 boards, Medium levels use 11×11 boards, and Hard levels use 15×15 boards. Each campaign contains ten levels.
+- The current UI uses a light editorial palette: warm off-white background, dark ink, teal source accents, orange target accents, violet mirrors, and a pale teal board.
+- The header centers a `SELECT A CAMPAIGN` radio group, shows `CAMPAIGN ONLINE` status, and supports Arrow-key plus Home/End navigation between difficulties.
+- Campaign facts, level metadata, and the three-life pool are visible in the layout; the header and metadata stack responsively on narrower screens.
 - Every authored campaign level has one blue source portal and one orange target portal. There are never more than two portals in a level.
 - Portals are fixed on border cells and face perpendicular to the border. A blue source portal emits inward; an orange target portal accepts a beam traveling in its facing direction. Small arrows show both directions.
 - Walls and board boundaries stop the beam.

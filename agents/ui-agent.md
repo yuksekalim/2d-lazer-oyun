@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the player-facing interface: board presentation, controls, portal feedback, level transitions, campaign overview, and desktop accessibility. The current runtime supports direct difficulty tabs and automatic progression through 30 authored levels; the overview and checkpoint flow are still pending.
+Own the player-facing interface: board presentation, controls, portal feedback, level transitions, campaign overview, and desktop-first accessibility. The current runtime supports direct difficulty tabs and automatic progression through 30 authored levels; the overview and checkpoint flow are still pending.
 
 ## Owns
 
@@ -11,7 +11,7 @@ Own the player-facing interface: board presentation, controls, portal feedback, 
 - Mirror rotation input through mouse, touch, and keyboard
 - Instructions, reset, automatic next-level, completion, and error states
 - Level indicators, status messages, checkpoint feedback, and feedback animations
-- Desktop layout, focus behavior, accessible labels, and visual consistency
+- Desktop-first layout with responsive fallback, focus behavior, accessible labels, and visual consistency
 
 Preferred implementation locations are `src/ui/`, `styles/`, `public/`, and UI-focused tests.
 
@@ -31,11 +31,17 @@ shown as the player's starting state or as an automatic answer.
 
 ## Interaction Requirements
 
-Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Optimize the board and control layout for desktop screens; mobile support is out of scope.
+Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Use the current light editorial palette: warm off-white background, dark ink, teal sources, orange targets, violet mirrors, and a pale teal board.
+
+The top campaign selector is an ARIA `radiogroup` containing `radio` buttons.
+Keep `aria-checked` synchronized with the active difficulty. Arrow keys move
+between campaigns, while Home and End select the first and last campaign;
+focus must remain visible. Preserve the responsive header and metadata layout
+at narrower widths, and keep reduced-motion and forced-colors behavior intact.
 
 For the completed teleport foundation, the source portal visibly indicates its emission direction and the target portal visibly indicates its accepted entry direction. A correct target entry activates target feedback and transitions automatically to the next level. **Reset** remains available during gameplay; completion currently offers replay and, for Easy/Medium, the next difficulty.
 
-For the remaining campaign phase, show a difficulty screen first. After selection, render all 10 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1 and 6, restore three lives after Level 5, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 10.
+For the remaining campaign phase, show a difficulty screen first. After selection, render all 10 actual mini-grids in a desktop-first, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1 and 6, restore three lives after Level 5, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 10.
 
 ## Validation
 

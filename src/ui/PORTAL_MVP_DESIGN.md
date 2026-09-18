@@ -16,11 +16,19 @@ Difficulty** action are not implemented yet.
 
 ## Visual language
 
-- Blue/cyan portals are sources. Use `#61e5e6` for the ring, core glow, and emission arrow.
-- Orange portals are targets. Use `#ffb65c` for the ring, core glow, and acceptance arrow.
+- The current interface uses a light editorial palette: `#f1f0ea` warm off-white background, `#13232b` dark ink, white and pale-green surfaces, and teal grid accents.
+- Blue/cyan portals are sources. The current source accent is `#087d86` for the ring, core glow, and emission arrow.
+- Orange portals are targets. The current target accent is `#bd681f` for the ring, core glow, and acceptance arrow.
+- Mirrors use violet `#6552b3`; walls and cells use a pale teal board palette (`#d8e4e3`) with low-contrast grid lines.
 - Portal role must never be communicated by color alone. The source uses a filled center and an inward arrow; the target uses a ringed center and an entry arrow. Accessible text names the role and direction.
-- Keep walls and the board grid in the existing low-contrast slate palette so portals and the beam remain the visual focus.
 - A source portal remains visually active while the player is aiming. A target portal receives a brighter halo only after a valid target-entry result.
+
+The header centers a `SELECT A CAMPAIGN` label above the Easy/Medium/Hard
+selector and shows `CAMPAIGN ONLINE` with the current level on the right. The
+selector is a keyboard-operable ARIA radio group. The board metadata visibly
+labels `LIVES`, level progress, level name, and grid size; the intro panel also
+shows the 30-route, three-difficulty, unlimited-retry campaign facts. The
+header and metadata stack responsively on narrower screens.
 
 ## Direction arrows
 
@@ -58,6 +66,8 @@ state, Level 1/6 segment restarts, refresh reset behavior, and the final
 - On failure, announce the terminal reason in plain language: `Attempt failed: beam hit a wall.` / `beam left the board.` / `beam entered a portal in the wrong direction.` / `beam looped.`
 - On success, announce `Target portal reached. Loading the next level.`
 - Keep the three-heart life pool in one `aria-live="polite"` region. The same shared count must remain visible across both levels.
+- Keep `aria-checked` synchronized on the difficulty radio buttons. Arrow keys navigate the selector, and Home/End jump to the first/last option.
+- Preserve visible focus indicators for mirrors, controls, and difficulty options. Support reduced-motion and forced-colors modes.
 
 ## Required handoff contracts
 
