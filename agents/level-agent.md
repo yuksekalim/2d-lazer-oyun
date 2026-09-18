@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. The current MVP has two 7×7 teleport levels; the next phase adds three independent 10-level campaigns.
+Own the game’s level files and level content. Create, organize, validate, and balance boards that give players clear and progressively harder mirror puzzles. The repository currently contains three independent 10-level campaigns; the remaining level work is campaign metadata for overview placement and checkpoints.
 
 ## Owns
 
@@ -23,7 +23,10 @@ Preferred implementation locations are `src/levels/`, `levels/`, and `tests/leve
 
 Use the Physics Agent’s documented simulation contract to check that levels are valid; report physics defects instead of fixing them here.
 
-## Teleport MVP Layouts
+## Historical Teleport MVP Layouts
+
+These two layouts document the completed teleport-MVP foundation. They are not
+the current campaign levels in `levels/levels.json`.
 
 Use top-left origin coordinates `(x, y)`, with `x` increasing east and `y` increasing south. Portal directions use `N`, `E`, `S`, and `W`. Every listed mirror is rotatable; the initial orientation is intentionally different from its solution orientation.
 
@@ -53,7 +56,18 @@ Level 1’s target (1, 6) connects to this level’s source (1, 0), which emits 
 - Levels 5 and 10 are checkpoint completions. Checkpoints are progression metadata, not physics behavior.
 - The overview is read-only and must show the actual level contents at reduced scale, not placeholder cards.
 
-## Level Requirements
+## Current Campaign Requirements
+
+Easy uses 7×7 boards, Medium 11×11, and Hard 15×15; each difficulty has ten
+ordered levels. Current campaign data uses one blue source portal and one
+orange target portal per level, with border-facing directions, multiple
+rotatable mirrors, fixed walls, decoys, and authored solution metadata. The
+dependency-free validator confirms dimensions, portal continuity, solution
+reachability, route uniqueness, and campaign difficulty constraints.
+
+Overview placement metadata and checkpoint markers are not in the schema yet.
+
+## Historical MVP Level Requirements
 
 Every MVP level must fit a 7×7 board, contain exactly three rotatable mirrors, use fixed walls, and have at most two portals. Level 1 has one emitter and one orange target portal; Level 2 has one blue source portal and one orange target portal. Portals must be on the border and face perpendicular to it. Levels should be solvable, avoid accidental ambiguity, and record an intended route.
 
@@ -69,8 +83,7 @@ reporting the format change to the coordinator.
 Validate schema, dimensions, unique required elements, legal placements, portal
 roles and directions, wall/mirror separation, and solvability. Use
 `python3 levels/validate_levels.py` for the current format-2 content. Extend it
-before adding campaigns to validate counts, board sizes, non-corner border
-portals, consecutive portal connections, overview placement, and solvability.
+when overview placement and checkpoint metadata are added.
 Include tests for both documented routes, wrong-direction target approaches,
 and source re-entry.
 

@@ -4,14 +4,14 @@ This file tracks work that has been started but is incomplete, paused, or deferr
 
 ## Current Items
 
-### Campaign agent prototypes need rework
+### Campaign orchestration needs completion
 
 - **Area:** Levels and UI
-- **Status:** Paused after review
-- **Current state:** The Level and UI agent branches contain a nine-level, three-per-difficulty prototype. It validates locally, but it does not meet the confirmed 10-level campaign contract.
-- **Remaining work:** Author 10 levels for each independent difficulty, add real mini-grid overview placement and portal chaining, then implement the difficulty screen, zoom transition, the Level 5 checkpoint, segment restarts, and final actions after Level 10.
-- **Files:** `levels/levels.json`, `levels/validate_levels.py`, `src/ui/app.js`, `src/ui/index.html`, `src/ui/styles.css`; branches `agent/levels` and `agent/ui`.
-- **Notes:** Do not merge commits `cb6e213` or `f3e3c00` wholesale. Their three-level assumption and direct difficulty tabs conflict with `README.md` and the confirmed rules.
+- **Status:** Partially complete
+- **Current state:** The main branch contains 30 validated levels (ten Easy, ten Medium, ten Hard), direct difficulty tabs, automatic level progression, shared lives, replay, and campaign completion feedback. The older `agent/levels` and `agent/ui` branches remain historical prototypes.
+- **Remaining work:** Add the initial difficulty screen, real mini-grid overview placement and rendering, zoom transitions, the Level 5 checkpoint, Level 1/6 segment restarts, refresh reset behavior, and **Choose Difficulty** after Level 10.
+- **Files:** `levels/levels.json`, `levels/validate_levels.py`, `src/ui/app.js`, `src/ui/index.html`, `src/ui/styles.css`, and the campaign documentation.
+- **Notes:** Do not merge commits `cb6e213` or `f3e3c00` wholesale. They contain earlier nine-level/three-level assumptions; use the current main-branch data and runtime as the baseline.
 
 ## Entry Template
 

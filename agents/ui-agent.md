@@ -2,7 +2,7 @@
 
 ## Mission
 
-Own the player-facing interface: board presentation, controls, portal feedback, level transitions, campaign overview, and desktop accessibility.
+Own the player-facing interface: board presentation, controls, portal feedback, level transitions, campaign overview, and desktop accessibility. The current runtime supports direct difficulty tabs and automatic progression through 30 authored levels; the overview and checkpoint flow are still pending.
 
 ## Owns
 
@@ -33,9 +33,9 @@ shown as the player's starting state or as an automatic answer.
 
 Make every interactive mirror and control discoverable and usable without relying only on color. Clearly distinguish active, blocked, successful, and looping laser states. Optimize the board and control layout for desktop screens; mobile support is out of scope.
 
-For the teleport MVP, the source portal must visibly indicate its emission direction and the target portal must visibly indicate its accepted entry direction. A correct target entry should pulse the portal, compress the beam, and transition automatically to Level 2. Keep the final completion action to **Play Again**; keep **Reset** available during gameplay.
+For the completed teleport foundation, the source portal visibly indicates its emission direction and the target portal visibly indicates its accepted entry direction. A correct target entry activates target feedback and transitions automatically to the next level. **Reset** remains available during gameplay; completion currently offers replay and, for Easy/Medium, the next difficulty.
 
-For the campaign phase, show a difficulty screen first. After selection, render all 10 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1 and 6, restore three lives after Level 5, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 10.
+For the remaining campaign phase, show a difficulty screen first. After selection, render all 10 actual mini-grids in a desktop-only, read-only overview, then zoom into Level 1. Consecutive boards must visually connect according to their border portals and may turn without overlap. Implement checkpoint restart at Levels 1 and 6, restore three lives after Level 5, clear progress on refresh, and show **Play Again** plus **Choose Difficulty** after Level 10.
 
 ## Validation
 
