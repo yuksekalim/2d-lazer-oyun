@@ -104,7 +104,7 @@ function updateDifficultyTabs() {
     difficultyTabs.forEach((tab) => {
         const active = tab.dataset.difficulty === difficultyId;
         tab.classList.toggle('is-active', active);
-        tab.setAttribute('aria-pressed', String(active));
+        tab.setAttribute('aria-checked', String(active));
         tab.disabled = isAnimating || isCoolingDown || isSolved || !levels.length;
     });
 }
@@ -210,12 +210,12 @@ function groupLevels(campaignLevels) {
     return grouped;
 }
 
-function selectDifficulty(nextDifficultyId) {
+function selectDifficulty(nextDifficultyId, { focusFire = false } = {}) {
     if (!levelsByDifficulty[nextDifficultyId] || isAnimating || isCoolingDown) return;
     clearFeedbackTimer();
     difficultyId = nextDifficultyId;
     lives = MAX_LIVES;
-    loadLevelAt(0);
+    loadLevelAt(0, { focusFire });
 }
 
 function showDifficultyComplete() {
@@ -229,11 +229,10 @@ function showDifficultyComplete() {
         : `All ten ${DIFFICULTY_LABELS[difficultyId]} routes are online. Ready for the next challenge?`;
     nextDifficultyButton.hidden = isFinalDifficulty;
     nextDifficultyButton.disabled = isFinalDifficulty;
-    playAgainButton.textContent = `Replay ${DIFFICULTY_LABELS[difficultyId]}`;
     const replayIcon = document.createElement('span');
+    replayIcon.className = 'action-icon action-icon-reset';
     replayIcon.setAttribute('aria-hidden', 'true');
-    replayIcon.textContent = '↺';
-    playAgainButton.append(' ', replayIcon);
+    playAgainButton.replaceChildren(document.createTextNode(`Replay ${DIFFICULTY_LABELS[difficultyId]}`), replayIcon);
     appShell.inert = true;
     winOverlay.hidden = false;
     (isFinalDifficulty ? playAgainButton : nextDifficultyButton).focus();
@@ -315,7 +314,7 @@ function playAgain() {
 
 function advanceDifficulty() {
     const nextIndex = DIFFICULTIES.indexOf(difficultyId) + 1;
-    if (nextIndex < DIFFICULTIES.length) selectDifficulty(DIFFICULTIES[nextIndex]);
+    if (nextIndex < DIFFICULTIES.length) selectDifficulty(DIFFICULTIES[nextIndex], { focusFire: true });
 }
 
 function showLoadError(error) {
@@ -338,6 +337,19 @@ async function initialize() {
 
 difficultyTabs.forEach((tab) => {
     tab.addEventListener('click', () => selectDifficulty(tab.dataset.difficulty));
+    tab.addEventListener('keydown', (event) => {
+        if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const currentIndex = difficultyTabs.indexOf(tab);
+        const nextIndex = event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+                ? difficultyTabs.length - 1
+                : (currentIndex + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + difficultyTabs.length) % difficultyTabs.length;
+        const nextTab = difficultyTabs[nextIndex];
+        nextTab.focus();
+        selectDifficulty(nextTab.dataset.difficulty);
+    });
 });
 fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);

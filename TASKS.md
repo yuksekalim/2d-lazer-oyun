@@ -108,6 +108,7 @@ The physics foundation is implemented in `src/physics/geometry.js` and
 
 - [x] Review the physics agent commit and apply its directional portal validation, portal events, and loop tests.
 - [x] Review the UI agent commit and retain compatible animation/status improvements in the current campaign runtime.
+- [x] Apply the light editorial UI pass: brighter palette, enlarged lives and board metadata, top difficulty selector, responsive metadata layout, and accessible interaction states.
 - [ ] Rework the UI campaign prototype around the confirmed difficulty screen, real 10-board overview, checkpoint flow, and final actions.
 - [x] Rework the level prototype so each campaign has 10 levels and consecutive border portals connect on the same row or column without corners.
 

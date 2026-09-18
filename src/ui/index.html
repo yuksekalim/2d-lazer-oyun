@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#0b1220">
+        <meta name="theme-color" content="#f1f0ea">
         <title>Beamline — Laser Mirror Puzzle</title>
         <link rel="stylesheet" href="./styles.css?v=30-campaign-final">
     </head>
@@ -15,12 +15,16 @@
                     <span class="brand-mark" aria-hidden="true"><span></span></span>
                     <span>BEAMLINE</span>
                 </a>
-                <div class="topbar-meta" aria-label="Game progress">
-                    <nav class="difficulty-nav" id="difficulty-tabs" aria-label="Choose difficulty">
-                        <button class="difficulty-tab is-active" type="button" data-difficulty="easy" aria-pressed="true">Easy</button>
-                        <button class="difficulty-tab" type="button" data-difficulty="medium" aria-pressed="false">Medium</button>
-                        <button class="difficulty-tab" type="button" data-difficulty="hard" aria-pressed="false">Hard</button>
+                <div class="topbar-center">
+                    <span class="topbar-label">SELECT A CAMPAIGN</span>
+                    <nav class="difficulty-nav" id="difficulty-tabs" role="radiogroup" aria-label="Choose difficulty">
+                        <button class="difficulty-tab is-active" type="button" role="radio" data-difficulty="easy" aria-checked="true">Easy</button>
+                        <button class="difficulty-tab" type="button" role="radio" data-difficulty="medium" aria-checked="false">Medium</button>
+                        <button class="difficulty-tab" type="button" role="radio" data-difficulty="hard" aria-checked="false">Hard</button>
                     </nav>
+                </div>
+                <div class="topbar-status" aria-label="Game progress">
+                    <span class="topbar-status-label"><span class="topbar-status-dot"></span> CAMPAIGN ONLINE</span>
                     <span class="level-tag" id="level-tag">EASY · LEVEL 01 / 10</span>
                 </div>
             </header>
@@ -88,12 +92,12 @@
                         </div>
                         <p class="control-copy">Set the mirror angles, then fire the laser to reveal its route. A miss costs one life.</p>
                         <button class="reset-button fire-button" id="fire-button" type="button">
-                            <span aria-hidden="true">▶</span>
+                            <span class="action-icon action-icon-play" aria-hidden="true"></span>
                             <span>Fire laser</span>
                             <span class="button-shortcut">↵</span>
                         </button>
                         <button class="reset-button" id="reset-button" type="button">
-                            <span class="reset-icon" aria-hidden="true">↺</span>
+                            <span class="action-icon action-icon-reset" aria-hidden="true"></span>
                             <span>Reset board</span>
                             <span class="button-shortcut">R</span>
                         </button>
@@ -111,13 +115,13 @@
 
         <div class="win-overlay" id="win-overlay" role="dialog" aria-modal="true" aria-labelledby="win-title" hidden>
             <div class="win-card">
-                <div class="win-burst" aria-hidden="true"><span>✦</span></div>
+                <div class="win-burst" aria-hidden="true"><span class="win-burst-mark"></span></div>
                 <p class="eyebrow" id="win-kicker">TRANSMISSION COMPLETE</p>
                 <h2 id="win-title">Perfect<br><em>alignment.</em></h2>
                 <p class="win-copy" id="win-copy">The receiver is online. The laser found a clear route to the target.</p>
                 <div class="win-actions">
-                    <button class="reset-button win-next" id="next-difficulty-button" type="button">Next difficulty <span>→</span></button>
-                    <button class="reset-button win-reset" id="play-again-button" type="button">Replay difficulty <span>↺</span></button>
+                    <button class="reset-button win-next" id="next-difficulty-button" type="button">Next difficulty <span class="action-arrow" aria-hidden="true"></span></button>
+                    <button class="reset-button win-reset" id="play-again-button" type="button">Replay difficulty <span class="action-icon action-icon-reset" aria-hidden="true"></span></button>
                 </div>
             </div>
         </div>
