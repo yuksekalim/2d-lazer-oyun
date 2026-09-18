@@ -6,6 +6,10 @@ Keep runtime code under `src/`, static resources under `assets/`, and automated 
 
 Do not commit generated output, editor caches, local configuration, or dependencies. Update ignore rules when introducing a new toolchain.
 
+## Task Tracking
+
+Keep active work in `TASKS.md`. If a task is started but remains incomplete, paused, or deferred, move it to `backlog.md` with its current state, remaining work, relevant files, and dependencies. Move it back to `TASKS.md` when work resumes.
+
 ## Coding Style & Naming Conventions
 
 Use the formatter and linter configured by the project. Unless the selected toolchain specifies otherwise, use four-space indentation, focused modules, and small single-purpose functions. Prefer immutable level definitions and explicit game-state transitions where practical.

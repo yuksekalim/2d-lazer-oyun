@@ -1,14 +1,18 @@
 # Teleport campaign UI design pass
 
-This document records the UI decisions for the live teleport campaign. It is
-implementation-neutral about physics: the UI renders portal metadata and physics
-results; it does not infer portal behavior.
+This document records the UI decisions for the teleport campaign. It is
+implementation-neutral about physics: the UI renders portal metadata and
+physics results; it does not infer portal behavior. It describes both the
+current direct-tab runtime and the remaining overview/checkpoint experience.
 
-The current campaign contains three independent difficulties with ten levels
-each. Easy uses 7×7 boards, Medium uses 11×11 boards, and Hard uses 15×15 boards.
-Each difficulty starts at Level 1 with three lives. A valid target entry advances
-automatically through Levels 1 → 10; completing Easy or Medium offers the next
-difficulty, while the final Hard completion offers Play Again.
+The current data set contains three independent difficulties with ten levels
+each. Easy uses 7×7 boards, Medium uses 11×11 boards, and Hard uses 15×15
+boards. The current runtime starts on Easy Level 1, allows direct difficulty
+tab switching, and gives each selected campaign three lives. A valid target
+entry advances automatically through Levels 1 → 10; completing Easy or Medium
+offers the next difficulty, while every difficulty offers replay. The separate
+difficulty screen, connected overview, checkpoint restart, and **Choose
+Difficulty** action are not implemented yet.
 
 ## Visual language
 
@@ -32,14 +36,19 @@ Portal arrows are data-driven and must not be inferred from the cell’s row or 
 | State | Visual behavior | Input behavior |
 | --- | --- | --- |
 | Aiming | Beam hidden; portals show their role and arrows | Mirrors, Fire Laser, and Reset available |
-| Beam playback | Beam reveals one traversed cell at a time; source emits a short blue pulse | Mirrors, Fire Laser, and Reset disabled |
-| Failed result | Beam remains visible for about 1.4 seconds; terminal cell gets a brief amber/red interruption pulse; beam then hides | Controls re-enable after the beam is hidden |
-| Valid target entry | Beam compresses into the orange portal over about 220ms; target portal pulses for about 720ms | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
+| Beam playback | Beam reveals one traversed cell at a time; the source and portal remain visible | Mirrors, Fire Laser, and Reset disabled |
+| Failed result | Beam remains visible for about 1.4 seconds; the status card reports the terminal reason; terminal-cell interruption pulse remains future polish | Controls re-enable after the beam is hidden |
+| Valid target entry | Target portal feedback plays for about 720ms; beam compression remains a future polish item | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
 | Level transition | After the target pulse, update the level label and render the next board with the shared life count intact | New level starts in aiming state |
 | Difficulty completion | After Level 10, show a completion dialog; Easy and Medium offer **Next difficulty**, all difficulties offer replay | Next difficulty starts its Level 1 with three lives; replay restarts the selected difficulty |
 | Campaign completion | After Hard Level 10, show a completion dialog with **Play Again** | Play Again restarts Hard Level 1 with three lives |
 
 The animation module should expose cancellation so Reset cannot leave a stale timer or portal effect running. The UI should use the physics path and terminal result as the only source of truth for beam playback and success/failure.
+
+Remaining UI work is the initial difficulty screen, the read-only overview of
+actual mini-grids, the overview-to-board zoom transition, Level 5 checkpoint
+state, Level 1/6 segment restarts, refresh reset behavior, and the final
+**Choose Difficulty** action.
 
 ## Accessible labels and live status
 
@@ -88,8 +97,9 @@ wall, and mirror dynamically across all thirty boards. The target edge and
 accepted direction are data-driven; the UI does not copy coordinates or
 solution routes into its own fixtures.
 
-The level validator confirms the thirty levels, their twenty-seven consecutive
-portal handoffs (nine within each independent difficulty), and their target
-reachability. The physics adapter passes those levels
-to the production simulator and exposes the returned path and terminal result to
-the animation layer.
+The level validator confirms the thirty levels, their target reachability, and
+portal handoffs in the ordered data file. The runtime treats the three
+difficulties as independent and traverses only the nine handoffs within the
+selected difficulty. The physics adapter passes each level to the production
+simulator and exposes the returned path and terminal result to the animation
+layer.

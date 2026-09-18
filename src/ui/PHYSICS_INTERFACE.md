@@ -5,8 +5,7 @@ The UI consumes the production physics implementation from `src/physics/` throug
 rules. The adapter converts the level format's top-left `{ x, y }` coordinates to
 the renderer's `{ row, col }` coordinates and converts them back before simulation.
 
-The runtime integration expects the physics and levels branches to be merged with
-this UI branch:
+The current runtime integration uses:
 
 - `src/physics/geometry.js` exports `DIRECTIONS` and `MIRROR_ORIENTATIONS`.
 - `src/physics/laser.js` exports `simulateLaser(board, source)`.
