@@ -113,6 +113,18 @@ npm run dev
 when working only on `src/physics/`. `npm run dev` starts a local static server;
 open `http://localhost:4173/src/ui/` in a modern browser.
 
+## Public Website
+
+The repository deploys the static game to GitHub Pages from the `main` branch
+through [`.github/workflows/pages.yml`](.github/workflows/pages.yml). The root
+`index.html` forwards visitors to the playable UI, so the public game is
+available at:
+
+https://yuksekalim.github.io/2d-lazer-oyun/
+
+GitHub Pages must be enabled for the repository with **GitHub Actions** selected
+as the publishing source. Every push to `main` then redeploys the site.
+
 ## License
 
 License: to be decided.
