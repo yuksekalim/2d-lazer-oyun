@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#f1f0ea">
         <title>Beamline — Laser Mirror Puzzle</title>
-        <link rel="stylesheet" href="./styles.css?v=game-first-review-3">
+        <link rel="stylesheet" href="./styles.css?v=local-board-hint-4">
     </head>
     <body>
         <div class="app-shell">
@@ -15,28 +15,11 @@
                     <span class="brand-mark" aria-hidden="true"><span></span></span>
                     <span>BEAMLINE</span>
                 </a>
-                <div class="topbar-center">
-                    <nav class="difficulty-nav" id="difficulty-tabs" role="radiogroup" aria-label="Choose difficulty">
-                        <button class="difficulty-tab is-active" type="button" role="radio" data-difficulty="easy" aria-checked="true">Easy</button>
-                        <button class="difficulty-tab" type="button" role="radio" data-difficulty="medium" aria-checked="false">Medium</button>
-                        <button class="difficulty-tab" type="button" role="radio" data-difficulty="hard" aria-checked="false">Hard</button>
-                    </nav>
-                </div>
-                <div class="topbar-game-meta" aria-label="Campaign progress and lives">
-                    <div class="campaign-progress">
-                        <span class="campaign-progress-label">ROUTE</span>
-                        <span class="level-tag" id="level-tag">01 / 10</span>
-                        <progress class="campaign-progress-bar" id="campaign-progress" max="10" value="1" aria-label="Campaign progress"></progress>
-                    </div>
-                    <div class="lives-group">
-                        <span class="lives-label" aria-hidden="true">LIVES</span>
-                        <div class="board-lives" id="lives-row" aria-live="polite" aria-label="3 lives remaining" role="img">
-                            <span class="heart is-filled" data-life="1" aria-hidden="true">♥</span>
-                            <span class="heart is-filled" data-life="2" aria-hidden="true">♥</span>
-                            <span class="heart is-filled" data-life="3" aria-hidden="true">♥</span>
-                        </div>
-                    </div>
-                </div>
+                <nav class="difficulty-nav" id="difficulty-tabs" role="radiogroup" aria-label="Choose difficulty">
+                    <button class="difficulty-tab is-active" type="button" role="radio" data-difficulty="easy" aria-checked="true">Easy</button>
+                    <button class="difficulty-tab" type="button" role="radio" data-difficulty="medium" aria-checked="false">Medium</button>
+                    <button class="difficulty-tab" type="button" role="radio" data-difficulty="hard" aria-checked="false">Hard</button>
+                </nav>
             </header>
 
             <main class="game-layout">
@@ -46,24 +29,43 @@
                         <span class="board-size" id="board-size">7 × 7</span>
                     </header>
 
+                    <div class="board-ribbon" aria-label="Campaign progress and lives">
+                        <div class="campaign-progress">
+                            <span class="campaign-progress-label">ROUTE</span>
+                            <span class="level-tag" id="level-tag">01 / 10</span>
+                            <progress class="campaign-progress-bar" id="campaign-progress" max="10" value="1" aria-label="Campaign progress"></progress>
+                        </div>
+                        <span class="ribbon-divider" aria-hidden="true"></span>
+                        <div class="lives-group">
+                            <span class="lives-label" aria-hidden="true">LIVES</span>
+                            <div class="board-lives" id="lives-row" aria-live="polite" aria-label="3 lives remaining" role="img">
+                                <span class="heart is-filled" data-life="1" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="2" aria-hidden="true">♥</span>
+                                <span class="heart is-filled" data-life="3" aria-hidden="true">♥</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="board-wrap" id="board-wrap">
-                        <div id="game-board" class="game-board" role="grid" aria-label="7 by 7 laser puzzle board"></div>
+                        <div id="game-board" class="game-board" role="grid" aria-label="7 by 7 laser puzzle board">
+                            <p class="board-fallback">Open Beamline through its local server to load the puzzle. Run <code>npm run dev</code>, then visit <code>http://localhost:4173/src/ui/</code>.</p>
+                        </div>
                         <svg id="beam-layer" class="beam-layer" viewBox="0 0 7 7" preserveAspectRatio="none" aria-hidden="true"></svg>
                         <div class="board-glow" aria-hidden="true"></div>
                     </div>
 
                     <div class="game-controls">
-                        <p class="interaction-hint">Click or tap a mirror to rotate it.</p>
+                        <p class="interaction-hint">Match the receiver’s entry direction, then fire.</p>
                         <div class="control-actions">
-                            <button class="reset-button" id="reset-button" type="button">
-                                <span class="action-icon action-icon-reset" aria-hidden="true"></span>
-                                <span>Reset</span>
-                                <span class="button-shortcut">R</span>
-                            </button>
                             <button class="reset-button fire-button" id="fire-button" type="button">
                                 <span class="action-icon action-icon-play" aria-hidden="true"></span>
                                 <span>Fire laser</span>
                                 <span class="button-shortcut">↵</span>
+                            </button>
+                            <button class="reset-button" id="reset-button" type="button">
+                                <span class="action-icon action-icon-reset" aria-hidden="true"></span>
+                                <span>Reset</span>
+                                <span class="button-shortcut">R</span>
                             </button>
                         </div>
                     </div>
@@ -77,6 +79,40 @@
                         </div>
                     </div>
                 </section>
+
+                <aside class="game-rail controls-rail" aria-labelledby="controls-title">
+                    <h2 id="controls-title">Controls</h2>
+                    <ul class="control-guide">
+                        <li>
+                            <span class="guide-symbol guide-mirror" aria-hidden="true"><span></span></span>
+                            <span class="guide-copy"><strong>Rotate</strong><small>Tap or click</small></span>
+                        </li>
+                        <li>
+                            <span class="guide-symbol guide-beam" aria-hidden="true">↗</span>
+                            <span class="guide-copy"><strong>Fire beam</strong><small>Test your route</small></span>
+                            <kbd>ENTER</kbd>
+                        </li>
+                        <li>
+                            <span class="guide-symbol guide-reset" aria-hidden="true">↶</span>
+                            <span class="guide-copy"><strong>Reset</strong><small>Restore this layout</small></span>
+                            <kbd>R</kbd>
+                        </li>
+                    </ul>
+                </aside>
+
+                <aside class="game-rail receiver-rail" aria-labelledby="receiver-title">
+                    <h2 id="receiver-title">Receiver</h2>
+                    <div class="receiver-callout">
+                        <span class="receiver-glyph" aria-hidden="true"><span id="receiver-arrow">→</span></span>
+                        <div>
+                            <strong class="receiver-direction" id="receiver-direction">Right</strong>
+                        </div>
+                    </div>
+                    <dl class="board-facts">
+                        <div><dt>Mirrors</dt><dd id="mirror-count">12</dd></div>
+                        <div><dt>Walls</dt><dd id="wall-count">8</dd></div>
+                    </dl>
+                </aside>
             </main>
         </div>
 
@@ -93,6 +129,6 @@
             </div>
         </div>
 
-        <script type="module" src="./app.js?v=game-first-review-3"></script>
+        <script type="module" src="./app.js?v=local-board-hint-4"></script>
     </body>
 </html>

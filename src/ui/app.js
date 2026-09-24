@@ -19,6 +19,10 @@ const levelTagElement = document.querySelector('#level-tag');
 const campaignProgressElement = document.querySelector('#campaign-progress');
 const levelNameElement = document.querySelector('#level-name');
 const boardSizeElement = document.querySelector('#board-size');
+const receiverArrowElement = document.querySelector('#receiver-arrow');
+const receiverDirectionElement = document.querySelector('#receiver-direction');
+const mirrorCountElement = document.querySelector('#mirror-count');
+const wallCountElement = document.querySelector('#wall-count');
 const difficultyTabs = [...document.querySelectorAll('.difficulty-tab')];
 const livesRow = document.querySelector('#lives-row');
 const statusCard = document.querySelector('#status-card');
@@ -64,12 +68,12 @@ function updateStatus(simulation) {
     }
 
     if (isAnimating) {
-        setStatus('active', 'BEAM IN TRANSIT', 'Tracing the route', 'Watch the beam move through each cell.');
+        setStatus('idle', '', '', '');
         return;
     }
 
     if (isCoolingDown) {
-        setStatus('blocked', 'ATTEMPT RECORDED', 'Beam fading', 'The next attempt unlocks when the route clears.');
+        setStatus('idle', '', '', '');
         return;
     }
 
@@ -117,6 +121,20 @@ function updateProgress() {
     campaignProgressElement.value = levelNumber;
 }
 
+function updateBoardBrief() {
+    const directions = {
+        N: { name: 'Up', arrow: '↑' },
+        E: { name: 'Right', arrow: '→' },
+        S: { name: 'Down', arrow: '↓' },
+        W: { name: 'Left', arrow: '←' },
+    };
+    const direction = directions[level.target.facingDirection];
+    receiverArrowElement.textContent = direction?.arrow ?? '•';
+    receiverDirectionElement.textContent = direction?.name ?? '—';
+    mirrorCountElement.textContent = String(level.mirrors.length);
+    wallCountElement.textContent = String(level.walls.length);
+}
+
 function createState() {
     return createInitialState(level);
 }
@@ -138,6 +156,7 @@ function render({ animatedMirrorId = null } = {}) {
     updateProgress();
     levelNameElement.textContent = level.name;
     boardSizeElement.textContent = `${level.size} × ${level.size}`;
+    updateBoardBrief();
     boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
     updateLives();
     fireButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
@@ -316,22 +335,11 @@ function advanceDifficulty() {
     if (nextIndex < DIFFICULTIES.length) selectDifficulty(DIFFICULTIES[nextIndex], { focusFire: true });
 }
 
-function showLoadError(error) {
-    setStatus('blocked', 'LOAD ERROR', 'Levels unavailable', error.message);
-    fireButton.disabled = true;
-    resetButton.disabled = true;
-    difficultyTabs.forEach((tab) => { tab.disabled = true; });
-}
-
 async function initialize() {
-    try {
-        levels = await loadMvpLevel();
-        levelsByDifficulty = groupLevels(levels);
-        difficultyId = DIFFICULTIES[0];
-        loadLevelAt(0);
-    } catch (error) {
-        showLoadError(error);
-    }
+    levels = await loadMvpLevel();
+    levelsByDifficulty = groupLevels(levels);
+    difficultyId = DIFFICULTIES[0];
+    loadLevelAt(0);
 }
 
 difficultyTabs.forEach((tab) => {

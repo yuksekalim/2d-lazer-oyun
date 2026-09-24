@@ -37,7 +37,7 @@ Portal arrows are data-driven and must not be inferred from the cell’s row or 
 - Source arrow: points in the exact direction emitted by the source portal.
 - Target arrow: points in the exact direction required by the target portal’s `facingDirection` / accepted beam direction.
 - Render the arrow inside the portal cell with a small tail and triangular head. Keep it visible at rest, during aiming, and while the beam is hidden.
-- Add a text equivalent to every arrow, for example: `Blue source portal, emits east` and `Orange target portal, accepts north`.
+- Add a text equivalent to every arrow, for example: `Blue source portal, emits right` and `Orange target portal, accepts up`.
 
 ## Feedback and timing
 

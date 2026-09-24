@@ -1,6 +1,6 @@
 const ORIENTATION_LABELS = Object.freeze({ '/': 'slash', '\\': 'backslash' });
 const DIRECTION_ARROWS = Object.freeze({ N: '↑', E: '→', S: '↓', W: '←' });
-const DIRECTION_LABELS = Object.freeze({ N: 'north', E: 'east', S: 'south', W: 'west' });
+const DIRECTION_LABELS = Object.freeze({ N: 'up', E: 'right', S: 'down', W: 'left' });
 
 const sameCell = (a, b) => a && b && a.row === b.row && a.col === b.col;
 const cellKey = ({ row, col }) => `${row}-${col}`;
