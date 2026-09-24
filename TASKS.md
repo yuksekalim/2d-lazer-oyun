@@ -110,8 +110,8 @@ The physics foundation is implemented in `src/physics/geometry.js` and
 - [x] Review the UI agent commit and retain compatible animation/status improvements in the current campaign runtime.
 - [x] Apply the light editorial UI pass: warm light palette, enlarged lives and board metadata, centered campaign radio group, responsive metadata layout, keyboard navigation, and accessible interaction states.
 - [x] Replace promotional framing and detached status/control panels with a board-first game screen and concise, contextual feedback.
-- [x] Move route and lives above the board; use the side rails for concise controls and level-specific receiver/board facts.
-- [x] Use screen-direction language, enlarge the Hard-mode grid, simplify rail headings, and improve beam contrast on the light board.
+- [x] Move route and lives above the board, center the board without side rails, and keep gameplay actions beneath the play area.
+- [x] Use screen-direction language, enlarge the Hard-mode grid, and improve beam contrast on the light board.
 - [ ] Rework the UI campaign prototype around the confirmed difficulty screen, real 10-board overview, checkpoint flow, and final actions.
 - [x] Rework the level prototype so each campaign has 10 levels and consecutive border portals connect on the same row or column without corners.
 
