@@ -15,7 +15,7 @@
     --state-danger: #98510f;
     --state-success: #176a51;
     --mirror: #6552b3;
-    --laser-beam: #ad2929;
+    --laser-beam: #d71920;
     --focus-ring: #185abd;
     --board-cell: #fbfcfa;
     --board-cell-alt: #edf3f0;
@@ -147,8 +147,11 @@ button { color: inherit; }
 .lives-group { display: flex; align-items: center; gap: 8px; }
 .lives-label { color: var(--text-secondary); font-size: 11px; font-weight: 650; letter-spacing: .06em; }
 .board-lives { display: flex; align-items: center; gap: 4px; min-height: 36px; }
-.heart { display: inline-block; color: #a94d1a; font-family: Georgia, serif; font-size: 34px; line-height: .9; transition: color 180ms ease, transform 180ms ease; }
-.heart:not(.is-filled) { color: #a9b3ae; transform: scale(.94); }
+.heart { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; color: #a94d1a; transition: color 180ms ease; }
+.heart svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.heart path { fill: currentColor; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; }
+.heart:not(.is-filled) { color: #a9b3ae; }
+.heart:not(.is-filled) path { fill: transparent; stroke-width: 1.8; }
 
 .game-layout {
     display: grid;
@@ -262,14 +265,11 @@ button { color: inherit; }
 .beam-layer { position: absolute; z-index: 2; inset: 8px; width: calc(100% - 16px); height: calc(100% - 16px); overflow: visible; pointer-events: none; }
 .beam-glow, .beam-line, .beam-pulse, .beam-spark { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
 .beam-glow, .beam-line { stroke: var(--laser-beam); }
-.beam-glow { stroke-width: 14px; opacity: .24; filter: drop-shadow(0 0 9px var(--laser-beam)); }
-.beam-line { stroke-width: 6px; opacity: 1; }
-.beam-pulse { stroke: #ffffff; stroke-width: 2px; opacity: .98; stroke-dasharray: .025 .075; stroke-dashoffset: 0; }
-.beam-spark { stroke: #ffffff; stroke-width: 1px; opacity: .9; stroke-dasharray: .008 .18; }
-.beam-layer.is-animating .beam-glow { animation: beam-bloom 850ms ease-out both, beam-shimmer 900ms linear infinite; }
-.beam-layer.is-animating .beam-line { animation: beam-bloom 850ms ease-out both; }
-.beam-layer.is-animating .beam-pulse { animation: beam-travel 800ms linear infinite; }
-.beam-layer.is-animating .beam-spark { animation: beam-travel 560ms linear infinite; }
+.beam-glow { stroke-width: 18px; opacity: .38; filter: drop-shadow(0 0 11px var(--laser-beam)); }
+.beam-line { stroke-width: 7px; opacity: 1; }
+.beam-pulse { stroke: #ffffff; stroke-width: 2.5px; opacity: .98; stroke-dasharray: .025 .075; stroke-dashoffset: 0; }
+.beam-spark { stroke: #ffffff; stroke-width: 1.5px; opacity: .96; stroke-dasharray: .008 .18; }
+.beam-layer.is-animating .beam-glow { animation: beam-shimmer 900ms ease-in-out infinite alternate; }
 .board-glow { position: absolute; z-index: 0; inset: 30% 18%; background: rgba(8, 123, 131, .05); filter: blur(45px); pointer-events: none; }
 
 .game-controls { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 16px; margin-top: 10px; }
@@ -328,9 +328,7 @@ button { color: inherit; }
 .is-celebrating .portal-glyph, .is-celebrating .target-glyph { animation: target-hit 700ms cubic-bezier(.2, .8, .2, 1); }
 
 @keyframes cell-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes beam-bloom { from { opacity: 0; stroke-width: 1px; } to { opacity: .2; stroke-width: 4px; } }
-@keyframes beam-travel { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes beam-shimmer { from { opacity: .08; } 50% { opacity: .16; } to { opacity: .08; } }
+@keyframes beam-shimmer { from { opacity: .3; } to { opacity: .52; } }
 @keyframes mirror-turn { 0% { transform: rotate(0deg) scale(.9); } 50% { transform: rotate(45deg) scale(1.08); } 100% { transform: rotate(90deg) scale(1); } }
 @keyframes target-hit { 0% { transform: scale(1); } 25% { transform: scale(1.3); } 60% { transform: scale(.92); } 100% { transform: scale(1); } }
 @keyframes portal-pulse { 0% { transform: rotate(var(--portal-angle)) scale(1); } 30% { transform: rotate(var(--portal-angle)) scale(1.28); } 65% { transform: rotate(var(--portal-angle)) scale(.94); } 100% { transform: rotate(var(--portal-angle)) scale(1); } }
@@ -365,7 +363,7 @@ button { color: inherit; }
     .level-tag { font-size: 14px; }
     .lives-group { gap: 5px; }
     .lives-label { font-size: 10px; }
-    .heart { font-size: 28px; }
+    .heart { width: 28px; height: 28px; flex-basis: 28px; }
     .game-heading { margin-bottom: 11px; }
     .game-heading h1 { font-size: 23px; }
     .board-size { font-size: 12px; }
@@ -384,7 +382,7 @@ button { color: inherit; }
     .brand-mark { width: 20px; height: 20px; }
     .campaign-progress-label, .lives-label { display: none; }
     .board-lives { gap: 1px; }
-    .heart { font-size: 26px; }
+    .heart { width: 26px; height: 26px; flex-basis: 26px; }
     .board-ribbon { padding-inline: 10px; }
 }
 

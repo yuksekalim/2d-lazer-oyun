@@ -112,6 +112,7 @@ The physics foundation is implemented in `src/physics/geometry.js` and
 - [x] Replace promotional framing and detached status/control panels with a board-first game screen and concise, contextual feedback.
 - [x] Move route and lives above the board, center the board without side rails, and keep gameplay actions beneath the play area.
 - [x] Use screen-direction language, enlarge the Hard-mode grid, and improve beam contrast on the light board.
+- [x] Replace stepwise beam playback with continuous frame-by-frame travel and give filled/empty life hearts identical vector geometry.
 - [ ] Rework the UI campaign prototype around the confirmed difficulty screen, real 10-board overview, checkpoint flow, and final actions.
 - [x] Rework the level prototype so each campaign has 10 levels and consecutive border portals connect on the same row or column without corners.
 

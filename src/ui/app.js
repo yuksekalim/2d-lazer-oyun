@@ -1,4 +1,4 @@
-import { animateLaser } from '../animation/laser-animation.js?v=30-campaign-final';
+import { animateLaser } from '../animation/laser-animation.js?v=smooth-red-beam-2';
 import { animateMirror } from '../animation/mirror-animation.js?v=30-campaign-final';
 import { animateTarget } from '../animation/target-animation.js?v=30-campaign-final';
 import { renderBoard } from '../rendering/board-renderer.js?v=30-campaign-final';
@@ -92,7 +92,6 @@ function updateLives() {
     livesRow.querySelectorAll('.heart').forEach((heart) => {
         const filled = Number(heart.dataset.life) <= lives;
         heart.classList.toggle('is-filled', filled);
-        heart.textContent = filled ? '♥' : '♡';
     });
 }
 
