@@ -23,12 +23,17 @@ Difficulty** action are not implemented yet.
 - Portal role must never be communicated by color alone. The source uses a filled center and an inward arrow; the target uses a ringed center and an entry arrow. Accessible text names the role and direction.
 - A source portal remains visually active while the player is aiming. A target portal receives a brighter halo only after a valid target-entry result.
 
-The header centers a `SELECT A CAMPAIGN` label above the Easy/Medium/Hard
-selector and shows `CAMPAIGN ONLINE` with the current level on the right. The
-selector is a keyboard-operable ARIA radio group. The board metadata visibly
-labels `LIVES`, level progress, level name, and grid size; the intro panel also
-shows the 30-route, three-difficulty, unlimited-retry campaign facts. The
-header and metadata stack responsively on narrower screens.
+The compact header contains the keyboard-operable Easy/Medium/Hard ARIA radio
+group. The current runtime is board-first: the level name and grid size sit
+above one centered board, a route/lives ribbon sits above the board, and Fire
+Laser/Reset actions sit below it. The former intro and side-rail panels are not
+rendered. A concise status row appears beneath the actions when a terminal
+result needs explanation, and the header/ribbon stack responsively on narrow
+screens.
+
+The three life icons use one inline vector-heart geometry for both filled and
+empty states so the life pool remains visually consistent as attempts are
+spent.
 
 ## Direction arrows
 
@@ -44,9 +49,9 @@ Portal arrows are data-driven and must not be inferred from the cell’s row or 
 | State | Visual behavior | Input behavior |
 | --- | --- | --- |
 | Aiming | Beam hidden; portals show their role and arrows | Mirrors, Fire Laser, and Reset available |
-| Beam playback | Beam reveals one traversed cell at a time; the source and portal remain visible | Mirrors, Fire Laser, and Reset disabled |
-| Failed result | Beam remains visible for about 1.4 seconds; the status card reports the terminal reason; terminal-cell interruption pulse remains future polish | Controls re-enable after the beam is hidden |
-| Valid target entry | Target portal feedback plays for about 720ms; beam compression remains a future polish item | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
+| Beam playback | A beam tip travels continuously along the traced path; the source and portal remain visible. Reduced-motion mode completes the route immediately. | Mirrors, Fire Laser, and Reset disabled |
+| Failed result | Beam remains visible for about 1.4 seconds; the compact status row reports the terminal reason after playback | Controls re-enable after the beam is hidden |
+| Valid target entry | Target portal feedback plays for about 720ms after the continuous beam route completes | Reset, mirrors, Fire Laser, and difficulty selection remain disabled during feedback |
 | Level transition | After the target pulse, update the level label and render the next board with the shared life count intact | New level starts in aiming state |
 | Difficulty completion | After Level 10, show a completion dialog; Easy and Medium offer **Next difficulty**, all difficulties offer replay | Next difficulty starts its Level 1 with three lives; replay restarts the selected difficulty |
 | Campaign completion | After Hard Level 10, show a completion dialog with **Play Again** | Play Again restarts Hard Level 1 with three lives |
@@ -62,7 +67,7 @@ state, Level 1/6 segment restarts, refresh reset behavior, and the final
 
 - Source portal: `Blue source portal at row {row}, column {col}; emits {direction} into the board.`
 - Target portal: `Orange target portal at row {row}, column {col}; accepts a beam traveling {direction}.`
-- During playback, announce `Laser in transit.` and do not announce every cell.
+- During playback, keep the live status region quiet and do not announce every animation frame or cell.
 - On failure, announce the terminal reason in plain language: `Attempt failed: beam hit a wall.` / `beam left the board.` / `beam entered a portal in the wrong direction.` / `beam looped.`
 - On success, announce `Target portal reached. Loading the next level.`
 - Keep the three-heart life pool in one `aria-live="polite"` region. The same shared count must remain visible across both levels.

@@ -39,15 +39,16 @@ runtime currently uses the format-2 teleport schema with 30 campaign levels.
 - The game starts at Easy Level 1. Easy, Medium, and Hard can currently be selected directly from the difficulty tabs; there is not yet a separate difficulty screen.
 - Easy levels use 7×7 boards, Medium levels use 11×11 boards, and Hard levels use 15×15 boards. Each campaign contains ten levels.
 - The current UI uses a light editorial palette: warm off-white background, dark ink, teal source accents, orange target accents, violet mirrors, and a pale teal board.
-- The header centers a `SELECT A CAMPAIGN` radio group, shows `CAMPAIGN ONLINE` status, and supports Arrow-key plus Home/End navigation between difficulties.
-- Campaign facts, level metadata, and the three-life pool are visible in the layout; the header and metadata stack responsively on narrower screens.
+- The current screen is board-first: the compact header contains the ARIA difficulty radio group, a route/lives ribbon sits above the centered board, and Fire Laser/Reset actions sit below it. The former intro and side-rail panels are not part of the runtime.
+- Level name and grid size appear above the board; the receiver’s required entry direction remains visible through the target arrow and accessible portal label. A compact status row appears only when a terminal result needs explanation.
+- The three-life pool and route progress remain visible in the ribbon, which stacks responsively on narrower screens. Filled and empty lives use the same inline vector-heart geometry.
 - Every authored campaign level has one blue source portal and one orange target portal. There are never more than two portals in a level.
 - Portals are fixed on border cells and face perpendicular to the border. A blue source portal emits inward; an orange target portal accepts a beam traveling in its facing direction. Small arrows show both directions.
 - Walls and board boundaries stop the beam.
 - Mirrors have two diagonal orientations, `/` and `\`, and rotate 90° per click.
 - The laser travels up, down, left, or right and reflects 90° from mirrors.
 - The beam is hidden until **Fire Laser** is pressed.
-- The beam animates cell by cell. A failed beam remains visible for about 1.4 seconds, then hides for the next attempt.
+- The beam travels continuously along the traced path with a moving tip rather than revealing one whole cell at a time. Reduced-motion mode completes the route immediately. A failed beam remains visible for about 1.4 seconds, then hides for the next attempt.
 - Mirror clicks and gameplay controls are disabled during the animation.
 - Any result that does not enter the orange target portal from the correct direction—including a wall, boundary, wrong-direction portal entry, or loop—is a failed attempt. The blue source portal is never a valid target.
 - The player has one shared pool of three lives within the selected campaign. Lives carry between levels; losing all lives currently restarts that campaign at Level 1 with three lives. Checkpoint restarts at Level 6 are not implemented yet.
@@ -67,6 +68,7 @@ current campaign content.
 - Click or tap a mirror to rotate it.
 - Press **Fire Laser** to run the current attempt.
 - Press **Reset** to restore the current level’s original mirror positions.
+- Press **Enter** to fire when focus is not on a button or link; press **R** to reset.
 
 ## Remaining Campaign Work
 
