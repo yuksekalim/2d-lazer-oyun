@@ -16,7 +16,7 @@ const boardWrap = document.querySelector('#board-wrap');
 const appShell = document.querySelector('.app-shell');
 const beamLayer = document.querySelector('#beam-layer');
 const levelTagElement = document.querySelector('#level-tag');
-const levelProgressElement = document.querySelector('#level-progress');
+const campaignProgressElement = document.querySelector('#campaign-progress');
 const levelNameElement = document.querySelector('#level-name');
 const boardSizeElement = document.querySelector('#board-size');
 const difficultyTabs = [...document.querySelectorAll('.difficulty-tab')];
@@ -59,7 +59,7 @@ function setStatus(state, kicker, title, detail) {
 
 function updateStatus(simulation) {
     if (!beamVisible || !simulation) {
-        setStatus('active', 'AWAITING FIRE', 'Aim the mirrors', 'The beam is hidden until you fire the laser.');
+        setStatus('idle', '', '', '');
         return;
     }
 
@@ -74,7 +74,7 @@ function updateStatus(simulation) {
     }
 
     const states = {
-        target: ['won', 'TRANSMISSION COMPLETE', 'Target acquired', 'A clean line reached the receiver.'],
+        target: ['won', 'ROUTE FOUND', 'Puzzle solved', 'The beam reached the receiver.'],
         boundary: ['blocked', 'ATTEMPT FAILED', 'Beam left the board', 'Rotate a mirror and try again.'],
         wall: ['blocked', 'ATTEMPT FAILED', 'Beam blocked', 'A wall interrupted the transmission.'],
         loop: ['loop', 'ATTEMPT FAILED', 'Loop detected', 'The beam repeated a path. Try another angle.'],
@@ -110,12 +110,11 @@ function updateDifficultyTabs() {
 }
 
 function updateProgress() {
-    const difficultyLabel = DIFFICULTY_LABELS[difficultyId].toUpperCase();
     const levelNumber = levelIndex + 1;
     const formattedLevel = String(levelNumber).padStart(2, '0');
     const formattedTotal = String(LEVELS_PER_DIFFICULTY).padStart(2, '0');
-    levelTagElement.textContent = `${difficultyLabel} · LEVEL ${formattedLevel} / ${formattedTotal}`;
-    levelProgressElement.textContent = `LEVEL ${formattedLevel} / ${formattedTotal}`;
+    levelTagElement.textContent = `${formattedLevel} / ${formattedTotal}`;
+    campaignProgressElement.value = levelNumber;
 }
 
 function createState() {
@@ -137,8 +136,8 @@ function render({ animatedMirrorId = null } = {}) {
     });
 
     updateProgress();
-    levelNameElement.textContent = level.name.toUpperCase();
-    boardSizeElement.textContent = `${level.size} × ${level.size} GRID`;
+    levelNameElement.textContent = level.name;
+    boardSizeElement.textContent = `${level.size} × ${level.size}`;
     boardElement.setAttribute('aria-label', `${level.size} by ${level.size} laser puzzle board`);
     updateLives();
     fireButton.disabled = isAnimating || isCoolingDown || isSolved || lives === 0;
@@ -174,7 +173,7 @@ function clearFeedbackTimer() {
     feedbackTimer = null;
 }
 
-function loadLevelAt(nextLevelIndex, { focusFire = true } = {}) {
+function loadLevelAt(nextLevelIndex, { focusFire = false } = {}) {
     const difficultyLevels = currentDifficultyLevels();
     levelIndex = nextLevelIndex;
     level = difficultyLevels[levelIndex];
@@ -222,11 +221,11 @@ function showDifficultyComplete() {
     const isFinalDifficulty = difficultyId === DIFFICULTIES.at(-1);
     isSolved = true;
     render();
-    winKicker.textContent = isFinalDifficulty ? 'CAMPAIGN COMPLETE' : 'DIFFICULTY CLEARED';
-    winTitle.innerHTML = isFinalDifficulty ? 'All lines<br><em>aligned.</em>' : `${DIFFICULTY_LABELS[difficultyId]}<br><em>cleared.</em>`;
-    winCopy.innerHTML = isFinalDifficulty
-        ? 'Every route is online. You completed the full thirty-level campaign.'
-        : `All ten ${DIFFICULTY_LABELS[difficultyId]} routes are online. Ready for the next challenge?`;
+    winKicker.textContent = isFinalDifficulty ? 'CAMPAIGN COMPLETE' : 'DIFFICULTY COMPLETE';
+    winTitle.innerHTML = isFinalDifficulty ? 'Campaign<br><em>complete.</em>' : `${DIFFICULTY_LABELS[difficultyId]}<br><em>complete.</em>`;
+    winCopy.textContent = isFinalDifficulty
+        ? 'You solved all 30 puzzles.'
+        : `You solved all 10 ${DIFFICULTY_LABELS[difficultyId]} puzzles.`;
     nextDifficultyButton.hidden = isFinalDifficulty;
     nextDifficultyButton.disabled = isFinalDifficulty;
     const replayIcon = document.createElement('span');
@@ -309,7 +308,7 @@ function resetGame() {
 function playAgain() {
     clearFeedbackTimer();
     lives = MAX_LIVES;
-    loadLevelAt(0);
+    loadLevelAt(0, { focusFire: true });
 }
 
 function advanceDifficulty() {
@@ -355,4 +354,18 @@ fireButton.addEventListener('click', fireLaser);
 resetButton.addEventListener('click', resetGame);
 nextDifficultyButton.addEventListener('click', advanceDifficulty);
 playAgainButton.addEventListener('click', playAgain);
+window.addEventListener('keydown', (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+    const activeElement = event.target instanceof Element ? event.target : null;
+    if (activeElement?.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+    if (event.key === 'Enter') {
+        if (activeElement?.closest('button, a')) return;
+        event.preventDefault();
+        fireLaser();
+    } else if (event.key.toLowerCase() === 'r' && !resetButton.disabled) {
+        event.preventDefault();
+        resetGame();
+    }
+});
 initialize();
