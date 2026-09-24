@@ -74,7 +74,7 @@ function updateStatus(simulation) {
     }
 
     const states = {
-        target: ['won', 'ROUTE FOUND', 'Puzzle solved', 'The beam reached the receiver.'],
+        target: ['idle', '', '', ''],
         boundary: ['blocked', 'ATTEMPT FAILED', 'Beam left the board', 'Rotate a mirror and try again.'],
         wall: ['blocked', 'ATTEMPT FAILED', 'Beam blocked', 'A wall interrupted the transmission.'],
         loop: ['loop', 'ATTEMPT FAILED', 'Loop detected', 'The beam repeated a path. Try another angle.'],
